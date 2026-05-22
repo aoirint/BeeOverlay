@@ -37,8 +37,7 @@ public sealed class Plugin : BaseUnityPlugin
 
 internal sealed class Overlay
 {
-    // The overlay now focuses on keeping bees in state 0. Colors therefore mark state-transition
-    // risks rather than the older destination-to-hive distance investigation.
+    // The overlay focuses on keeping bees in state 0, so colors mark transition risks.
     private static readonly Color LineColor = new(1f, 0.85f, 0.1f, 0.95f);
     private static readonly Color DefenseDistanceColor = new(0.1f, 0.75f, 1f, 0.7f);
     private static readonly Color SightLineColor = new(0.65f, 1f, 1f, 0.95f);
