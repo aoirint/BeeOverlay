@@ -278,12 +278,9 @@ internal sealed class Overlay
         return string.Join(
             "  ",
             Tag($"bee:{bee.thisEnemyIndex}", BeeColor),
-            Tag($"player-hive={FmtDistance(playerToHiveDistance)}", PlayerColor),
-            Tag($"bee-hive={hiveSightProbe.EyeToHiveDistance:F2}u", HiveColor),
-            Tag($"bee-lkh={hiveMissingProbe.EyeToLastKnownHiveDistance:F2}u", LastKnownHiveColor),
-            Tag($"playerLOS={YesNo(canSeeLocalPlayer)}", PlayerColor),
-            Tag($"hiveLOS={YesNo(!hiveSightProbe.LinecastBlocked)}", HiveColor),
-            Tag($"lkhLOS={YesNo(!hiveMissingProbe.LinecastBlocked)}", LastKnownHiveColor)
+            Tag($"player={FmtDistance(playerToHiveDistance)}/{SeenBlocked(canSeeLocalPlayer)}", PlayerColor),
+            Tag($"hive={hiveSightProbe.EyeToHiveDistance:F2}u/{SeenBlocked(!hiveSightProbe.LinecastBlocked)}", HiveColor),
+            Tag($"known-hive={hiveMissingProbe.EyeToLastKnownHiveDistance:F2}u/{SeenBlocked(!hiveMissingProbe.LinecastBlocked)}", LastKnownHiveColor)
         );
     }
 
@@ -350,9 +347,9 @@ internal sealed class Overlay
         return distance.HasValue ? $"{distance.Value:F2}u" : "n/a";
     }
 
-    private static string YesNo(bool value)
+    private static string SeenBlocked(bool canSee)
     {
-        return value ? "YES" : "NO";
+        return canSee ? "SEEN" : "blocked";
     }
 
     private static string Tag(string text, Color color)
