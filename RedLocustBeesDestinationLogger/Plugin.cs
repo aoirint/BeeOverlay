@@ -95,7 +95,7 @@ internal sealed class Overlay
 
         var seen = new HashSet<int>();
         var statusBuilder = new StringBuilder();
-        statusBuilder.Append($"RLB state transition overlay | bees={bees.Length}");
+        statusBuilder.Append($"Bee state transition overlay | bees={bees.Length}");
         var localPlayer = GameNetworkManager.Instance != null ? GameNetworkManager.Instance.localPlayerController : null;
         var localPlayerPosition = GetPlayerBodyPosition(localPlayer);
         foreach (var bee in bees)
