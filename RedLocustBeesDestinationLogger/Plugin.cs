@@ -667,7 +667,6 @@ internal static class BeeLogPatch
         }
 
         var hive = bee.hive.transform.position;
-        var enemyDestination = bee.destination;
         var agent = bee.agent;
         var agentDestination = Vector3.zero;
         var agentReadable = agent != null && agent.isOnNavMesh;
@@ -683,11 +682,9 @@ internal static class BeeLogPatch
                 + $"state={bee.currentBehaviourStateIndex} "
                 + $"hiveHeld={bee.hive.isHeld} "
                 + $"agentOnNavMesh={agentReadable} "
-                + $"enemyDestinationToHive={Fmt.Distance(enemyDestination, hive)} "
                 + $"agentDestinationToHive={Fmt.Distance(agentDestination, hive, agentReadable)} "
                 + $"bodyToAgentDestination={Fmt.Distance(bee.transform.position, agentDestination, agentReadable)} "
                 + $"hive={Fmt.Vector(hive)} "
-                + $"enemyDestination={Fmt.Vector(enemyDestination)} "
                 + $"agentDestination={Fmt.Vector(agentDestination, agentReadable)}"
         );
     }
