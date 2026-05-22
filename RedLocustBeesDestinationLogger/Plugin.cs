@@ -43,9 +43,9 @@ internal sealed class Overlay
     private static readonly Color HudTextColor = new(1f, 0.85f, 0.1f, 0.95f);
     private static readonly Color BeeColor = new(1f, 0.85f, 0.1f, 0.95f);
     private static readonly Color HiveColor = new(0.25f, 1f, 0.35f, 0.95f);
-    private static readonly Color LastKnownHiveColor = new(0.15f, 0.55f, 1f, 0.95f);
-    private static readonly Color LastKnownHiveNearCircleColor = new(0.05f, 0.32f, 0.95f, 0.9f);
-    private static readonly Color LastKnownHiveLineOfSightCircleColor = new(0.45f, 0.75f, 1f, 0.45f);
+    private static readonly Color LastKnownHiveColor = new(0.05f, 0.32f, 1f, 0.95f);
+    private static readonly Color LastKnownHiveNearCircleColor = new(0.15f, 0.55f, 1f, 0.7f);
+    private static readonly Color LastKnownHiveLineOfSightCircleColor = new(0.55f, 0.8f, 1f, 0.35f);
     private static readonly Color PlayerColor = new(1f, 0.15f, 0.1f, 0.95f);
     private static readonly Color InactiveLineColor = new(0.45f, 0.5f, 0.52f, 0.55f);
 
