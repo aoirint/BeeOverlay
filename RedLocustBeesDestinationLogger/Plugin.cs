@@ -96,11 +96,13 @@ internal sealed class Overlay
         var seen = new HashSet<int>();
         var statusBuilder = new StringBuilder();
         statusBuilder.Append($"RLB state transition overlay | bees={bees.Length}");
+        var localPlayer = GameNetworkManager.Instance != null ? GameNetworkManager.Instance.localPlayerController : null;
+        var localPlayerPosition = GetPlayerBodyPosition(localPlayer);
         foreach (var bee in bees)
         {
             DrawBee(bee, seen);
             statusBuilder.AppendLine();
-            statusBuilder.Append(GetBeeStatusLine(bee));
+            statusBuilder.Append(GetBeeStatusLine(bee, localPlayer, localPlayerPosition));
         }
 
         foreach (var pair in views)
@@ -162,6 +164,7 @@ internal sealed class Overlay
         statusText.fontStyle = FontStyle.Bold;
         statusText.alignment = TextAnchor.UpperLeft;
         statusText.color = HudTextColor;
+        statusText.supportRichText = true;
         statusText.raycastTarget = false;
         statusText.horizontalOverflow = HorizontalWrapMode.Overflow;
         statusText.verticalOverflow = VerticalWrapMode.Overflow;
@@ -217,6 +220,11 @@ internal sealed class Overlay
         return player.transform.position + Vector3.up * 1.6f;
     }
 
+    private static Vector3? GetPlayerBodyPosition(PlayerControllerB? player)
+    {
+        return player != null ? player.transform.position : null;
+    }
+
     private BeeView GetView(int beeIndex)
     {
         if (views.TryGetValue(beeIndex, out var view))
@@ -236,24 +244,45 @@ internal sealed class Overlay
         return view;
     }
 
-    private static string GetBeeStatusLine(RedLocustBees bee)
+    private static string GetBeeStatusLine(
+        RedLocustBees bee,
+        PlayerControllerB? localPlayer,
+        Vector3? localPlayerPosition
+    )
     {
         if (bee == null)
         {
-            return "bee:n/a  hiveLOS n/a  lkh-eye=n/a  missProbe n/a";
+            return $"{Tag("bee:n/a", BeeColor)}";
         }
 
         if (bee.hive == null)
         {
-            return $"bee:{bee.thisEnemyIndex}  hiveLOS n/a  lkh-eye=n/a  missProbe n/a  no hive";
+            return $"{Tag($"bee:{bee.thisEnemyIndex}", BeeColor)}  hive n/a";
         }
 
         var beeEyePosition = bee.eye != null ? bee.eye.position : bee.transform.position + Vector3.up * WorldYOffset;
+        var hivePosition = bee.hive.transform.position;
+        var visiblePlayer = bee.CheckLineOfSightForPlayer(360f, (int)PlayerLineOfSightDistance, 1);
+        var canSeeLocalPlayer = localPlayer != null && visiblePlayer != null && visiblePlayer == localPlayer;
+        var playerToHiveDistance = localPlayerPosition.HasValue
+            ? Vector3.Distance(localPlayerPosition.Value, hivePosition)
+            : (float?)null;
         var hiveMissingProbe = GetHiveMissingProbe(bee, beeEyePosition);
-        var hiveMissingStatus = FormatHiveMissingProbeStatus(hiveMissingProbe);
-        var hiveSightStatus = FormatHiveSightProbeStatus(GetHiveSightProbe(beeEyePosition, bee.hive.transform.position));
+        var hiveSightProbe = GetHiveSightProbe(beeEyePosition, hivePosition);
 
-        return $"bee:{bee.thisEnemyIndex}  {hiveSightStatus}  {hiveMissingStatus}";
+        // HUD rows intentionally avoid transition-derived labels such as missProbe. In practice the
+        // player needs quick distances and current game visibility booleans; the colored terms map
+        // to the same entity colors as the 3D dots/lines.
+        return string.Join(
+            "  ",
+            Tag($"bee:{bee.thisEnemyIndex}", BeeColor),
+            Tag($"player-hive={FmtDistance(playerToHiveDistance)}", PlayerColor),
+            Tag($"bee-hive={hiveSightProbe.EyeToHiveDistance:F2}u", HiveColor),
+            Tag($"bee-lkh={hiveMissingProbe.EyeToLastKnownHiveDistance:F2}u", LastKnownHiveColor),
+            Tag($"playerLOS={YesNo(canSeeLocalPlayer)}", PlayerColor),
+            Tag($"hiveLOS={YesNo(!hiveSightProbe.LinecastBlocked)}", HiveColor),
+            Tag($"lkhLOS={YesNo(!hiveMissingProbe.LinecastBlocked)}", LastKnownHiveColor)
+        );
     }
 
     private static HiveSightProbe GetHiveSightProbe(Vector3 beeEyePosition, Vector3 hivePosition)
@@ -314,20 +343,19 @@ internal sealed class Overlay
         }
     }
 
-    private static string FormatHiveMissingProbeStatus(HiveMissingProbe probe)
+    private static string FmtDistance(float? distance)
     {
-        var synced = probe.SyncedLastKnownHivePosition.HasValue
-            ? (probe.SyncedLastKnownHivePosition.Value ? "YES" : "NO")
-            : "n/a";
-        var los = probe.LinecastBlocked ? "blocked" : "clear";
-        var active = probe.CanEvaluateMissing ? "YES" : "NO";
-        return $"lkh-eye={probe.EyeToLastKnownHiveDistance:F2}u  lkhLOS={los}  lkhSync={synced}  missProbe {active}";
+        return distance.HasValue ? $"{distance.Value:F2}u" : "n/a";
     }
 
-    private static string FormatHiveSightProbeStatus(HiveSightProbe probe)
+    private static string YesNo(bool value)
     {
-        var los = probe.LinecastBlocked ? "blocked" : "clear";
-        return $"hiveLOS={los}  hive-eye={probe.EyeToHiveDistance:F2}u";
+        return value ? "YES" : "NO";
+    }
+
+    private static string Tag(string text, Color color)
+    {
+        return $"<color=#{ColorUtility.ToHtmlStringRGBA(color)}>{text}</color>";
     }
 
     private void SetStatus(string text)
