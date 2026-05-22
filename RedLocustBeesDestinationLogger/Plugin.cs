@@ -12,6 +12,7 @@ using HarmonyLib;
 using LethalCompany;
 using UnityEngine::UnityEngine;
 using UnityEngine::UnityEngine.AI;
+using PlayerControllerB = LethalCompany::GameNetcodeStuff.PlayerControllerB;
 using UiImage = LethalCompany::UnityEngine.UI.Image;
 using UiText = LethalCompany::UnityEngine.UI.Text;
 using UnityObject = UnityEngine::UnityEngine.Object;
@@ -46,10 +47,14 @@ internal sealed class Overlay
     private static readonly Color DestinationColor = new(1f, 0.15f, 0.1f, 0.95f);
     private static readonly Color LineColor = new(1f, 0.85f, 0.1f, 0.95f);
     private static readonly Color ThresholdLineColor = new(1f, 0.1f, 0.05f, 0.95f);
+    private static readonly Color DefenseDistanceColor = new(0.1f, 0.75f, 1f, 0.7f);
+    private static readonly Color SightLineColor = new(0.65f, 1f, 1f, 0.95f);
 
     // Four Unity units is the investigation threshold from the observed bee return behavior.
     // Keep it near the overlay colors because it drives both the status text and the warning line.
     private const float DestinationToHiveThresholdDistance = 4f;
+    private const float PlayerLineOfSightDistance = 16f;
+    private const int DefenseDistanceCircleSegments = 96;
 
     // Markers are lifted a little above the sampled positions so they are not hidden by terrain,
     // hive meshes, or the bee body while still representing the same horizontal point.
@@ -180,18 +185,32 @@ internal sealed class Overlay
             return;
         }
 
+        var view = GetView(bee.thisEnemyIndex);
+        var beePosition = bee.transform.position;
+        var hive = bee.hive.transform.position;
+        var beeEyePosition = bee.eye != null ? bee.eye.position : beePosition + Vector3.up * WorldYOffset;
+        var visiblePlayer = bee.CheckLineOfSightForPlayer(360f, (int)PlayerLineOfSightDistance, 1);
+        var visiblePlayerPosition = GetPlayerSightTargetPosition(visiblePlayer);
+
+        view.SetSpatialGuides(
+            hive + Vector3.up * WorldYOffset,
+            bee.defenseDistance,
+            beeEyePosition,
+            visiblePlayerPosition
+        );
+        seen.Add(bee.thisEnemyIndex);
+
         if (!TryGetAgentDestination(bee, out var destination))
         {
             // No fallback is intentional. The overlay exists to inspect the real NavMeshAgent
             // destination, and drawing another field in the same red "destination" role would make
             // a bad or missing agent look like valid evidence. Leaving the bee undrawn makes the
             // missing prerequisite obvious through the top-left n/a status row.
+            view.SetDestinationVisible(false);
+            view.SetHudVisible(false);
             return;
         }
 
-        var view = GetView(bee.thisEnemyIndex);
-        var beePosition = bee.transform.position;
-        var hive = bee.hive.transform.position;
         var beeToDestinationDistance = Vector3.Distance(beePosition, destination);
         var destinationToHiveDistance = Vector3.Distance(destination, hive);
 
@@ -219,7 +238,23 @@ internal sealed class Overlay
             thresholdColor,
             $"bee:{bee.thisEnemyIndex}  bee-dest {beeToDestinationDistance:F2}u  dest-hive {destinationToHiveDistance:F2}u  >=4 {(destinationToHiveDistance >= DestinationToHiveThresholdDistance ? "YES" : "NO")}"
         );
-        seen.Add(bee.thisEnemyIndex);
+    }
+
+    private static Vector3? GetPlayerSightTargetPosition(PlayerControllerB? player)
+    {
+        if (player == null)
+        {
+            return null;
+        }
+
+        // Match the player's camera when available because the bee line-of-sight check is about
+        // whether the bee can see the player, not merely where the player's feet are on the floor.
+        if (player.gameplayCamera != null)
+        {
+            return player.gameplayCamera.transform.position;
+        }
+
+        return player.transform.position + Vector3.up * 1.6f;
     }
 
     private BeeView GetView(int beeIndex)
@@ -380,6 +415,8 @@ internal sealed class Overlay
         private readonly GameObject worldRoot;
         private readonly LineRenderer beeToDestinationWorldLine;
         private readonly LineRenderer destinationToHiveWorldLine;
+        private readonly LineRenderer defenseDistanceCircle;
+        private readonly LineRenderer visiblePlayerSightLine;
         private readonly GameObject beeMarker;
         private readonly GameObject hiveMarker;
         private readonly GameObject destinationMarker;
@@ -396,6 +433,8 @@ internal sealed class Overlay
             GameObject worldRoot,
             LineRenderer beeToDestinationWorldLine,
             LineRenderer destinationToHiveWorldLine,
+            LineRenderer defenseDistanceCircle,
+            LineRenderer visiblePlayerSightLine,
             GameObject beeMarker,
             GameObject hiveMarker,
             GameObject destinationMarker
@@ -412,6 +451,8 @@ internal sealed class Overlay
             this.worldRoot = worldRoot;
             this.beeToDestinationWorldLine = beeToDestinationWorldLine;
             this.destinationToHiveWorldLine = destinationToHiveWorldLine;
+            this.defenseDistanceCircle = defenseDistanceCircle;
+            this.visiblePlayerSightLine = visiblePlayerSightLine;
             this.beeMarker = beeMarker;
             this.hiveMarker = hiveMarker;
             this.destinationMarker = destinationMarker;
@@ -445,9 +486,16 @@ internal sealed class Overlay
             // in-game positions even when the HUD canvas scales or changes anchoring.
             var beeToDestinationWorldLine = CreateWorldLine("BeeToDestinationWorldLine", worldRoot.transform, lineMaterial);
             var destinationToHiveWorldLine = CreateWorldLine("DestinationToHiveWorldLine", worldRoot.transform, lineMaterial);
+            var defenseDistanceCircle = CreateWorldLine("DefenseDistanceCircle", worldRoot.transform, lineMaterial);
+            var visiblePlayerSightLine = CreateWorldLine("VisiblePlayerSightLine", worldRoot.transform, lineMaterial);
             var beeMarker = CreateWorldMarker("BeeWorldMarker", worldRoot.transform, beeMaterial);
             var hiveMarker = CreateWorldMarker("HiveWorldMarker", worldRoot.transform, hiveMaterial);
             var destinationMarker = CreateWorldMarker("DestinationWorldMarker", worldRoot.transform, destinationMaterial);
+
+            // These two guides are conditional frame-by-frame. Start hidden so a newly allocated
+            // view never flashes a stale two-point line before the first real sample is written.
+            defenseDistanceCircle.gameObject.SetActive(false);
+            visiblePlayerSightLine.gameObject.SetActive(false);
 
             return new BeeView(
                 rootObject,
@@ -461,6 +509,8 @@ internal sealed class Overlay
                 worldRoot,
                 beeToDestinationWorldLine,
                 destinationToHiveWorldLine,
+                defenseDistanceCircle,
+                visiblePlayerSightLine,
                 beeMarker,
                 hiveMarker,
                 destinationMarker
@@ -488,6 +538,42 @@ internal sealed class Overlay
             label.text = labelText;
         }
 
+        public void SetHudVisible(bool visible)
+        {
+            if (rootObject != null)
+            {
+                rootObject.SetActive(visible);
+            }
+        }
+
+        public void SetSpatialGuides(Vector3 hive, int defenseDistance, Vector3 beeEye, Vector3? visiblePlayer)
+        {
+            if (worldRoot == null)
+            {
+                return;
+            }
+
+            worldRoot.SetActive(true);
+
+            // RedLocustBees stores defenseDistance as an integer radius around the hive. Drawing it
+            // as a horizontal ring lets the player judge "near hive" before crossing the trigger
+            // region, which is more useful than another late true/false row in the HUD.
+            SetDefenseDistanceCircle(defenseDistanceCircle, hive, defenseDistance);
+
+            // The player line is drawn only when the game-side visibility query currently returns
+            // a player. Absence of the line therefore means "not currently seen by this check",
+            // without adding a fallback or guessing through walls.
+            if (visiblePlayer.HasValue)
+            {
+                visiblePlayerSightLine.gameObject.SetActive(true);
+                SetWorldLine(visiblePlayerSightLine, beeEye, visiblePlayer.Value, SightLineColor);
+            }
+            else
+            {
+                visiblePlayerSightLine.gameObject.SetActive(false);
+            }
+        }
+
         public void SetWorld(Vector3 bee, Vector3 destination, Vector3 hive, float markerDistance, Color destinationToHiveColor)
         {
             if (worldRoot == null)
@@ -496,6 +582,7 @@ internal sealed class Overlay
             }
 
             worldRoot.SetActive(true);
+            SetDestinationVisible(true);
 
             // Use two LineRenderers so each segment can keep an independent color. A single
             // three-point LineRenderer would interpolate colors across the shared destination point.
@@ -511,6 +598,15 @@ internal sealed class Overlay
             beeMarker.transform.localScale = Vector3.one * markerScale;
             hiveMarker.transform.localScale = Vector3.one * markerScale;
             destinationMarker.transform.localScale = Vector3.one * markerScale;
+        }
+
+        public void SetDestinationVisible(bool visible)
+        {
+            beeToDestinationWorldLine.gameObject.SetActive(visible);
+            destinationToHiveWorldLine.gameObject.SetActive(visible);
+            beeMarker.SetActive(visible);
+            hiveMarker.SetActive(visible);
+            destinationMarker.SetActive(visible);
         }
 
         public void SetVisible(bool visible)
@@ -537,10 +633,32 @@ internal sealed class Overlay
 
         private static void SetWorldLine(LineRenderer line, Vector3 start, Vector3 end, Color color)
         {
+            line.positionCount = 2;
             line.SetPosition(0, start);
             line.SetPosition(1, end);
             line.startColor = color;
             line.endColor = color;
+        }
+
+        private static void SetDefenseDistanceCircle(LineRenderer line, Vector3 center, int radius)
+        {
+            if (radius <= 0)
+            {
+                line.gameObject.SetActive(false);
+                return;
+            }
+
+            line.gameObject.SetActive(true);
+            line.positionCount = DefenseDistanceCircleSegments + 1;
+            line.startColor = DefenseDistanceColor;
+            line.endColor = DefenseDistanceColor;
+
+            for (var i = 0; i <= DefenseDistanceCircleSegments; i++)
+            {
+                var radians = Mathf.PI * 2f * i / DefenseDistanceCircleSegments;
+                var offset = new Vector3(Mathf.Cos(radians) * radius, 0f, Mathf.Sin(radians) * radius);
+                line.SetPosition(i, center + offset);
+            }
         }
 
         private static RectTransform CreateHudLine(string name, Transform parent)
