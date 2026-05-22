@@ -10,7 +10,6 @@ using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
 using LethalCompany;
-using PlayerControllerB = LethalCompany::GameNetcodeStuff.PlayerControllerB;
 using UnityEngine::UnityEngine;
 using UnityEngine::UnityEngine.AI;
 using UiImage = LethalCompany::UnityEngine.UI.Image;
@@ -51,8 +50,6 @@ internal sealed class Overlay
     // Four Unity units is the investigation threshold from the observed bee return behavior.
     // Keep it near the overlay colors because it drives both the status text and the warning line.
     private const float DestinationToHiveThresholdDistance = 4f;
-    private const float HiveLineOfSightDistance = 9f;
-    private const float PlayerLineOfSightDistance = 16f;
 
     // Markers are lifted a little above the sampled positions so they are not hidden by terrain,
     // hive meshes, or the bee body while still representing the same horizontal point.
@@ -158,14 +155,13 @@ internal sealed class Overlay
         statusRect.pivot = new Vector2(0f, 1f);
         statusRect.anchoredPosition = new Vector2(16f, -16f);
 
-        // Reserve enough room for several bees with multi-line condition diagnostics. Overflow
-        // remains enabled below because this is a diagnostic overlay and clipped lines are worse
-        // than imperfect layout in edge cases.
-        statusRect.sizeDelta = new Vector2(980f, 420f);
+        // Reserve enough room for several bees. Overflow remains enabled below because this is a
+        // diagnostic overlay and clipped lines are worse than imperfect layout in edge cases.
+        statusRect.sizeDelta = new Vector2(760f, 240f);
 
         statusText = statusObject.GetComponent<UiText>();
         statusText.font = font;
-        statusText.fontSize = 14;
+        statusText.fontSize = 16;
         statusText.fontStyle = FontStyle.Bold;
         statusText.alignment = TextAnchor.UpperLeft;
         statusText.color = LineColor;
@@ -279,110 +275,17 @@ internal sealed class Overlay
             return $"bee:{bee.thisEnemyIndex}  agentDest-hive=n/a  >=4 n/a  no hive";
         }
 
-        var diagnostics = GetConditionDiagnostics(bee);
         if (!TryGetAgentDestination(bee, out var agentDestination))
         {
             // Keep the status row strict for the same reason as the overlay: every numeric distance
             // must come from NavMeshAgent.destination, otherwise the >=4 answer can look precise
             // while measuring the wrong piece of game AI state.
-            return $"bee:{bee.thisEnemyIndex}  state={GetStateLabel(bee.currentBehaviourStateIndex)}  agentDest-hive=n/a  >=4 n/a  no navmesh agent"
-                + Environment.NewLine
-                + diagnostics;
+            return $"bee:{bee.thisEnemyIndex}  agentDest-hive=n/a  >=4 n/a  no navmesh agent";
         }
 
-        var destinationToHiveDistance = Vector3.Distance(agentDestination, bee.hive.transform.position);
-        var bodyToDestinationDistance = Vector3.Distance(bee.transform.position, agentDestination);
-        var overThreshold = destinationToHiveDistance >= DestinationToHiveThresholdDistance ? "YES" : "NO";
-        return $"bee:{bee.thisEnemyIndex}  state={GetStateLabel(bee.currentBehaviourStateIndex)}  agentDest-hive={destinationToHiveDistance:F2}u  >=4 {overThreshold}  body-dest={bodyToDestinationDistance:F2}u"
-            + Environment.NewLine
-            + diagnostics;
-    }
-
-    private static string GetConditionDiagnostics(RedLocustBees bee)
-    {
-        var hivePosition = bee.hive.transform.position;
-        var closestPlayer = FindClosestTargetablePlayerToHive(bee, hivePosition, out var closestPlayerToHiveDistance);
-        var playerNearHive = closestPlayer != null && closestPlayerToHiveDistance < bee.defenseDistance;
-
-        // RedLocustBees state 0 uses CheckLineOfSightForPlayer(360, 16, 1) before checking the
-        // seen player's distance to the hive. Keep this as a separate "seen16" signal instead of
-        // folding it into nearHive so a blocked line of sight and an out-of-defense-range player
-        // can be distinguished while scouting locations.
-        var seenPlayer = bee.CheckLineOfSightForPlayer(360f, (int)PlayerLineOfSightDistance, 1);
-        var seenPlayerDistance = seenPlayer != null
-            ? Vector3.Distance(bee.eye.position, seenPlayer.gameplayCamera.transform.position)
-            : 0f;
-        var seenPlayerHiveDistance = seenPlayer != null
-            ? Vector3.Distance(seenPlayer.transform.position, hivePosition)
-            : 0f;
-
-        // RedLocustBees state 2 can leave the missing/search behavior through IsHivePlacedAndInLOS.
-        // Show both the final boolean and the underlying distance/blocker terms because bad glitch
-        // spots are often explained by "close enough but blocked" or "visible but outside 9u".
-        var hiveEyeDistance = Vector3.Distance(bee.eye.position, hivePosition);
-        var hiveBlocked = Physics.Linecast(
-            bee.eye.position,
-            hivePosition,
-            StartOfRound.Instance.collidersAndRoomMaskAndDefault,
-            QueryTriggerInteraction.Ignore
-        );
-        var hivePlacedAndInLineOfSight = !bee.hive.isHeld && hiveEyeDistance <= HiveLineOfSightDistance && !hiveBlocked;
-        var targetPlayer = bee.targetPlayer;
-        var targetHoldingHive = targetPlayer != null && targetPlayer.currentlyHeldObjectServer == bee.hive;
-        var targetHiveDistance = targetPlayer != null
-            ? Vector3.Distance(targetPlayer.transform.position, hivePosition)
-            : 0f;
-
-        // These fields mirror the decision points in RedLocustBees.DoAIInterval rather than
-        // inventing a new "glitch score". The boolean says whether a branch can currently fire,
-        // and the adjacent number explains how close the player or hive is to that branch boundary.
-        return "  "
-            + $"nearHive={Fmt.Bool(playerNearHive)}({Fmt.DistanceOrNa(closestPlayerToHiveDistance, closestPlayer != null)}<{bee.defenseDistance}u player={Fmt.Player(closestPlayer)})  "
-            + $"seen16={Fmt.Bool(seenPlayer != null)}({Fmt.DistanceOrNa(seenPlayerDistance, seenPlayer != null)}<{PlayerLineOfSightDistance:F0}u player={Fmt.Player(seenPlayer)} hive={Fmt.DistanceOrNa(seenPlayerHiveDistance, seenPlayer != null)})"
-            + Environment.NewLine
-            + "  "
-            + $"hiveHeld={Fmt.Bool(bee.hive.isHeld)}  "
-            + $"hiveLOS9={Fmt.Bool(hivePlacedAndInLineOfSight)}(eye-hive={hiveEyeDistance:F2}u<=9 blocked={Fmt.Bool(hiveBlocked)})  "
-            + $"targetHive={Fmt.Bool(targetHoldingHive)}(target={Fmt.Player(targetPlayer)} target-hive={Fmt.DistanceOrNa(targetHiveDistance, targetPlayer != null)})";
-    }
-
-    private static PlayerControllerB? FindClosestTargetablePlayerToHive(RedLocustBees bee, Vector3 hivePosition, out float distance)
-    {
-        var players = StartOfRound.Instance != null ? StartOfRound.Instance.allPlayerScripts : null;
-        PlayerControllerB? closestPlayer = null;
-        distance = 0f;
-        if (players == null)
-        {
-            return null;
-        }
-
-        foreach (var player in players)
-        {
-            if (player == null || !bee.PlayerIsTargetable(player))
-            {
-                continue;
-            }
-
-            var candidateDistance = Vector3.Distance(player.transform.position, hivePosition);
-            if (closestPlayer == null || candidateDistance < distance)
-            {
-                closestPlayer = player;
-                distance = candidateDistance;
-            }
-        }
-
-        return closestPlayer;
-    }
-
-    private static string GetStateLabel(int state)
-    {
-        return state switch
-        {
-            0 => "0/return",
-            1 => "1/defend",
-            2 => "2/search",
-            _ => $"{state}/unknown",
-        };
+        var distance = Vector3.Distance(agentDestination, bee.hive.transform.position);
+        var overThreshold = distance >= DestinationToHiveThresholdDistance ? "YES" : "NO";
+        return $"bee:{bee.thisEnemyIndex}  agentDest-hive={distance:F2}u  >=4 {overThreshold}";
     }
 
     internal static bool TryGetAgentDestination(RedLocustBees bee, out Vector3 destination)
@@ -789,28 +692,13 @@ internal static class BeeLogPatch
 
 internal static class Fmt
 {
-    public static string Bool(bool value)
-    {
-        return value ? "true" : "false";
-    }
-
     public static string Distance(Vector3 a, Vector3 b, bool enabled = true)
     {
         return enabled ? Vector3.Distance(a, b).ToString("F3") : "n/a";
     }
 
-    public static string DistanceOrNa(float distance, bool enabled)
-    {
-        return enabled ? $"{distance:F2}u" : "n/a";
-    }
-
     public static string Vector(Vector3 vector, bool enabled = true)
     {
         return enabled ? $"({vector.x:F3},{vector.y:F3},{vector.z:F3})" : "n/a";
-    }
-
-    public static string Player(PlayerControllerB? player)
-    {
-        return player != null ? $"{player.playerClientId}:{player.playerUsername}" : "n/a";
     }
 }
