@@ -47,8 +47,8 @@ internal sealed class Overlay
     private static readonly Color LastKnownHiveNearCircleColor = new(0.15f, 0.55f, 1f, 0.7f);
     private static readonly Color LastKnownHiveLineOfSightCircleColor = new(0.25f, 0.6f, 1f, 0.3f);
     private static readonly Color PlayerColor = new(1f, 0.15f, 0.1f, 0.95f);
+    private static readonly Color PickupProxyColor = new(1f, 1f, 1f, 0.95f);
     private static readonly Color InactiveLineColor = new(0.18f, 0.18f, 0.18f, 0.58f);
-    private static readonly Color BeePlayerHudColor = new(1f, 1f, 1f, 0.95f);
 
     // Keep the important thresholds named at the overlay boundary. The goal is not to invent new
     // gameplay rules here; each visual should point back to one specific base-game gate that can
@@ -302,9 +302,9 @@ internal sealed class Overlay
         return string.Join(
             "  ",
             Tag($"bee:{displayBeeNumber}", BeeColor),
-            Tag($"bee-player={FmtDistance(beeToPlayerDistance)}/{SeenBlocked(canSeeLocalPlayer)}", BeePlayerHudColor),
-            Tag($"hive-player={FmtDistance(playerToHiveDistance)}/{InsideOutside(playerToHiveDistance, bee.defenseDistance)}", PlayerColor),
-            Tag($"bee-hive={hiveSightProbe.EyeToHiveDistance:F2}u/{SeenBlocked(hiveSightProbe.CanSeePickupProxy)}", HiveColor),
+            Tag($"bee-player={FmtDistance(beeToPlayerDistance)}/{SeenBlocked(canSeeLocalPlayer)}", PlayerColor),
+            Tag($"hive-player={FmtDistance(playerToHiveDistance)}/{InsideOutside(playerToHiveDistance, bee.defenseDistance)}", HiveColor),
+            Tag($"bee-hive={hiveSightProbe.EyeToHiveDistance:F2}u/{SeenBlocked(hiveSightProbe.CanSeePickupProxy)}", PickupProxyColor),
             Tag(
                 $"bee-knownHive={hiveMissingProbe.EyeToLastKnownHiveDistance:F2}u/{SeenBlocked(!hiveMissingProbe.LinecastBlocked)}",
                 LastKnownHiveColor
@@ -677,7 +677,7 @@ internal sealed class Overlay
             // the hive, the bee-to-hive ray is the closest stable proxy for whether the bee could
             // see that pickup position before the player collider is actually there.
             var hiveTarget = probe.HivePosition + Vector3.up * WorldYOffset;
-            var lineColor = probe.CanSeePickupProxy ? HiveColor : InactiveLineColor;
+            var lineColor = probe.CanSeePickupProxy ? PickupProxyColor : InactiveLineColor;
             SetWorldLine(beeEyeToHiveLine, beeEye, hiveTarget, lineColor);
             beeEyeToHiveLine.gameObject.SetActive(true);
         }
