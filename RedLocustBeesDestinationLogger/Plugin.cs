@@ -41,14 +41,16 @@ internal sealed class Overlay
     private static readonly Color HiveColor = new(0.15f, 1f, 0.25f, 0.95f);
     private static readonly Color DestinationColor = new(1f, 0.15f, 0.1f, 0.95f);
     private static readonly Color LineColor = new(1f, 0.85f, 0.1f, 0.95f);
+    private static readonly Color ThresholdLineColor = new(1f, 0.1f, 0.05f, 0.95f);
 
+    private const float DestinationToHiveThresholdDistance = 4f;
     private const float WorldYOffset = 0.35f;
     private const float UiMarkerSize = 12f;
     private const float UiLineThickness = 3f;
 
     private readonly Dictionary<int, BeeView> views = new();
     private readonly Font? font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-    private readonly Material worldLineMaterial = CreateMaterial(LineColor);
+    private readonly Material worldLineMaterial = CreateMaterial(Color.white);
     private readonly Material beeMaterial = CreateMaterial(BeeColor);
     private readonly Material hiveMaterial = CreateMaterial(HiveColor);
     private readonly Material destinationMaterial = CreateMaterial(DestinationColor);
@@ -156,12 +158,16 @@ internal sealed class Overlay
         var destination = GetNavMeshDestination(bee);
         var beeToDestinationDistance = Vector3.Distance(beePosition, destination);
         var destinationToHiveDistance = Vector3.Distance(destination, hive);
+        var thresholdColor = destinationToHiveDistance >= DestinationToHiveThresholdDistance
+            ? ThresholdLineColor
+            : LineColor;
 
         view.SetWorld(
             beePosition + Vector3.up * WorldYOffset,
             destination + Vector3.up * WorldYOffset,
             hive + Vector3.up * WorldYOffset,
-            Mathf.Max(beeToDestinationDistance, destinationToHiveDistance)
+            Mathf.Max(beeToDestinationDistance, destinationToHiveDistance),
+            thresholdColor
         );
 
         var beeUi = WorldToHudPoint(camera, beePosition + Vector3.up * WorldYOffset);
@@ -171,7 +177,8 @@ internal sealed class Overlay
             beeUi,
             destinationUi,
             hiveUi,
-            $"bee:{bee.thisEnemyIndex}  bee-dest {beeToDestinationDistance:F2}u  dest-hive {destinationToHiveDistance:F2}u"
+            thresholdColor,
+            $"bee:{bee.thisEnemyIndex}  bee-dest {beeToDestinationDistance:F2}u  dest-hive {destinationToHiveDistance:F2}u  >=4 {(destinationToHiveDistance >= DestinationToHiveThresholdDistance ? "YES" : "NO")}"
         );
         seen.Add(bee.thisEnemyIndex);
     }
@@ -292,7 +299,8 @@ internal sealed class Overlay
         private readonly RectTransform labelRect;
         private readonly UiText label;
         private readonly GameObject worldRoot;
-        private readonly LineRenderer worldLine;
+        private readonly LineRenderer beeToDestinationWorldLine;
+        private readonly LineRenderer destinationToHiveWorldLine;
         private readonly GameObject beeMarker;
         private readonly GameObject hiveMarker;
         private readonly GameObject destinationMarker;
@@ -307,7 +315,8 @@ internal sealed class Overlay
             RectTransform labelRect,
             UiText label,
             GameObject worldRoot,
-            LineRenderer worldLine,
+            LineRenderer beeToDestinationWorldLine,
+            LineRenderer destinationToHiveWorldLine,
             GameObject beeMarker,
             GameObject hiveMarker,
             GameObject destinationMarker
@@ -322,7 +331,8 @@ internal sealed class Overlay
             this.labelRect = labelRect;
             this.label = label;
             this.worldRoot = worldRoot;
-            this.worldLine = worldLine;
+            this.beeToDestinationWorldLine = beeToDestinationWorldLine;
+            this.destinationToHiveWorldLine = destinationToHiveWorldLine;
             this.beeMarker = beeMarker;
             this.hiveMarker = hiveMarker;
             this.destinationMarker = destinationMarker;
@@ -351,7 +361,8 @@ internal sealed class Overlay
 
             var worldRoot = new GameObject($"BeeWorldOverlay_{beeIndex}");
             UnityObject.DontDestroyOnLoad(worldRoot);
-            var worldLine = CreateWorldLine(worldRoot.transform, lineMaterial);
+            var beeToDestinationWorldLine = CreateWorldLine("BeeToDestinationWorldLine", worldRoot.transform, lineMaterial);
+            var destinationToHiveWorldLine = CreateWorldLine("DestinationToHiveWorldLine", worldRoot.transform, lineMaterial);
             var beeMarker = CreateWorldMarker("BeeWorldMarker", worldRoot.transform, beeMaterial);
             var hiveMarker = CreateWorldMarker("HiveWorldMarker", worldRoot.transform, hiveMaterial);
             var destinationMarker = CreateWorldMarker("DestinationWorldMarker", worldRoot.transform, destinationMaterial);
@@ -366,14 +377,15 @@ internal sealed class Overlay
                 labelRect,
                 label,
                 worldRoot,
-                worldLine,
+                beeToDestinationWorldLine,
+                destinationToHiveWorldLine,
                 beeMarker,
                 hiveMarker,
                 destinationMarker
             );
         }
 
-        public void SetHud(Vector2 bee, Vector2 destination, Vector2 hive, string labelText)
+        public void SetHud(Vector2 bee, Vector2 destination, Vector2 hive, Color destinationToHiveColor, string labelText)
         {
             if (rootObject == null)
             {
@@ -385,14 +397,14 @@ internal sealed class Overlay
             hiveMarkerRect.anchoredPosition = hive;
             destinationMarkerRect.anchoredPosition = destination;
 
-            SetHudLine(beeToDestinationLineRect, bee, destination);
-            SetHudLine(destinationToHiveLineRect, destination, hive);
+            SetHudLine(beeToDestinationLineRect, bee, destination, LineColor);
+            SetHudLine(destinationToHiveLineRect, destination, hive, destinationToHiveColor);
 
             labelRect.anchoredPosition = destination + Vector2.up * 18f;
             label.text = labelText;
         }
 
-        public void SetWorld(Vector3 bee, Vector3 destination, Vector3 hive, float markerDistance)
+        public void SetWorld(Vector3 bee, Vector3 destination, Vector3 hive, float markerDistance, Color destinationToHiveColor)
         {
             if (worldRoot == null)
             {
@@ -400,9 +412,8 @@ internal sealed class Overlay
             }
 
             worldRoot.SetActive(true);
-            worldLine.SetPosition(0, bee);
-            worldLine.SetPosition(1, destination);
-            worldLine.SetPosition(2, hive);
+            SetWorldLine(beeToDestinationWorldLine, bee, destination, LineColor);
+            SetWorldLine(destinationToHiveWorldLine, destination, hive, destinationToHiveColor);
             beeMarker.transform.position = bee;
             hiveMarker.transform.position = hive;
             destinationMarker.transform.position = destination;
@@ -426,12 +437,21 @@ internal sealed class Overlay
             }
         }
 
-        private static void SetHudLine(RectTransform rect, Vector2 start, Vector2 end)
+        private static void SetHudLine(RectTransform rect, Vector2 start, Vector2 end, Color color)
         {
             var delta = end - start;
             rect.anchoredPosition = start + delta * 0.5f;
             rect.sizeDelta = new Vector2(delta.magnitude, UiLineThickness);
             rect.localEulerAngles = new Vector3(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
+            rect.GetComponent<UiImage>().color = color;
+        }
+
+        private static void SetWorldLine(LineRenderer line, Vector3 start, Vector3 end, Color color)
+        {
+            line.SetPosition(0, start);
+            line.SetPosition(1, end);
+            line.startColor = color;
+            line.endColor = color;
         }
 
         private static RectTransform CreateHudLine(string name, Transform parent)
@@ -475,12 +495,12 @@ internal sealed class Overlay
             return (rect, text);
         }
 
-        private static LineRenderer CreateWorldLine(Transform parent, Material material)
+        private static LineRenderer CreateWorldLine(string name, Transform parent, Material material)
         {
-            var lineObject = new GameObject("BeeDestinationHiveWorldLine");
+            var lineObject = new GameObject(name);
             lineObject.transform.SetParent(parent, false);
             var line = lineObject.AddComponent<LineRenderer>();
-            line.positionCount = 3;
+            line.positionCount = 2;
             line.useWorldSpace = true;
             line.startWidth = 0.06f;
             line.endWidth = 0.06f;
