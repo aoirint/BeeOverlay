@@ -284,7 +284,7 @@ internal sealed class Overlay
             Tag($"bee:{bee.thisEnemyIndex}", BeeColor),
             Tag($"bee-player={FmtDistance(beeToPlayerDistance)}/{SeenBlocked(canSeeLocalPlayer)}", BeePlayerHudColor),
             Tag($"hive-player={FmtDistance(playerToHiveDistance)}/{InsideOutside(playerToHiveDistance, bee.defenseDistance)}", PlayerColor),
-            Tag($"bee-hive={hiveSightProbe.EyeToHiveDistance:F2}u/{SeenBlocked(!hiveSightProbe.LinecastBlocked)}", HiveColor),
+            Tag($"bee-hive={hiveSightProbe.EyeToHiveDistance:F2}u/{SeenBlocked(hiveSightProbe.CanSeePickupProxy)}", HiveColor),
             Tag(
                 $"bee-knownHive={hiveMissingProbe.EyeToLastKnownHiveDistance:F2}u/{SeenBlocked(!hiveMissingProbe.LinecastBlocked)}",
                 LastKnownHiveColor
@@ -294,13 +294,18 @@ internal sealed class Overlay
 
     private static HiveSightProbe GetHiveSightProbe(Vector3 beeEyePosition, Vector3 hivePosition)
     {
+        var eyeToHiveDistance = Vector3.Distance(beeEyePosition, hivePosition);
+        // The hive ray is a pickup-position proxy, not a general-purpose hive visibility check.
+        // Match the base game's player sight range so SEEN only means "the bee could have seen a
+        // player standing at the hive pickup point" under the same 16u gate as state 0 -> state 1.
+        var withinPlayerSightRange = eyeToHiveDistance < PlayerLineOfSightDistance;
         var linecastBlocked = StartOfRound.Instance == null || Physics.Linecast(
             beeEyePosition,
             hivePosition,
             StartOfRound.Instance.collidersAndRoomMaskAndDefault,
             QueryTriggerInteraction.Ignore
         );
-        return new HiveSightProbe(hivePosition, Vector3.Distance(beeEyePosition, hivePosition), linecastBlocked);
+        return new HiveSightProbe(hivePosition, eyeToHiveDistance, linecastBlocked, withinPlayerSightRange);
     }
 
     private static HiveMissingProbe GetHiveMissingProbe(RedLocustBees bee, Vector3 beeEyePosition)
@@ -458,11 +463,17 @@ internal sealed class Overlay
 
     private readonly struct HiveSightProbe
     {
-        public HiveSightProbe(Vector3 hivePosition, float eyeToHiveDistance, bool linecastBlocked)
+        public HiveSightProbe(
+            Vector3 hivePosition,
+            float eyeToHiveDistance,
+            bool linecastBlocked,
+            bool withinPlayerSightRange
+        )
         {
             HivePosition = hivePosition;
             EyeToHiveDistance = eyeToHiveDistance;
             LinecastBlocked = linecastBlocked;
+            WithinPlayerSightRange = withinPlayerSightRange;
         }
 
         public Vector3 HivePosition { get; }
@@ -470,6 +481,10 @@ internal sealed class Overlay
         public float EyeToHiveDistance { get; }
 
         public bool LinecastBlocked { get; }
+
+        public bool WithinPlayerSightRange { get; }
+
+        public bool CanSeePickupProxy => WithinPlayerSightRange && !LinecastBlocked;
     }
 
     private sealed class BeeView
@@ -620,7 +635,7 @@ internal sealed class Overlay
             // the hive, the bee-to-hive ray is the closest stable proxy for whether the bee could
             // see that pickup position before the player collider is actually there.
             var hiveTarget = probe.HivePosition + Vector3.up * WorldYOffset;
-            var lineColor = probe.LinecastBlocked ? InactiveLineColor : HiveColor;
+            var lineColor = probe.CanSeePickupProxy ? HiveColor : InactiveLineColor;
             SetWorldLine(beeEyeToHiveLine, beeEye, hiveTarget, lineColor);
             beeEyeToHiveLine.gameObject.SetActive(true);
         }
