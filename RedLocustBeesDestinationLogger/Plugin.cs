@@ -45,9 +45,10 @@ internal sealed class Overlay
     private static readonly Color HiveColor = new(0.25f, 1f, 0.35f, 0.95f);
     private static readonly Color LastKnownHiveColor = new(0.05f, 0.32f, 1f, 0.95f);
     private static readonly Color LastKnownHiveNearCircleColor = new(0.15f, 0.55f, 1f, 0.7f);
-    private static readonly Color LastKnownHiveLineOfSightCircleColor = new(0.55f, 0.8f, 1f, 0.35f);
+    private static readonly Color LastKnownHiveLineOfSightCircleColor = new(0.25f, 0.6f, 1f, 0.3f);
     private static readonly Color PlayerColor = new(1f, 0.15f, 0.1f, 0.95f);
-    private static readonly Color InactiveLineColor = new(0.45f, 0.5f, 0.52f, 0.55f);
+    private static readonly Color InactiveLineColor = new(0.18f, 0.18f, 0.18f, 0.58f);
+    private static readonly Color BeePlayerHudColor = new(1f, 1f, 1f, 0.95f);
 
     private const float PlayerLineOfSightDistance = 16f;
     private const float VisiblePlayerSightLineRenderYOffset = -0.35f;
@@ -97,7 +98,7 @@ internal sealed class Overlay
 
         var seen = new HashSet<int>();
         var statusBuilder = new StringBuilder();
-        statusBuilder.Append($"Bee state transition overlay | bees={bees.Length}");
+        statusBuilder.Append($"Bee Overlay | bees={bees.Length}");
         var localPlayer = GameNetworkManager.Instance != null ? GameNetworkManager.Instance.localPlayerController : null;
         var localPlayerPosition = GetPlayerBodyPosition(localPlayer);
         foreach (var bee in bees)
@@ -269,6 +270,9 @@ internal sealed class Overlay
         var playerToHiveDistance = localPlayerPosition.HasValue
             ? Vector3.Distance(localPlayerPosition.Value, hivePosition)
             : (float?)null;
+        var beeToPlayerDistance = localPlayerPosition.HasValue
+            ? Vector3.Distance(beeEyePosition, localPlayerPosition.Value)
+            : (float?)null;
         var hiveMissingProbe = GetHiveMissingProbe(bee, beeEyePosition);
         var hiveSightProbe = GetHiveSightProbe(beeEyePosition, hivePosition);
 
@@ -278,9 +282,13 @@ internal sealed class Overlay
         return string.Join(
             "  ",
             Tag($"bee:{bee.thisEnemyIndex}", BeeColor),
-            Tag($"player={FmtDistance(playerToHiveDistance)}/{SeenBlocked(canSeeLocalPlayer)}", PlayerColor),
-            Tag($"hive={hiveSightProbe.EyeToHiveDistance:F2}u/{SeenBlocked(!hiveSightProbe.LinecastBlocked)}", HiveColor),
-            Tag($"known-hive={hiveMissingProbe.EyeToLastKnownHiveDistance:F2}u/{SeenBlocked(!hiveMissingProbe.LinecastBlocked)}", LastKnownHiveColor)
+            Tag($"bee-player={FmtDistance(beeToPlayerDistance)}/{SeenBlocked(canSeeLocalPlayer)}", BeePlayerHudColor),
+            Tag($"hive-player={FmtDistance(playerToHiveDistance)}", PlayerColor),
+            Tag($"bee-hive={hiveSightProbe.EyeToHiveDistance:F2}u/{SeenBlocked(!hiveSightProbe.LinecastBlocked)}", HiveColor),
+            Tag(
+                $"bee-knownHive={hiveMissingProbe.EyeToLastKnownHiveDistance:F2}u/{SeenBlocked(!hiveMissingProbe.LinecastBlocked)}",
+                LastKnownHiveColor
+            )
         );
     }
 
