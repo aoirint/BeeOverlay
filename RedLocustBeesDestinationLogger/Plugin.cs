@@ -5,6 +5,7 @@ extern alias UnityEngine;
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
@@ -79,10 +80,16 @@ internal sealed class Overlay
         }
 
         var bees = UnityObject.FindObjectsOfType<RedLocustBees>();
+        Array.Sort(bees, static (left, right) => left.thisEnemyIndex.CompareTo(right.thisEnemyIndex));
+
         var seen = new HashSet<int>();
+        var statusBuilder = new StringBuilder();
+        statusBuilder.Append($"RLB destination overlay | bees={bees.Length}");
         foreach (var bee in bees)
         {
             DrawBee(camera, bee, seen);
+            statusBuilder.AppendLine();
+            statusBuilder.Append(GetBeeStatusLine(bee));
         }
 
         foreach (var pair in views)
@@ -93,7 +100,7 @@ internal sealed class Overlay
             }
         }
 
-        SetStatus($"RLB destination overlay | bees={bees.Length}");
+        SetStatus(statusBuilder.ToString());
     }
 
     private bool TryEnsureHudRoot()
@@ -129,11 +136,11 @@ internal sealed class Overlay
         statusRect.anchorMax = new Vector2(0f, 1f);
         statusRect.pivot = new Vector2(0f, 1f);
         statusRect.anchoredPosition = new Vector2(16f, -16f);
-        statusRect.sizeDelta = new Vector2(560f, 28f);
+        statusRect.sizeDelta = new Vector2(760f, 240f);
 
         statusText = statusObject.GetComponent<UiText>();
         statusText.font = font;
-        statusText.fontSize = 18;
+        statusText.fontSize = 16;
         statusText.fontStyle = FontStyle.Bold;
         statusText.alignment = TextAnchor.UpperLeft;
         statusText.color = LineColor;
@@ -226,6 +233,41 @@ internal sealed class Overlay
     {
         var agent = bee.agent;
         return agent != null && agent.isOnNavMesh ? agent.destination : bee.destination;
+    }
+
+    private static string GetBeeStatusLine(RedLocustBees bee)
+    {
+        if (bee == null)
+        {
+            return "bee:n/a  agentDest-hive=n/a  >=4 n/a";
+        }
+
+        if (bee.hive == null)
+        {
+            return $"bee:{bee.thisEnemyIndex}  agentDest-hive=n/a  >=4 n/a  no hive";
+        }
+
+        if (!TryGetAgentDestination(bee, out var agentDestination))
+        {
+            return $"bee:{bee.thisEnemyIndex}  agentDest-hive=n/a  >=4 n/a  no navmesh agent";
+        }
+
+        var distance = Vector3.Distance(agentDestination, bee.hive.transform.position);
+        var overThreshold = distance >= DestinationToHiveThresholdDistance ? "YES" : "NO";
+        return $"bee:{bee.thisEnemyIndex}  agentDest-hive={distance:F2}u  >=4 {overThreshold}";
+    }
+
+    private static bool TryGetAgentDestination(RedLocustBees bee, out Vector3 destination)
+    {
+        var agent = bee.agent;
+        if (agent != null && agent.isOnNavMesh)
+        {
+            destination = agent.destination;
+            return true;
+        }
+
+        destination = Vector3.zero;
+        return false;
     }
 
     private static bool TryGetGameplayCamera(out Camera camera)
