@@ -283,7 +283,7 @@ internal sealed class Overlay
             "  ",
             Tag($"bee:{bee.thisEnemyIndex}", BeeColor),
             Tag($"bee-player={FmtDistance(beeToPlayerDistance)}/{SeenBlocked(canSeeLocalPlayer)}", BeePlayerHudColor),
-            Tag($"hive-player={FmtDistance(playerToHiveDistance)}", PlayerColor),
+            Tag($"hive-player={FmtDistance(playerToHiveDistance)}/{InsideOutside(playerToHiveDistance, bee.defenseDistance)}", PlayerColor),
             Tag($"bee-hive={hiveSightProbe.EyeToHiveDistance:F2}u/{SeenBlocked(!hiveSightProbe.LinecastBlocked)}", HiveColor),
             Tag(
                 $"bee-knownHive={hiveMissingProbe.EyeToLastKnownHiveDistance:F2}u/{SeenBlocked(!hiveMissingProbe.LinecastBlocked)}",
@@ -358,6 +358,16 @@ internal sealed class Overlay
     private static string SeenBlocked(bool canSee)
     {
         return canSee ? "SEEN" : "blocked";
+    }
+
+    private static string InsideOutside(float? distance, float radius)
+    {
+        if (!distance.HasValue || radius <= 0f)
+        {
+            return "n/a";
+        }
+
+        return distance.Value < radius ? "inside" : "outside";
     }
 
     private static string Tag(string text, Color color)
