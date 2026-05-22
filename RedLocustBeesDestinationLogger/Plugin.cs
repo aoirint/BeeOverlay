@@ -41,6 +41,7 @@ internal sealed class Overlay
     private static readonly Color LineColor = new(1f, 0.85f, 0.1f, 0.95f);
     private static readonly Color DefenseDistanceColor = new(0.1f, 0.75f, 1f, 0.7f);
     private static readonly Color SightLineColor = new(0.65f, 1f, 1f, 0.95f);
+    private static readonly Color SightLineInactiveColor = new(0.45f, 0.5f, 0.52f, 0.55f);
     private static readonly Color LastKnownHiveColor = new(0.85f, 0.35f, 1f, 0.95f);
     private static readonly Color HiveMissingNearColor = new(1f, 0.45f, 0.05f, 0.85f);
     private static readonly Color HiveMissingActiveLineColor = new(1f, 0.2f, 0.05f, 0.95f);
@@ -180,7 +181,9 @@ internal sealed class Overlay
         var hive = bee.hive.transform.position;
         var beeEyePosition = bee.eye != null ? bee.eye.position : beePosition + Vector3.up * WorldYOffset;
         var visiblePlayer = bee.CheckLineOfSightForPlayer(360f, (int)PlayerLineOfSightDistance, 1);
-        var visiblePlayerPosition = GetPlayerSightTargetPosition(visiblePlayer);
+        var localPlayer = GameNetworkManager.Instance != null ? GameNetworkManager.Instance.localPlayerController : null;
+        var localPlayerPosition = GetPlayerSightTargetPosition(localPlayer);
+        var canSeeLocalPlayer = visiblePlayer != null && visiblePlayer == localPlayer;
         var hiveMissingProbe = GetHiveMissingProbe(bee, beeEyePosition);
         var hiveSightProbe = GetHiveSightProbe(beeEyePosition, hive);
 
@@ -188,7 +191,8 @@ internal sealed class Overlay
             hive + Vector3.up * WorldYOffset,
             bee.defenseDistance,
             beeEyePosition,
-            visiblePlayerPosition,
+            localPlayerPosition,
+            canSeeLocalPlayer,
             hiveMissingProbe,
             hiveSightProbe
         );
@@ -484,7 +488,8 @@ internal sealed class Overlay
             Vector3 hive,
             int defenseDistance,
             Vector3 beeEye,
-            Vector3? visiblePlayer,
+            Vector3? localPlayer,
+            bool canSeeLocalPlayer,
             HiveMissingProbe hiveMissingProbe,
             HiveSightProbe hiveSightProbe
         )
@@ -503,18 +508,20 @@ internal sealed class Overlay
             SetHiveMissingProbe(beeEye, hiveMissingProbe);
             SetHiveSightProbe(beeEye, hiveSightProbe);
 
-            // The player line is drawn only when the game-side visibility query currently returns
-            // a player. Absence of the line therefore means "not currently seen by this check",
-            // without adding a fallback or guessing through walls.
-            if (visiblePlayer.HasValue)
+            // The player line follows the same "always draw, change color" convention as the
+            // hive line. It targets the local player's real camera/body position, while the color
+            // comes only from the game's CheckLineOfSightForPlayer result for that same player.
+            // This keeps blocked sight readable without inventing our own line-of-sight fallback.
+            if (localPlayer.HasValue)
             {
                 // This offset is rendering-only. The visibility query and all status distances keep
                 // using the real bee eye / player camera positions, while the cyan line is lowered
                 // just enough that rapid visibility flicker is less likely to flash across the
                 // player's exact view direction.
                 var renderOffset = Vector3.up * VisiblePlayerSightLineRenderYOffset;
+                var lineColor = canSeeLocalPlayer ? SightLineColor : SightLineInactiveColor;
                 visiblePlayerSightLine.gameObject.SetActive(true);
-                SetWorldLine(visiblePlayerSightLine, beeEye + renderOffset, visiblePlayer.Value + renderOffset, SightLineColor);
+                SetWorldLine(visiblePlayerSightLine, beeEye + renderOffset, localPlayer.Value + renderOffset, lineColor);
             }
             else
             {
