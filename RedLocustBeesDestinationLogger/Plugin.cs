@@ -106,14 +106,18 @@ internal sealed class Overlay
         statusBuilder.Append($"Bee Overlay | bees={bees.Length}");
         var localPlayer = GameNetworkManager.Instance != null ? GameNetworkManager.Instance.localPlayerController : null;
         var localPlayerPosition = GetPlayerBodyPosition(localPlayer);
-        foreach (var bee in bees)
+        for (var i = 0; i < bees.Length; i++)
         {
+            var bee = bees[i];
             // Drawing and status construction both sample the same frame, but they intentionally
             // stay separate: the 3D probes answer "where is the risky geometry?", while the HUD
             // answers "which exact gates are currently true enough to care about?".
             DrawBee(bee, seen);
             statusBuilder.AppendLine();
-            statusBuilder.Append(GetBeeStatusLine(bee, localPlayer, localPlayerPosition));
+            // HUD numbers are compact per-frame ordinals after sorting, while the view dictionary
+            // still uses thisEnemyIndex below. That keeps the overlay readable without giving up
+            // the stable identity Unity exposes for hiding old per-bee world objects.
+            statusBuilder.Append(GetBeeStatusLine(bee, i + 1, localPlayer, localPlayerPosition));
         }
 
         foreach (var pair in views)
@@ -263,6 +267,7 @@ internal sealed class Overlay
 
     private static string GetBeeStatusLine(
         RedLocustBees bee,
+        int displayBeeNumber,
         PlayerControllerB? localPlayer,
         Vector3? localPlayerPosition
     )
@@ -274,7 +279,7 @@ internal sealed class Overlay
 
         if (bee.hive == null)
         {
-            return $"{Tag($"bee:{bee.thisEnemyIndex}", BeeColor)}  hive n/a";
+            return $"{Tag($"bee:{displayBeeNumber}", BeeColor)}  hive n/a";
         }
 
         var beeEyePosition = bee.eye != null ? bee.eye.position : bee.transform.position + Vector3.up * WorldYOffset;
@@ -296,7 +301,7 @@ internal sealed class Overlay
         // dots/lines so the player can glance between HUD and world probes.
         return string.Join(
             "  ",
-            Tag($"bee:{bee.thisEnemyIndex}", BeeColor),
+            Tag($"bee:{displayBeeNumber}", BeeColor),
             Tag($"bee-player={FmtDistance(beeToPlayerDistance)}/{SeenBlocked(canSeeLocalPlayer)}", BeePlayerHudColor),
             Tag($"hive-player={FmtDistance(playerToHiveDistance)}/{InsideOutside(playerToHiveDistance, bee.defenseDistance)}", PlayerColor),
             Tag($"bee-hive={hiveSightProbe.EyeToHiveDistance:F2}u/{SeenBlocked(hiveSightProbe.CanSeePickupProxy)}", HiveColor),
@@ -390,7 +395,7 @@ internal sealed class Overlay
             return "n/a";
         }
 
-        return distance.Value < radius ? "inside" : "outside";
+        return distance.Value < radius ? "INSIDE" : "outside";
     }
 
     private static string Tag(string text, Color color)
