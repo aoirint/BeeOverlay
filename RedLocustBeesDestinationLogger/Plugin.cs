@@ -515,6 +515,7 @@ internal sealed class Overlay
     private sealed class BeeView
     {
         private readonly GameObject worldRoot;
+        private readonly LineRenderer beeSightRangeCircle;
         private readonly LineRenderer defenseDistanceCircle;
         private readonly LineRenderer visiblePlayerSightLine;
         private readonly LineRenderer lastKnownHiveNearCircle;
@@ -528,6 +529,7 @@ internal sealed class Overlay
 
         private BeeView(
             GameObject worldRoot,
+            LineRenderer beeSightRangeCircle,
             LineRenderer defenseDistanceCircle,
             LineRenderer visiblePlayerSightLine,
             LineRenderer lastKnownHiveNearCircle,
@@ -541,6 +543,7 @@ internal sealed class Overlay
         )
         {
             this.worldRoot = worldRoot;
+            this.beeSightRangeCircle = beeSightRangeCircle;
             this.defenseDistanceCircle = defenseDistanceCircle;
             this.visiblePlayerSightLine = visiblePlayerSightLine;
             this.lastKnownHiveNearCircle = lastKnownHiveNearCircle;
@@ -565,6 +568,7 @@ internal sealed class Overlay
             var worldRoot = new GameObject($"BeeWorldOverlay_{beeIndex}");
             UnityObject.DontDestroyOnLoad(worldRoot);
 
+            var beeSightRangeCircle = CreateWorldLine("BeeSightRangeCircle", worldRoot.transform, lineMaterial);
             var defenseDistanceCircle = CreateWorldLine("DefenseDistanceCircle", worldRoot.transform, lineMaterial);
             var visiblePlayerSightLine = CreateWorldLine("VisiblePlayerSightLine", worldRoot.transform, lineMaterial);
             var lastKnownHiveNearCircle = CreateWorldLine("LastKnownHiveNearCircle", worldRoot.transform, lineMaterial);
@@ -578,6 +582,7 @@ internal sealed class Overlay
 
             // These guides are conditional frame-by-frame. Start hidden so a newly allocated view
             // never flashes stale geometry before the first real sample is written.
+            beeSightRangeCircle.gameObject.SetActive(false);
             defenseDistanceCircle.gameObject.SetActive(false);
             visiblePlayerSightLine.gameObject.SetActive(false);
             lastKnownHiveNearCircle.gameObject.SetActive(false);
@@ -591,6 +596,7 @@ internal sealed class Overlay
 
             return new BeeView(
                 worldRoot,
+                beeSightRangeCircle,
                 defenseDistanceCircle,
                 visiblePlayerSightLine,
                 lastKnownHiveNearCircle,
@@ -622,6 +628,12 @@ internal sealed class Overlay
             worldRoot.SetActive(true);
             SetMarker(beeMarker, beeEye, 0.16f);
             SetMarker(hiveMarker, hive, 0.18f);
+
+            // This yellow ring is the spatial version of the 16u player sight range used by the
+            // base game's CheckLineOfSightForPlayer call. It is centered on the bee eye because
+            // both the real player check and the hive pickup proxy start their visibility test
+            // from that point.
+            SetWorldCircle(beeSightRangeCircle, beeEye, PlayerLineOfSightDistance, BeeColor);
 
             // RedLocustBees stores defenseDistance as an integer radius around the hive. Drawing it
             // as a horizontal ring lets the player judge "near hive" before crossing the trigger
