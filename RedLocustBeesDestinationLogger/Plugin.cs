@@ -37,7 +37,7 @@ public sealed class Plugin : BaseUnityPlugin
 
 internal sealed class Overlay
 {
-    // The overlay focuses on keeping bees in state 0, so colors mark transition risks.
+    // The state transition overlay focuses on keeping bees in state 0, so colors mark transition risks.
     private static readonly Color LineColor = new(1f, 0.85f, 0.1f, 0.95f);
     private static readonly Color DefenseDistanceColor = new(0.1f, 0.75f, 1f, 0.7f);
     private static readonly Color SightLineColor = new(0.65f, 1f, 1f, 0.95f);
@@ -93,7 +93,7 @@ internal sealed class Overlay
 
         var seen = new HashSet<int>();
         var statusBuilder = new StringBuilder();
-        statusBuilder.Append($"RLB state0 overlay | bees={bees.Length}");
+        statusBuilder.Append($"RLB state transition overlay | bees={bees.Length}");
         foreach (var bee in bees)
         {
             DrawBee(bee, seen);
