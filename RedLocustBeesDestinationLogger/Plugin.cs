@@ -37,17 +37,15 @@ public sealed class Plugin : BaseUnityPlugin
 
 internal sealed class Overlay
 {
-    // The state transition overlay focuses on keeping bees in state 0, so colors mark transition risks.
-    private static readonly Color LineColor = new(1f, 0.85f, 0.1f, 0.95f);
-    private static readonly Color DefenseDistanceColor = new(0.1f, 0.75f, 1f, 0.7f);
-    private static readonly Color SightLineColor = new(0.65f, 1f, 1f, 0.95f);
-    private static readonly Color SightLineInactiveColor = new(0.45f, 0.5f, 0.52f, 0.55f);
-    private static readonly Color LastKnownHiveColor = new(0.85f, 0.35f, 1f, 0.95f);
-    private static readonly Color HiveMissingNearColor = new(1f, 0.45f, 0.05f, 0.85f);
-    private static readonly Color HiveMissingActiveLineColor = new(1f, 0.2f, 0.05f, 0.95f);
-    private static readonly Color HiveMissingInactiveLineColor = new(0.45f, 0.45f, 0.5f, 0.65f);
-    private static readonly Color HiveVisibleLineColor = new(0.25f, 1f, 0.35f, 0.95f);
-    private static readonly Color HiveBlockedLineColor = new(0.35f, 0.4f, 0.38f, 0.65f);
+    // The state transition overlay uses entity colors first, then grey only for blocked/inactive
+    // checks. That keeps dots, lines, and rings readable as "which object is this about?" instead
+    // of mixing separate colors for every condition.
+    private static readonly Color HudTextColor = new(1f, 0.85f, 0.1f, 0.95f);
+    private static readonly Color BeeColor = new(0.15f, 0.55f, 1f, 0.95f);
+    private static readonly Color HiveColor = new(0.25f, 1f, 0.35f, 0.95f);
+    private static readonly Color LastKnownHiveColor = new(0.95f, 0.35f, 1f, 0.95f);
+    private static readonly Color PlayerColor = new(1f, 0.58f, 0.1f, 0.95f);
+    private static readonly Color InactiveLineColor = new(0.45f, 0.5f, 0.52f, 0.55f);
 
     private const float PlayerLineOfSightDistance = 16f;
     private const float VisiblePlayerSightLineRenderYOffset = -0.35f;
@@ -65,7 +63,10 @@ internal sealed class Overlay
     // LineRenderer vertex colors are updated per segment every frame. A white material avoids
     // tinting those runtime colors and lets the normal/warning colors match the HUD lines.
     private readonly Material worldLineMaterial = CreateMaterial(Color.white);
+    private readonly Material beeMaterial = CreateMaterial(BeeColor);
+    private readonly Material hiveMaterial = CreateMaterial(HiveColor);
     private readonly Material lastKnownHiveMaterial = CreateMaterial(LastKnownHiveColor);
+    private readonly Material playerMaterial = CreateMaterial(PlayerColor);
 
     private static readonly AccessTools.FieldRef<RedLocustBees, bool>? SyncedLastKnownHivePositionRef =
         CreateSyncedLastKnownHivePositionRef();
@@ -160,7 +161,7 @@ internal sealed class Overlay
         statusText.fontSize = 15;
         statusText.fontStyle = FontStyle.Bold;
         statusText.alignment = TextAnchor.UpperLeft;
-        statusText.color = LineColor;
+        statusText.color = HudTextColor;
         statusText.raycastTarget = false;
         statusText.horizontalOverflow = HorizontalWrapMode.Overflow;
         statusText.verticalOverflow = VerticalWrapMode.Overflow;
@@ -226,7 +227,10 @@ internal sealed class Overlay
         view = BeeView.Create(
             beeIndex,
             worldLineMaterial,
-            lastKnownHiveMaterial
+            beeMaterial,
+            hiveMaterial,
+            lastKnownHiveMaterial,
+            playerMaterial
         );
         views.Add(beeIndex, view);
         return view;
@@ -431,7 +435,10 @@ internal sealed class Overlay
         private readonly LineRenderer lastKnownHiveNearCircle;
         private readonly LineRenderer beeEyeToLastKnownHiveLine;
         private readonly LineRenderer beeEyeToHiveLine;
+        private readonly GameObject beeMarker;
+        private readonly GameObject hiveMarker;
         private readonly GameObject lastKnownHiveMarker;
+        private readonly GameObject playerMarker;
 
         private BeeView(
             GameObject worldRoot,
@@ -440,7 +447,10 @@ internal sealed class Overlay
             LineRenderer lastKnownHiveNearCircle,
             LineRenderer beeEyeToLastKnownHiveLine,
             LineRenderer beeEyeToHiveLine,
-            GameObject lastKnownHiveMarker
+            GameObject beeMarker,
+            GameObject hiveMarker,
+            GameObject lastKnownHiveMarker,
+            GameObject playerMarker
         )
         {
             this.worldRoot = worldRoot;
@@ -449,10 +459,20 @@ internal sealed class Overlay
             this.lastKnownHiveNearCircle = lastKnownHiveNearCircle;
             this.beeEyeToLastKnownHiveLine = beeEyeToLastKnownHiveLine;
             this.beeEyeToHiveLine = beeEyeToHiveLine;
+            this.beeMarker = beeMarker;
+            this.hiveMarker = hiveMarker;
             this.lastKnownHiveMarker = lastKnownHiveMarker;
+            this.playerMarker = playerMarker;
         }
 
-        public static BeeView Create(int beeIndex, Material lineMaterial, Material lastKnownHiveMaterial)
+        public static BeeView Create(
+            int beeIndex,
+            Material lineMaterial,
+            Material beeMaterial,
+            Material hiveMaterial,
+            Material lastKnownHiveMaterial,
+            Material playerMaterial
+        )
         {
             var worldRoot = new GameObject($"BeeWorldOverlay_{beeIndex}");
             UnityObject.DontDestroyOnLoad(worldRoot);
@@ -462,7 +482,10 @@ internal sealed class Overlay
             var lastKnownHiveNearCircle = CreateWorldLine("LastKnownHiveNearCircle", worldRoot.transform, lineMaterial);
             var beeEyeToLastKnownHiveLine = CreateWorldLine("BeeEyeToLastKnownHiveLine", worldRoot.transform, lineMaterial);
             var beeEyeToHiveLine = CreateWorldLine("BeeEyeToHiveLine", worldRoot.transform, lineMaterial);
+            var beeMarker = CreateWorldMarker("BeeEyeWorldMarker", worldRoot.transform, beeMaterial);
+            var hiveMarker = CreateWorldMarker("HiveWorldMarker", worldRoot.transform, hiveMaterial);
             var lastKnownHiveMarker = CreateWorldMarker("LastKnownHiveWorldMarker", worldRoot.transform, lastKnownHiveMaterial);
+            var playerMarker = CreateWorldMarker("LocalPlayerWorldMarker", worldRoot.transform, playerMaterial);
 
             // These guides are conditional frame-by-frame. Start hidden so a newly allocated view
             // never flashes stale geometry before the first real sample is written.
@@ -471,7 +494,10 @@ internal sealed class Overlay
             lastKnownHiveNearCircle.gameObject.SetActive(false);
             beeEyeToLastKnownHiveLine.gameObject.SetActive(false);
             beeEyeToHiveLine.gameObject.SetActive(false);
+            beeMarker.SetActive(false);
+            hiveMarker.SetActive(false);
             lastKnownHiveMarker.SetActive(false);
+            playerMarker.SetActive(false);
 
             return new BeeView(
                 worldRoot,
@@ -480,7 +506,10 @@ internal sealed class Overlay
                 lastKnownHiveNearCircle,
                 beeEyeToLastKnownHiveLine,
                 beeEyeToHiveLine,
-                lastKnownHiveMarker
+                beeMarker,
+                hiveMarker,
+                lastKnownHiveMarker,
+                playerMarker
             );
         }
 
@@ -500,11 +529,13 @@ internal sealed class Overlay
             }
 
             worldRoot.SetActive(true);
+            SetMarker(beeMarker, beeEye, 0.16f);
+            SetMarker(hiveMarker, hive, 0.18f);
 
             // RedLocustBees stores defenseDistance as an integer radius around the hive. Drawing it
             // as a horizontal ring lets the player judge "near hive" before crossing the trigger
             // region, which is more useful than another late true/false row in the HUD.
-            SetWorldCircle(defenseDistanceCircle, hive, defenseDistance, DefenseDistanceColor);
+            SetWorldCircle(defenseDistanceCircle, hive, defenseDistance, HiveColor);
             SetHiveMissingProbe(beeEye, hiveMissingProbe);
             SetHiveSightProbe(beeEye, hiveSightProbe);
 
@@ -519,13 +550,16 @@ internal sealed class Overlay
                 // looking from here", while lowering the player end keeps rapid visibility flicker
                 // from flashing across the player's exact camera point.
                 var playerRenderOffset = Vector3.up * VisiblePlayerSightLineRenderYOffset;
-                var lineColor = canSeeLocalPlayer ? SightLineColor : SightLineInactiveColor;
+                var displayedPlayer = localPlayer.Value + playerRenderOffset;
+                var lineColor = canSeeLocalPlayer ? PlayerColor : InactiveLineColor;
+                SetMarker(playerMarker, displayedPlayer, 0.16f);
                 visiblePlayerSightLine.gameObject.SetActive(true);
-                SetWorldLine(visiblePlayerSightLine, beeEye, localPlayer.Value + playerRenderOffset, lineColor);
+                SetWorldLine(visiblePlayerSightLine, beeEye, displayedPlayer, lineColor);
             }
             else
             {
                 visiblePlayerSightLine.gameObject.SetActive(false);
+                playerMarker.SetActive(false);
             }
         }
 
@@ -535,7 +569,7 @@ internal sealed class Overlay
             // the hive, the bee-to-hive ray is the closest stable proxy for whether the bee could
             // see that pickup position before the player collider is actually there.
             var hiveTarget = probe.HivePosition + Vector3.up * WorldYOffset;
-            var lineColor = probe.LinecastBlocked ? HiveBlockedLineColor : HiveVisibleLineColor;
+            var lineColor = probe.LinecastBlocked ? InactiveLineColor : HiveColor;
             SetWorldLine(beeEyeToHiveLine, beeEye, hiveTarget, lineColor);
             beeEyeToHiveLine.gameObject.SetActive(true);
         }
@@ -549,11 +583,11 @@ internal sealed class Overlay
             // The 4u ring marks the close-range IsHiveMissing() trigger directly. The 8u
             // line-of-sight trigger is intentionally left as text plus the bee-to-memory line so
             // it does not compete with the more actionable pickup sightline guides.
-            SetWorldCircle(lastKnownHiveNearCircle, lastKnownHive, HiveMissingNearDistance, HiveMissingNearColor);
+            SetWorldCircle(lastKnownHiveNearCircle, lastKnownHive, HiveMissingNearDistance, LastKnownHiveColor);
 
             var probeLineColor = probe.CanEvaluateMissing
-                ? HiveMissingActiveLineColor
-                : HiveMissingInactiveLineColor;
+                ? LastKnownHiveColor
+                : InactiveLineColor;
             SetWorldLine(beeEyeToLastKnownHiveLine, beeEye, lastKnownHive, probeLineColor);
             beeEyeToLastKnownHiveLine.gameObject.SetActive(true);
 
@@ -569,6 +603,13 @@ internal sealed class Overlay
             {
                 worldRoot.SetActive(visible);
             }
+        }
+
+        private static void SetMarker(GameObject marker, Vector3 position, float scale)
+        {
+            marker.SetActive(true);
+            marker.transform.position = position;
+            marker.transform.localScale = Vector3.one * scale;
         }
 
         private static void SetWorldLine(LineRenderer line, Vector3 start, Vector3 end, Color color)
@@ -611,8 +652,8 @@ internal sealed class Overlay
             line.startWidth = 0.06f;
             line.endWidth = 0.06f;
             line.numCapVertices = 4;
-            line.startColor = LineColor;
-            line.endColor = LineColor;
+            line.startColor = HudTextColor;
+            line.endColor = HudTextColor;
             line.material = material;
             return line;
         }
