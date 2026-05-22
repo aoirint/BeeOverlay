@@ -514,14 +514,14 @@ internal sealed class Overlay
             // This keeps blocked sight readable without inventing our own line-of-sight fallback.
             if (localPlayer.HasValue)
             {
-                // This offset is rendering-only. The visibility query and all status distances keep
-                // using the real bee eye / player camera positions, while the cyan line is lowered
-                // just enough that rapid visibility flicker is less likely to flash across the
-                // player's exact view direction.
-                var renderOffset = Vector3.up * VisiblePlayerSightLineRenderYOffset;
+                // This offset is rendering-only and applies only to the player end of the line.
+                // Keeping the bee-eye end exact preserves the visual meaning of "the bee is
+                // looking from here", while lowering the player end keeps rapid visibility flicker
+                // from flashing across the player's exact camera point.
+                var playerRenderOffset = Vector3.up * VisiblePlayerSightLineRenderYOffset;
                 var lineColor = canSeeLocalPlayer ? SightLineColor : SightLineInactiveColor;
                 visiblePlayerSightLine.gameObject.SetActive(true);
-                SetWorldLine(visiblePlayerSightLine, beeEye + renderOffset, localPlayer.Value + renderOffset, lineColor);
+                SetWorldLine(visiblePlayerSightLine, beeEye, localPlayer.Value + playerRenderOffset, lineColor);
             }
             else
             {
