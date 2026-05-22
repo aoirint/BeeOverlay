@@ -282,8 +282,8 @@ internal sealed class Overlay
         return string.Join(
             "  ",
             Tag($"bee:{bee.thisEnemyIndex}", BeeColor),
-            Tag($"bee-player={FmtDistance(beeToPlayerDistance)}", BeePlayerHudColor),
-            Tag($"hive-player={FmtDistance(playerToHiveDistance)}/{SeenBlocked(canSeeLocalPlayer)}", PlayerColor),
+            Tag($"bee-player={FmtDistance(beeToPlayerDistance)}/{SeenBlocked(canSeeLocalPlayer)}", BeePlayerHudColor),
+            Tag($"hive-player={FmtDistance(playerToHiveDistance)}", PlayerColor),
             Tag($"bee-hive={hiveSightProbe.EyeToHiveDistance:F2}u/{SeenBlocked(!hiveSightProbe.LinecastBlocked)}", HiveColor),
             Tag(
                 $"bee-knownHive={hiveMissingProbe.EyeToLastKnownHiveDistance:F2}u/{SeenBlocked(!hiveMissingProbe.LinecastBlocked)}",
