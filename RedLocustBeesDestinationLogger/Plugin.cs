@@ -38,19 +38,30 @@ public sealed class Plugin : BaseUnityPlugin
 
 internal sealed class Overlay
 {
+    // The overlay is intentionally color-coded by semantic role instead of object type names in
+    // Unity. The target debugging question is whether the live NavMesh destination sits far enough
+    // from the hive, so destination and hive need to remain visually distinct at a glance.
     private static readonly Color BeeColor = new(0.2f, 0.55f, 1f, 0.95f);
     private static readonly Color HiveColor = new(0.15f, 1f, 0.25f, 0.95f);
     private static readonly Color DestinationColor = new(1f, 0.15f, 0.1f, 0.95f);
     private static readonly Color LineColor = new(1f, 0.85f, 0.1f, 0.95f);
     private static readonly Color ThresholdLineColor = new(1f, 0.1f, 0.05f, 0.95f);
 
+    // Four Unity units is the investigation threshold from the observed bee return behavior.
+    // Keep it near the overlay colors because it drives both the status text and the warning line.
     private const float DestinationToHiveThresholdDistance = 4f;
+
+    // Markers are lifted a little above the sampled positions so they are not hidden by terrain,
+    // hive meshes, or the bee body while still representing the same horizontal point.
     private const float WorldYOffset = 0.35f;
     private const float UiMarkerSize = 12f;
     private const float UiLineThickness = 3f;
 
     private readonly Dictionary<int, BeeView> views = new();
     private readonly Font? font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+
+    // LineRenderer vertex colors are updated per segment every frame. A white material avoids
+    // tinting those runtime colors and lets the normal/warning colors match the HUD lines.
     private readonly Material worldLineMaterial = CreateMaterial(Color.white);
     private readonly Material beeMaterial = CreateMaterial(BeeColor);
     private readonly Material hiveMaterial = CreateMaterial(HiveColor);
@@ -80,6 +91,9 @@ internal sealed class Overlay
         }
 
         var bees = UnityObject.FindObjectsOfType<RedLocustBees>();
+
+        // Stable ordering makes the top-left status useful for screenshots and frame-to-frame
+        // comparison. Unity's object enumeration order is not a good identity signal by itself.
         Array.Sort(bees, static (left, right) => left.thisEnemyIndex.CompareTo(right.thisEnemyIndex));
 
         var seen = new HashSet<int>();
@@ -100,6 +114,8 @@ internal sealed class Overlay
             }
         }
 
+        // The status text is rebuilt from the current frame instead of cached so stale bee rows
+        // disappear immediately when a bee despawns or no longer has readable navigation data.
         SetStatus(statusBuilder.ToString());
     }
 
@@ -116,6 +132,8 @@ internal sealed class Overlay
             return true;
         }
 
+        // The HUD container can be recreated across scene transitions. Rebuild this overlay when
+        // the parent changes so RectTransforms do not stay attached to a destroyed canvas.
         if (hudRoot != null)
         {
             UnityObject.Destroy(hudRoot.gameObject);
@@ -136,6 +154,9 @@ internal sealed class Overlay
         statusRect.anchorMax = new Vector2(0f, 1f);
         statusRect.pivot = new Vector2(0f, 1f);
         statusRect.anchoredPosition = new Vector2(16f, -16f);
+
+        // Reserve enough room for several bees. Overflow remains enabled below because this is a
+        // diagnostic overlay and clipped lines are worse than imperfect layout in edge cases.
         statusRect.sizeDelta = new Vector2(760f, 240f);
 
         statusText = statusObject.GetComponent<UiText>();
@@ -165,6 +186,9 @@ internal sealed class Overlay
         var destination = GetNavMeshDestination(bee);
         var beeToDestinationDistance = Vector3.Distance(beePosition, destination);
         var destinationToHiveDistance = Vector3.Distance(destination, hive);
+
+        // Only the destination-to-hive segment changes to the warning color because that is the
+        // distance being tested. Keeping bee-to-destination yellow preserves direction context.
         var thresholdColor = destinationToHiveDistance >= DestinationToHiveThresholdDistance
             ? ThresholdLineColor
             : LineColor;
@@ -215,6 +239,8 @@ internal sealed class Overlay
         var screen = camera.WorldToScreenPoint(worldPosition);
         if (screen.z < 0f)
         {
+            // Points behind the camera project to mirrored screen coordinates. Flipping keeps the
+            // off-screen indicator clamped to a useful edge instead of jumping across the HUD.
             screen *= -1f;
         }
 
@@ -232,6 +258,10 @@ internal sealed class Overlay
     private static Vector3 GetNavMeshDestination(RedLocustBees bee)
     {
         var agent = bee.agent;
+
+        // The bee.destination field can represent game AI bookkeeping such as a remembered hive
+        // position. The NavMeshAgent destination is the actual movement target when the agent is
+        // active, so use it for visualization and fall back only when Unity cannot expose it.
         return agent != null && agent.isOnNavMesh ? agent.destination : bee.destination;
     }
 
@@ -249,6 +279,8 @@ internal sealed class Overlay
 
         if (!TryGetAgentDestination(bee, out var agentDestination))
         {
+            // The status panel is stricter than the world overlay: it reports only values that came
+            // from the live NavMeshAgent so the >=4 answer cannot silently use bee.destination.
             return $"bee:{bee.thisEnemyIndex}  agentDest-hive=n/a  >=4 n/a  no navmesh agent";
         }
 
@@ -403,6 +435,9 @@ internal sealed class Overlay
 
             var worldRoot = new GameObject($"BeeWorldOverlay_{beeIndex}");
             UnityObject.DontDestroyOnLoad(worldRoot);
+
+            // World-space primitives are separate from the HUD hierarchy so they render at the real
+            // in-game positions even when the HUD canvas scales or changes anchoring.
             var beeToDestinationWorldLine = CreateWorldLine("BeeToDestinationWorldLine", worldRoot.transform, lineMaterial);
             var destinationToHiveWorldLine = CreateWorldLine("DestinationToHiveWorldLine", worldRoot.transform, lineMaterial);
             var beeMarker = CreateWorldMarker("BeeWorldMarker", worldRoot.transform, beeMaterial);
@@ -439,6 +474,8 @@ internal sealed class Overlay
             hiveMarkerRect.anchoredPosition = hive;
             destinationMarkerRect.anchoredPosition = destination;
 
+            // The HUD uses two line RectTransforms instead of a polyline component because the game
+            // already ships Unity UI Image and the overlay only needs two straight segments.
             SetHudLine(beeToDestinationLineRect, bee, destination, LineColor);
             SetHudLine(destinationToHiveLineRect, destination, hive, destinationToHiveColor);
 
@@ -454,12 +491,17 @@ internal sealed class Overlay
             }
 
             worldRoot.SetActive(true);
+
+            // Use two LineRenderers so each segment can keep an independent color. A single
+            // three-point LineRenderer would interpolate colors across the shared destination point.
             SetWorldLine(beeToDestinationWorldLine, bee, destination, LineColor);
             SetWorldLine(destinationToHiveWorldLine, destination, hive, destinationToHiveColor);
             beeMarker.transform.position = bee;
             hiveMarker.transform.position = hive;
             destinationMarker.transform.position = destination;
 
+            // Scale markers by the larger nearby segment so tiny movements remain visible without
+            // letting long-distance cases dominate the scene.
             var markerScale = Mathf.Clamp(markerDistance * 0.04f, 0.18f, 0.45f);
             beeMarker.transform.localScale = Vector3.one * markerScale;
             hiveMarker.transform.localScale = Vector3.one * markerScale;
@@ -563,6 +605,8 @@ internal sealed class Overlay
             var collider = marker.GetComponent<Collider>();
             if (collider != null)
             {
+                // Overlay markers are visual probes only. Removing colliders avoids changing
+                // gameplay physics, raycasts, or any mod that scans nearby colliders.
                 UnityObject.Destroy(collider);
             }
 
@@ -585,6 +629,9 @@ internal static class HudUpdatePatch
     [HarmonyPostfix]
     private static void Postfix()
     {
+        // HUDManager.Update runs during normal gameplay and already has the current HUD context.
+        // Driving the overlay here keeps the visualization in sync without adding another
+        // MonoBehaviour object to manage.
         Overlay.Instance?.Tick();
     }
 }
@@ -602,6 +649,8 @@ internal static class BeeLogPatch
         var beeIndex = __instance.thisEnemyIndex;
         if (NextLogTimes.TryGetValue(beeIndex, out var nextLogTime) && now < nextLogTime)
         {
+            // DoAIInterval can run frequently enough to flood BepInEx logs. Throttle per bee so the
+            // log stays useful while still capturing behavior changes over time.
             return;
         }
 
@@ -624,6 +673,8 @@ internal static class BeeLogPatch
         var agentReadable = agent != null && agent.isOnNavMesh;
         if (agentReadable && agent != null)
         {
+            // Reading NavMeshAgent.destination while the agent is off the NavMesh can throw or
+            // return misleading data depending on Unity state, so keep the guard explicit.
             agentDestination = agent.destination;
         }
 
