@@ -180,10 +180,18 @@ internal sealed class Overlay
             return;
         }
 
+        if (!TryGetAgentDestination(bee, out var destination))
+        {
+            // No fallback is intentional. The overlay exists to inspect the real NavMeshAgent
+            // destination, and drawing another field in the same red "destination" role would make
+            // a bad or missing agent look like valid evidence. Leaving the bee undrawn makes the
+            // missing prerequisite obvious through the top-left n/a status row.
+            return;
+        }
+
         var view = GetView(bee.thisEnemyIndex);
         var beePosition = bee.transform.position;
         var hive = bee.hive.transform.position;
-        var destination = GetNavMeshDestination(bee);
         var beeToDestinationDistance = Vector3.Distance(beePosition, destination);
         var destinationToHiveDistance = Vector3.Distance(destination, hive);
 
@@ -255,16 +263,6 @@ internal sealed class Overlay
             : clamped;
     }
 
-    private static Vector3 GetNavMeshDestination(RedLocustBees bee)
-    {
-        var agent = bee.agent;
-
-        // The bee.destination field can represent game AI bookkeeping such as a remembered hive
-        // position. The NavMeshAgent destination is the actual movement target when the agent is
-        // active, so use it for visualization and fall back only when Unity cannot expose it.
-        return agent != null && agent.isOnNavMesh ? agent.destination : bee.destination;
-    }
-
     private static string GetBeeStatusLine(RedLocustBees bee)
     {
         if (bee == null)
@@ -279,8 +277,9 @@ internal sealed class Overlay
 
         if (!TryGetAgentDestination(bee, out var agentDestination))
         {
-            // The status panel is stricter than the world overlay: it reports only values that came
-            // from the live NavMeshAgent so the >=4 answer cannot silently use bee.destination.
+            // Keep the status row strict for the same reason as the overlay: every numeric distance
+            // must come from NavMeshAgent.destination, otherwise the >=4 answer can look precise
+            // while measuring the wrong piece of game AI state.
             return $"bee:{bee.thisEnemyIndex}  agentDest-hive=n/a  >=4 n/a  no navmesh agent";
         }
 
@@ -289,15 +288,21 @@ internal sealed class Overlay
         return $"bee:{bee.thisEnemyIndex}  agentDest-hive={distance:F2}u  >=4 {overThreshold}";
     }
 
-    private static bool TryGetAgentDestination(RedLocustBees bee, out Vector3 destination)
+    internal static bool TryGetAgentDestination(RedLocustBees bee, out Vector3 destination)
     {
         var agent = bee.agent;
         if (agent != null && agent.isOnNavMesh)
         {
+            // NavMeshAgent.destination is read only after the agent is confirmed to be on the
+            // NavMesh. That guard is both a Unity safety check and the entire data-quality boundary
+            // for this diagnostic mod.
             destination = agent.destination;
             return true;
         }
 
+        // Return false instead of substituting bee.destination. bee.destination has represented
+        // remembered or hive-adjacent state in the cases this mod is investigating, so using it as
+        // a replacement would reintroduce the original ambiguity.
         destination = Vector3.zero;
         return false;
     }
@@ -667,15 +672,10 @@ internal static class BeeLogPatch
         }
 
         var hive = bee.hive.transform.position;
-        var agent = bee.agent;
         var agentDestination = Vector3.zero;
-        var agentReadable = agent != null && agent.isOnNavMesh;
-        if (agentReadable && agent != null)
-        {
-            // Reading NavMeshAgent.destination while the agent is off the NavMesh can throw or
-            // return misleading data depending on Unity state, so keep the guard explicit.
-            agentDestination = agent.destination;
-        }
+        // The log follows the same strict source rule as the overlay and status text. If these
+        // fields are present, they came from the live NavMeshAgent destination.
+        var agentReadable = Overlay.TryGetAgentDestination(bee, out agentDestination);
 
         Plugin.Log?.LogInfo(
             $"[bee:{bee.thisEnemyIndex}] "
