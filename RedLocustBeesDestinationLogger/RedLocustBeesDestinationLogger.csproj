@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>com.aoirint.RedLocustBeesDestinationLogger</AssemblyName>
+    <Product>RedLocustBeesDestinationLogger</Product>
+    <RootNamespace>RedLocustBeesDestinationLogger</RootNamespace>
+    <Version>0.4.0</Version>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>13.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Core" Version="[5.4.21]" IncludeAssets="compile" />
+    <PackageReference Include="LethalCompany.GameLibs.Steam" Version="[73.0.0-ngd.0]" IncludeAssets="compile">
+      <Aliases>LethalCompany</Aliases>
+    </PackageReference>
+    <PackageReference Include="UnityEngine.Modules" Version="[2022.3.62]" IncludeAssets="compile">
+      <Aliases>UnityEngine</Aliases>
+    </PackageReference>
+    <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

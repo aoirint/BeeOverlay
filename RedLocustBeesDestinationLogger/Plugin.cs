@@ -1,0 +1,552 @@
+#nullable enable
+
+extern alias LethalCompany;
+extern alias UnityEngine;
+
+using System;
+using System.Collections.Generic;
+using BepInEx;
+using BepInEx.Logging;
+using HarmonyLib;
+using LethalCompany;
+using UnityEngine::UnityEngine;
+using UnityEngine::UnityEngine.AI;
+using UiImage = LethalCompany::UnityEngine.UI.Image;
+using UiText = LethalCompany::UnityEngine.UI.Text;
+using UnityObject = UnityEngine::UnityEngine.Object;
+
+namespace RedLocustBeesDestinationLogger;
+
+[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+[BepInProcess("Lethal Company.exe")]
+public sealed class Plugin : BaseUnityPlugin
+{
+    internal static ManualLogSource? Log { get; private set; }
+
+    private Harmony? harmony;
+
+    private void Awake()
+    {
+        Log = Logger;
+        Overlay.Instance = new Overlay();
+        harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
+        harmony.PatchAll(typeof(Plugin).Assembly);
+        Logger.LogInfo($"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION} loaded.");
+    }
+}
+
+internal sealed class Overlay
+{
+    private static readonly Color HiveColor = new(0.15f, 1f, 0.25f, 0.95f);
+    private static readonly Color DestinationColor = new(1f, 0.15f, 0.1f, 0.95f);
+    private static readonly Color LineColor = new(1f, 0.85f, 0.1f, 0.95f);
+
+    private const float WorldYOffset = 0.35f;
+    private const float UiMarkerSize = 12f;
+    private const float UiLineThickness = 3f;
+
+    private readonly Dictionary<int, BeeView> views = new();
+    private readonly Font? font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+    private readonly Material worldLineMaterial = CreateMaterial(LineColor);
+    private readonly Material hiveMaterial = CreateMaterial(HiveColor);
+    private readonly Material destinationMaterial = CreateMaterial(DestinationColor);
+
+    private RectTransform? hudRoot;
+    private UiText? statusText;
+    private Transform? attachedHudContainer;
+    private float nextWaitingLogTime;
+
+    public static Overlay? Instance { get; set; }
+
+    public void Tick()
+    {
+        if (!TryEnsureHudRoot())
+        {
+            HideAll();
+            LogWaitingForHud();
+            return;
+        }
+
+        if (!TryGetGameplayCamera(out var camera))
+        {
+            HideAll();
+            SetStatus("RLB destination overlay | waiting for gameplay camera");
+            return;
+        }
+
+        var bees = UnityObject.FindObjectsOfType<RedLocustBees>();
+        var seen = new HashSet<int>();
+        foreach (var bee in bees)
+        {
+            DrawBee(camera, bee, seen);
+        }
+
+        foreach (var pair in views)
+        {
+            if (!seen.Contains(pair.Key))
+            {
+                pair.Value.SetVisible(false);
+            }
+        }
+
+        SetStatus($"RLB destination overlay | bees={bees.Length}");
+    }
+
+    private bool TryEnsureHudRoot()
+    {
+        var hudContainer = HUDManager.Instance != null ? HUDManager.Instance.HUDContainer : null;
+        if (hudContainer == null)
+        {
+            return false;
+        }
+
+        if (hudRoot != null && attachedHudContainer == hudContainer.transform)
+        {
+            return true;
+        }
+
+        if (hudRoot != null)
+        {
+            UnityObject.Destroy(hudRoot.gameObject);
+        }
+
+        views.Clear();
+        attachedHudContainer = hudContainer.transform;
+
+        var rootObject = new GameObject("RedLocustBeesDestinationOverlay", typeof(RectTransform));
+        rootObject.transform.SetParent(attachedHudContainer, false);
+        hudRoot = rootObject.GetComponent<RectTransform>();
+        Stretch(hudRoot);
+
+        var statusObject = new GameObject("Status", typeof(RectTransform), typeof(UiText));
+        statusObject.transform.SetParent(rootObject.transform, false);
+        var statusRect = statusObject.GetComponent<RectTransform>();
+        statusRect.anchorMin = new Vector2(0f, 1f);
+        statusRect.anchorMax = new Vector2(0f, 1f);
+        statusRect.pivot = new Vector2(0f, 1f);
+        statusRect.anchoredPosition = new Vector2(16f, -16f);
+        statusRect.sizeDelta = new Vector2(560f, 28f);
+
+        statusText = statusObject.GetComponent<UiText>();
+        statusText.font = font;
+        statusText.fontSize = 18;
+        statusText.fontStyle = FontStyle.Bold;
+        statusText.alignment = TextAnchor.UpperLeft;
+        statusText.color = LineColor;
+        statusText.raycastTarget = false;
+        statusText.horizontalOverflow = HorizontalWrapMode.Overflow;
+        statusText.verticalOverflow = VerticalWrapMode.Overflow;
+
+        Plugin.Log?.LogInfo($"Overlay attached to HUDContainer='{hudContainer.name}'.");
+        return true;
+    }
+
+    private void DrawBee(Camera camera, RedLocustBees bee, HashSet<int> seen)
+    {
+        if (bee == null || bee.hive == null)
+        {
+            return;
+        }
+
+        var view = GetView(bee.thisEnemyIndex);
+        var hive = bee.hive.transform.position;
+        var destination = GetNavMeshDestination(bee);
+        var distance = Vector3.Distance(hive, destination);
+
+        view.SetWorld(hive + Vector3.up * WorldYOffset, destination + Vector3.up * WorldYOffset, distance);
+
+        var hiveUi = WorldToHudPoint(camera, hive + Vector3.up * WorldYOffset);
+        var destinationUi = WorldToHudPoint(camera, destination + Vector3.up * WorldYOffset);
+        view.SetHud(hiveUi, destinationUi, $"bee:{bee.thisEnemyIndex}  navmesh-dest-hive {distance:F2}u");
+        seen.Add(bee.thisEnemyIndex);
+    }
+
+    private BeeView GetView(int beeIndex)
+    {
+        if (views.TryGetValue(beeIndex, out var view))
+        {
+            return view;
+        }
+
+        view = BeeView.Create(
+            beeIndex,
+            hudRoot!,
+            font,
+            worldLineMaterial,
+            hiveMaterial,
+            destinationMaterial
+        );
+        views.Add(beeIndex, view);
+        return view;
+    }
+
+    private Vector2 WorldToHudPoint(Camera camera, Vector3 worldPosition)
+    {
+        var screen = camera.WorldToScreenPoint(worldPosition);
+        if (screen.z < 0f)
+        {
+            screen *= -1f;
+        }
+
+        var margin = 16f;
+        var clamped = new Vector2(
+            Mathf.Clamp(screen.x, margin, Screen.width - margin),
+            Mathf.Clamp(screen.y, margin, Screen.height - margin)
+        );
+
+        return RectTransformUtility.ScreenPointToLocalPointInRectangle(hudRoot, clamped, null, out var localPoint)
+            ? localPoint
+            : clamped;
+    }
+
+    private static Vector3 GetNavMeshDestination(RedLocustBees bee)
+    {
+        var agent = bee.agent;
+        return agent != null && agent.isOnNavMesh ? agent.destination : bee.destination;
+    }
+
+    private static bool TryGetGameplayCamera(out Camera camera)
+    {
+        camera = null!;
+        var player = GameNetworkManager.Instance != null
+            ? GameNetworkManager.Instance.localPlayerController
+            : null;
+        if (player == null || player.isPlayerDead || player.gameplayCamera == null)
+        {
+            return false;
+        }
+
+        camera = player.gameplayCamera;
+        return true;
+    }
+
+    private void SetStatus(string text)
+    {
+        if (statusText != null)
+        {
+            statusText.text = text;
+        }
+    }
+
+    private void HideAll()
+    {
+        foreach (var view in views.Values)
+        {
+            view.SetVisible(false);
+        }
+    }
+
+    private void LogWaitingForHud()
+    {
+        if (Time.realtimeSinceStartup < nextWaitingLogTime)
+        {
+            return;
+        }
+
+        nextWaitingLogTime = Time.realtimeSinceStartup + 5f;
+        Plugin.Log?.LogInfo("Overlay waiting for HUDManager.HUDContainer.");
+    }
+
+    private static void Stretch(RectTransform rect)
+    {
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+        rect.localScale = Vector3.one;
+    }
+
+    private static Material CreateMaterial(Color color)
+    {
+        var shader = Shader.Find("Sprites/Default") ?? Shader.Find("Hidden/Internal-Colored");
+        return new Material(shader)
+        {
+            color = color,
+        };
+    }
+
+    private sealed class BeeView
+    {
+        private readonly GameObject rootObject;
+        private readonly RectTransform lineRect;
+        private readonly RectTransform hiveMarkerRect;
+        private readonly RectTransform destinationMarkerRect;
+        private readonly RectTransform labelRect;
+        private readonly UiText label;
+        private readonly GameObject worldRoot;
+        private readonly LineRenderer worldLine;
+        private readonly GameObject hiveMarker;
+        private readonly GameObject destinationMarker;
+
+        private BeeView(
+            GameObject rootObject,
+            RectTransform lineRect,
+            RectTransform hiveMarkerRect,
+            RectTransform destinationMarkerRect,
+            RectTransform labelRect,
+            UiText label,
+            GameObject worldRoot,
+            LineRenderer worldLine,
+            GameObject hiveMarker,
+            GameObject destinationMarker
+        )
+        {
+            this.rootObject = rootObject;
+            this.lineRect = lineRect;
+            this.hiveMarkerRect = hiveMarkerRect;
+            this.destinationMarkerRect = destinationMarkerRect;
+            this.labelRect = labelRect;
+            this.label = label;
+            this.worldRoot = worldRoot;
+            this.worldLine = worldLine;
+            this.hiveMarker = hiveMarker;
+            this.destinationMarker = destinationMarker;
+        }
+
+        public static BeeView Create(
+            int beeIndex,
+            RectTransform hudParent,
+            Font? font,
+            Material lineMaterial,
+            Material hiveMaterial,
+            Material destinationMaterial
+        )
+        {
+            var rootObject = new GameObject($"BeeOverlay_{beeIndex}", typeof(RectTransform));
+            rootObject.transform.SetParent(hudParent, false);
+            Stretch(rootObject.GetComponent<RectTransform>());
+
+            var lineRect = CreateHudLine(rootObject.transform);
+            var hiveMarkerRect = CreateHudMarker("HiveMarker", rootObject.transform, HiveColor);
+            var destinationMarkerRect = CreateHudMarker("DestinationMarker", rootObject.transform, DestinationColor);
+            var (labelRect, label) = CreateHudLabel(rootObject.transform, font);
+
+            var worldRoot = new GameObject($"BeeWorldOverlay_{beeIndex}");
+            UnityObject.DontDestroyOnLoad(worldRoot);
+            var worldLine = CreateWorldLine(worldRoot.transform, lineMaterial);
+            var hiveMarker = CreateWorldMarker("HiveWorldMarker", worldRoot.transform, hiveMaterial);
+            var destinationMarker = CreateWorldMarker("DestinationWorldMarker", worldRoot.transform, destinationMaterial);
+
+            return new BeeView(
+                rootObject,
+                lineRect,
+                hiveMarkerRect,
+                destinationMarkerRect,
+                labelRect,
+                label,
+                worldRoot,
+                worldLine,
+                hiveMarker,
+                destinationMarker
+            );
+        }
+
+        public void SetHud(Vector2 hive, Vector2 destination, string labelText)
+        {
+            if (rootObject == null)
+            {
+                return;
+            }
+
+            rootObject.SetActive(true);
+            hiveMarkerRect.anchoredPosition = hive;
+            destinationMarkerRect.anchoredPosition = destination;
+
+            var delta = destination - hive;
+            lineRect.anchoredPosition = hive + delta * 0.5f;
+            lineRect.sizeDelta = new Vector2(delta.magnitude, UiLineThickness);
+            lineRect.localEulerAngles = new Vector3(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
+
+            labelRect.anchoredPosition = hive + delta * 0.5f + Vector2.up * 18f;
+            label.text = labelText;
+        }
+
+        public void SetWorld(Vector3 hive, Vector3 destination, float distance)
+        {
+            if (worldRoot == null)
+            {
+                return;
+            }
+
+            worldRoot.SetActive(true);
+            worldLine.SetPosition(0, hive);
+            worldLine.SetPosition(1, destination);
+            hiveMarker.transform.position = hive;
+            destinationMarker.transform.position = destination;
+
+            var markerScale = Mathf.Clamp(distance * 0.04f, 0.18f, 0.45f);
+            hiveMarker.transform.localScale = Vector3.one * markerScale;
+            destinationMarker.transform.localScale = Vector3.one * markerScale;
+        }
+
+        public void SetVisible(bool visible)
+        {
+            if (rootObject != null)
+            {
+                rootObject.SetActive(visible);
+            }
+
+            if (worldRoot != null)
+            {
+                worldRoot.SetActive(visible);
+            }
+        }
+
+        private static RectTransform CreateHudLine(Transform parent)
+        {
+            var lineObject = new GameObject("HiveToDestinationLine", typeof(RectTransform), typeof(UiImage));
+            lineObject.transform.SetParent(parent, false);
+            var rect = lineObject.GetComponent<RectTransform>();
+            Center(rect);
+            lineObject.GetComponent<UiImage>().color = LineColor;
+            return rect;
+        }
+
+        private static RectTransform CreateHudMarker(string name, Transform parent, Color color)
+        {
+            var markerObject = new GameObject(name, typeof(RectTransform), typeof(UiImage));
+            markerObject.transform.SetParent(parent, false);
+            var rect = markerObject.GetComponent<RectTransform>();
+            Center(rect);
+            rect.sizeDelta = new Vector2(UiMarkerSize, UiMarkerSize);
+            markerObject.GetComponent<UiImage>().color = color;
+            return rect;
+        }
+
+        private static (RectTransform Rect, UiText Text) CreateHudLabel(Transform parent, Font? font)
+        {
+            var labelObject = new GameObject("DistanceLabel", typeof(RectTransform), typeof(UiText));
+            labelObject.transform.SetParent(parent, false);
+            var rect = labelObject.GetComponent<RectTransform>();
+            Center(rect);
+            rect.sizeDelta = new Vector2(360f, 24f);
+
+            var text = labelObject.GetComponent<UiText>();
+            text.font = font;
+            text.fontSize = 16;
+            text.fontStyle = FontStyle.Bold;
+            text.alignment = TextAnchor.MiddleCenter;
+            text.color = Color.white;
+            text.raycastTarget = false;
+            text.horizontalOverflow = HorizontalWrapMode.Overflow;
+            text.verticalOverflow = VerticalWrapMode.Overflow;
+            return (rect, text);
+        }
+
+        private static LineRenderer CreateWorldLine(Transform parent, Material material)
+        {
+            var lineObject = new GameObject("HiveToDestinationWorldLine");
+            lineObject.transform.SetParent(parent, false);
+            var line = lineObject.AddComponent<LineRenderer>();
+            line.positionCount = 2;
+            line.useWorldSpace = true;
+            line.startWidth = 0.06f;
+            line.endWidth = 0.06f;
+            line.numCapVertices = 4;
+            line.startColor = LineColor;
+            line.endColor = LineColor;
+            line.material = material;
+            return line;
+        }
+
+        private static GameObject CreateWorldMarker(string name, Transform parent, Material material)
+        {
+            var marker = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            marker.name = name;
+            marker.transform.SetParent(parent, false);
+            marker.GetComponent<Renderer>().material = material;
+
+            var collider = marker.GetComponent<Collider>();
+            if (collider != null)
+            {
+                UnityObject.Destroy(collider);
+            }
+
+            return marker;
+        }
+
+        private static void Center(RectTransform rect)
+        {
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.localScale = Vector3.one;
+        }
+    }
+}
+
+[HarmonyPatch(typeof(HUDManager), "Update")]
+internal static class HudUpdatePatch
+{
+    [HarmonyPostfix]
+    private static void Postfix()
+    {
+        Overlay.Instance?.Tick();
+    }
+}
+
+[HarmonyPatch(typeof(RedLocustBees), nameof(RedLocustBees.DoAIInterval))]
+internal static class BeeLogPatch
+{
+    private const float LogIntervalSeconds = 1f;
+    private static readonly Dictionary<int, float> NextLogTimes = new();
+
+    [HarmonyPostfix]
+    private static void Postfix(RedLocustBees __instance)
+    {
+        var now = Time.realtimeSinceStartup;
+        var beeIndex = __instance.thisEnemyIndex;
+        if (NextLogTimes.TryGetValue(beeIndex, out var nextLogTime) && now < nextLogTime)
+        {
+            return;
+        }
+
+        NextLogTimes[beeIndex] = now + LogIntervalSeconds;
+        Log(__instance);
+    }
+
+    private static void Log(RedLocustBees bee)
+    {
+        if (bee.hive == null)
+        {
+            Plugin.Log?.LogInfo($"[bee:{bee.thisEnemyIndex}] no hive");
+            return;
+        }
+
+        var hive = bee.hive.transform.position;
+        var enemyDestination = bee.destination;
+        var agent = bee.agent;
+        var agentDestination = Vector3.zero;
+        var agentReadable = agent != null && agent.isOnNavMesh;
+        if (agentReadable && agent != null)
+        {
+            agentDestination = agent.destination;
+        }
+
+        Plugin.Log?.LogInfo(
+            $"[bee:{bee.thisEnemyIndex}] "
+                + $"state={bee.currentBehaviourStateIndex} "
+                + $"hiveHeld={bee.hive.isHeld} "
+                + $"agentOnNavMesh={agentReadable} "
+                + $"enemyDestinationToHive={Fmt.Distance(enemyDestination, hive)} "
+                + $"agentDestinationToHive={Fmt.Distance(agentDestination, hive, agentReadable)} "
+                + $"bodyToAgentDestination={Fmt.Distance(bee.transform.position, agentDestination, agentReadable)} "
+                + $"hive={Fmt.Vector(hive)} "
+                + $"enemyDestination={Fmt.Vector(enemyDestination)} "
+                + $"agentDestination={Fmt.Vector(agentDestination, agentReadable)}"
+        );
+    }
+}
+
+internal static class Fmt
+{
+    public static string Distance(Vector3 a, Vector3 b, bool enabled = true)
+    {
+        return enabled ? Vector3.Distance(a, b).ToString("F3") : "n/a";
+    }
+
+    public static string Vector(Vector3 vector, bool enabled = true)
+    {
+        return enabled ? $"({vector.x:F3},{vector.y:F3},{vector.z:F3})" : "n/a";
+    }
+}
