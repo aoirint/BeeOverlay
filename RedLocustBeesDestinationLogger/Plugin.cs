@@ -49,6 +49,7 @@ internal sealed class Overlay
     private static readonly Color HiveBlockedLineColor = new(0.35f, 0.4f, 0.38f, 0.65f);
 
     private const float PlayerLineOfSightDistance = 16f;
+    private const float VisiblePlayerSightLineRenderYOffset = -0.35f;
     private const float HiveMissingNearDistance = 4f;
     private const float HiveMissingLineOfSightDistance = 8f;
     private const int DefenseDistanceCircleSegments = 96;
@@ -507,8 +508,13 @@ internal sealed class Overlay
             // without adding a fallback or guessing through walls.
             if (visiblePlayer.HasValue)
             {
+                // This offset is rendering-only. The visibility query and all status distances keep
+                // using the real bee eye / player camera positions, while the cyan line is lowered
+                // just enough that rapid visibility flicker is less likely to flash across the
+                // player's exact view direction.
+                var renderOffset = Vector3.up * VisiblePlayerSightLineRenderYOffset;
                 visiblePlayerSightLine.gameObject.SetActive(true);
-                SetWorldLine(visiblePlayerSightLine, beeEye, visiblePlayer.Value, SightLineColor);
+                SetWorldLine(visiblePlayerSightLine, beeEye + renderOffset, visiblePlayer.Value + renderOffset, SightLineColor);
             }
             else
             {
