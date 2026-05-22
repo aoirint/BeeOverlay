@@ -49,11 +49,18 @@ internal sealed class Overlay
     private static readonly Color ThresholdLineColor = new(1f, 0.1f, 0.05f, 0.95f);
     private static readonly Color DefenseDistanceColor = new(0.1f, 0.75f, 1f, 0.7f);
     private static readonly Color SightLineColor = new(0.65f, 1f, 1f, 0.95f);
+    private static readonly Color LastKnownHiveColor = new(0.85f, 0.35f, 1f, 0.95f);
+    private static readonly Color HiveMissingNearColor = new(1f, 0.45f, 0.05f, 0.85f);
+    private static readonly Color HiveMissingLineOfSightColor = new(0.65f, 0.35f, 1f, 0.65f);
+    private static readonly Color HiveMissingActiveLineColor = new(1f, 0.2f, 0.05f, 0.95f);
+    private static readonly Color HiveMissingInactiveLineColor = new(0.45f, 0.45f, 0.5f, 0.65f);
 
     // Four Unity units is the investigation threshold from the observed bee return behavior.
     // Keep it near the overlay colors because it drives both the status text and the warning line.
     private const float DestinationToHiveThresholdDistance = 4f;
     private const float PlayerLineOfSightDistance = 16f;
+    private const float HiveMissingNearDistance = 4f;
+    private const float HiveMissingLineOfSightDistance = 8f;
     private const int DefenseDistanceCircleSegments = 96;
 
     // Markers are lifted a little above the sampled positions so they are not hidden by terrain,
@@ -71,6 +78,10 @@ internal sealed class Overlay
     private readonly Material beeMaterial = CreateMaterial(BeeColor);
     private readonly Material hiveMaterial = CreateMaterial(HiveColor);
     private readonly Material destinationMaterial = CreateMaterial(DestinationColor);
+    private readonly Material lastKnownHiveMaterial = CreateMaterial(LastKnownHiveColor);
+
+    private static readonly AccessTools.FieldRef<RedLocustBees, bool>? SyncedLastKnownHivePositionRef =
+        CreateSyncedLastKnownHivePositionRef();
 
     private RectTransform? hudRoot;
     private UiText? statusText;
@@ -162,11 +173,11 @@ internal sealed class Overlay
 
         // Reserve enough room for several bees. Overflow remains enabled below because this is a
         // diagnostic overlay and clipped lines are worse than imperfect layout in edge cases.
-        statusRect.sizeDelta = new Vector2(760f, 240f);
+        statusRect.sizeDelta = new Vector2(1040f, 320f);
 
         statusText = statusObject.GetComponent<UiText>();
         statusText.font = font;
-        statusText.fontSize = 16;
+        statusText.fontSize = 15;
         statusText.fontStyle = FontStyle.Bold;
         statusText.alignment = TextAnchor.UpperLeft;
         statusText.color = LineColor;
@@ -191,12 +202,14 @@ internal sealed class Overlay
         var beeEyePosition = bee.eye != null ? bee.eye.position : beePosition + Vector3.up * WorldYOffset;
         var visiblePlayer = bee.CheckLineOfSightForPlayer(360f, (int)PlayerLineOfSightDistance, 1);
         var visiblePlayerPosition = GetPlayerSightTargetPosition(visiblePlayer);
+        var hiveMissingProbe = GetHiveMissingProbe(bee, beeEyePosition);
 
         view.SetSpatialGuides(
             hive + Vector3.up * WorldYOffset,
             bee.defenseDistance,
             beeEyePosition,
-            visiblePlayerPosition
+            visiblePlayerPosition,
+            hiveMissingProbe
         );
         seen.Add(bee.thisEnemyIndex);
 
@@ -271,7 +284,8 @@ internal sealed class Overlay
             worldLineMaterial,
             beeMaterial,
             hiveMaterial,
-            destinationMaterial
+            destinationMaterial,
+            lastKnownHiveMaterial
         );
         views.Add(beeIndex, view);
         return view;
@@ -302,25 +316,85 @@ internal sealed class Overlay
     {
         if (bee == null)
         {
-            return "bee:n/a  agentDest-hive=n/a  >=4 n/a";
+            return "bee:n/a  agentDest-hive=n/a  >=4 n/a  lkh-eye=n/a  missProbe n/a";
         }
 
         if (bee.hive == null)
         {
-            return $"bee:{bee.thisEnemyIndex}  agentDest-hive=n/a  >=4 n/a  no hive";
+            return $"bee:{bee.thisEnemyIndex}  agentDest-hive=n/a  >=4 n/a  lkh-eye=n/a  missProbe n/a  no hive";
         }
+
+        var hiveMissingProbe = GetHiveMissingProbe(bee, bee.eye != null ? bee.eye.position : bee.transform.position + Vector3.up * WorldYOffset);
+        var hiveMissingStatus = FormatHiveMissingProbeStatus(hiveMissingProbe);
 
         if (!TryGetAgentDestination(bee, out var agentDestination))
         {
             // Keep the status row strict for the same reason as the overlay: every numeric distance
             // must come from NavMeshAgent.destination, otherwise the >=4 answer can look precise
             // while measuring the wrong piece of game AI state.
-            return $"bee:{bee.thisEnemyIndex}  agentDest-hive=n/a  >=4 n/a  no navmesh agent";
+            return $"bee:{bee.thisEnemyIndex}  agentDest-hive=n/a  >=4 n/a  {hiveMissingStatus}  no navmesh agent";
         }
 
         var distance = Vector3.Distance(agentDestination, bee.hive.transform.position);
         var overThreshold = distance >= DestinationToHiveThresholdDistance ? "YES" : "NO";
-        return $"bee:{bee.thisEnemyIndex}  agentDest-hive={distance:F2}u  >=4 {overThreshold}";
+        return $"bee:{bee.thisEnemyIndex}  agentDest-hive={distance:F2}u  >=4 {overThreshold}  {hiveMissingStatus}";
+    }
+
+    private static HiveMissingProbe GetHiveMissingProbe(RedLocustBees bee, Vector3 beeEyePosition)
+    {
+        var lastKnownHivePosition = bee.lastKnownHivePosition;
+        var eyeToLastKnownHiveDistance = Vector3.Distance(beeEyePosition, lastKnownHivePosition);
+        var linecastBlocked = StartOfRound.Instance == null || Physics.Linecast(
+            beeEyePosition,
+            lastKnownHivePosition,
+            StartOfRound.Instance.collidersAndRoomMaskAndDefault,
+            QueryTriggerInteraction.Ignore
+        );
+        var synced = GetSyncedLastKnownHivePosition(bee);
+        var nearTrigger = eyeToLastKnownHiveDistance < HiveMissingNearDistance;
+        var lineOfSightTrigger = eyeToLastKnownHiveDistance < HiveMissingLineOfSightDistance && !linecastBlocked;
+
+        // This mirrors only the spatial/sync gate inside IsHiveMissing(). The hive-held branch is
+        // intentionally not displayed per the current investigation goal, and the actual transition
+        // still depends on the base game's hive state checks.
+        var canEvaluateMissing = synced != false && (nearTrigger || lineOfSightTrigger);
+        return new HiveMissingProbe(
+            lastKnownHivePosition,
+            eyeToLastKnownHiveDistance,
+            linecastBlocked,
+            nearTrigger,
+            lineOfSightTrigger,
+            canEvaluateMissing,
+            synced
+        );
+    }
+
+    private static bool? GetSyncedLastKnownHivePosition(RedLocustBees bee)
+    {
+        return SyncedLastKnownHivePositionRef != null ? SyncedLastKnownHivePositionRef(bee) : null;
+    }
+
+    private static AccessTools.FieldRef<RedLocustBees, bool>? CreateSyncedLastKnownHivePositionRef()
+    {
+        try
+        {
+            return AccessTools.FieldRefAccess<RedLocustBees, bool>("syncedLastKnownHivePosition");
+        }
+        catch (Exception ex)
+        {
+            Plugin.Log?.LogWarning($"Could not access RedLocustBees.syncedLastKnownHivePosition: {ex.Message}");
+            return null;
+        }
+    }
+
+    private static string FormatHiveMissingProbeStatus(HiveMissingProbe probe)
+    {
+        var synced = probe.SyncedLastKnownHivePosition.HasValue
+            ? (probe.SyncedLastKnownHivePosition.Value ? "YES" : "NO")
+            : "n/a";
+        var los = probe.LinecastBlocked ? "blocked" : "clear";
+        var active = probe.CanEvaluateMissing ? "YES" : "NO";
+        return $"lkh-eye={probe.EyeToLastKnownHiveDistance:F2}u  lkhLOS={los}  lkhSync={synced}  missProbe {active}";
     }
 
     internal static bool TryGetAgentDestination(RedLocustBees bee, out Vector3 destination)
@@ -402,6 +476,42 @@ internal sealed class Overlay
         };
     }
 
+    private readonly struct HiveMissingProbe
+    {
+        public HiveMissingProbe(
+            Vector3 lastKnownHivePosition,
+            float eyeToLastKnownHiveDistance,
+            bool linecastBlocked,
+            bool nearTrigger,
+            bool lineOfSightTrigger,
+            bool canEvaluateMissing,
+            bool? syncedLastKnownHivePosition
+        )
+        {
+            LastKnownHivePosition = lastKnownHivePosition;
+            EyeToLastKnownHiveDistance = eyeToLastKnownHiveDistance;
+            LinecastBlocked = linecastBlocked;
+            NearTrigger = nearTrigger;
+            LineOfSightTrigger = lineOfSightTrigger;
+            CanEvaluateMissing = canEvaluateMissing;
+            SyncedLastKnownHivePosition = syncedLastKnownHivePosition;
+        }
+
+        public Vector3 LastKnownHivePosition { get; }
+
+        public float EyeToLastKnownHiveDistance { get; }
+
+        public bool LinecastBlocked { get; }
+
+        public bool NearTrigger { get; }
+
+        public bool LineOfSightTrigger { get; }
+
+        public bool CanEvaluateMissing { get; }
+
+        public bool? SyncedLastKnownHivePosition { get; }
+    }
+
     private sealed class BeeView
     {
         private readonly GameObject rootObject;
@@ -417,9 +527,13 @@ internal sealed class Overlay
         private readonly LineRenderer destinationToHiveWorldLine;
         private readonly LineRenderer defenseDistanceCircle;
         private readonly LineRenderer visiblePlayerSightLine;
+        private readonly LineRenderer lastKnownHiveNearCircle;
+        private readonly LineRenderer lastKnownHiveLineOfSightCircle;
+        private readonly LineRenderer beeEyeToLastKnownHiveLine;
         private readonly GameObject beeMarker;
         private readonly GameObject hiveMarker;
         private readonly GameObject destinationMarker;
+        private readonly GameObject lastKnownHiveMarker;
 
         private BeeView(
             GameObject rootObject,
@@ -435,9 +549,13 @@ internal sealed class Overlay
             LineRenderer destinationToHiveWorldLine,
             LineRenderer defenseDistanceCircle,
             LineRenderer visiblePlayerSightLine,
+            LineRenderer lastKnownHiveNearCircle,
+            LineRenderer lastKnownHiveLineOfSightCircle,
+            LineRenderer beeEyeToLastKnownHiveLine,
             GameObject beeMarker,
             GameObject hiveMarker,
-            GameObject destinationMarker
+            GameObject destinationMarker,
+            GameObject lastKnownHiveMarker
         )
         {
             this.rootObject = rootObject;
@@ -453,9 +571,13 @@ internal sealed class Overlay
             this.destinationToHiveWorldLine = destinationToHiveWorldLine;
             this.defenseDistanceCircle = defenseDistanceCircle;
             this.visiblePlayerSightLine = visiblePlayerSightLine;
+            this.lastKnownHiveNearCircle = lastKnownHiveNearCircle;
+            this.lastKnownHiveLineOfSightCircle = lastKnownHiveLineOfSightCircle;
+            this.beeEyeToLastKnownHiveLine = beeEyeToLastKnownHiveLine;
             this.beeMarker = beeMarker;
             this.hiveMarker = hiveMarker;
             this.destinationMarker = destinationMarker;
+            this.lastKnownHiveMarker = lastKnownHiveMarker;
         }
 
         public static BeeView Create(
@@ -465,7 +587,8 @@ internal sealed class Overlay
             Material lineMaterial,
             Material beeMaterial,
             Material hiveMaterial,
-            Material destinationMaterial
+            Material destinationMaterial,
+            Material lastKnownHiveMaterial
         )
         {
             var rootObject = new GameObject($"BeeOverlay_{beeIndex}", typeof(RectTransform));
@@ -488,14 +611,22 @@ internal sealed class Overlay
             var destinationToHiveWorldLine = CreateWorldLine("DestinationToHiveWorldLine", worldRoot.transform, lineMaterial);
             var defenseDistanceCircle = CreateWorldLine("DefenseDistanceCircle", worldRoot.transform, lineMaterial);
             var visiblePlayerSightLine = CreateWorldLine("VisiblePlayerSightLine", worldRoot.transform, lineMaterial);
+            var lastKnownHiveNearCircle = CreateWorldLine("LastKnownHiveNearCircle", worldRoot.transform, lineMaterial);
+            var lastKnownHiveLineOfSightCircle = CreateWorldLine("LastKnownHiveLineOfSightCircle", worldRoot.transform, lineMaterial);
+            var beeEyeToLastKnownHiveLine = CreateWorldLine("BeeEyeToLastKnownHiveLine", worldRoot.transform, lineMaterial);
             var beeMarker = CreateWorldMarker("BeeWorldMarker", worldRoot.transform, beeMaterial);
             var hiveMarker = CreateWorldMarker("HiveWorldMarker", worldRoot.transform, hiveMaterial);
             var destinationMarker = CreateWorldMarker("DestinationWorldMarker", worldRoot.transform, destinationMaterial);
+            var lastKnownHiveMarker = CreateWorldMarker("LastKnownHiveWorldMarker", worldRoot.transform, lastKnownHiveMaterial);
 
-            // These two guides are conditional frame-by-frame. Start hidden so a newly allocated
-            // view never flashes a stale two-point line before the first real sample is written.
+            // These guides are conditional frame-by-frame. Start hidden so a newly allocated view
+            // never flashes stale geometry before the first real sample is written.
             defenseDistanceCircle.gameObject.SetActive(false);
             visiblePlayerSightLine.gameObject.SetActive(false);
+            lastKnownHiveNearCircle.gameObject.SetActive(false);
+            lastKnownHiveLineOfSightCircle.gameObject.SetActive(false);
+            beeEyeToLastKnownHiveLine.gameObject.SetActive(false);
+            lastKnownHiveMarker.SetActive(false);
 
             return new BeeView(
                 rootObject,
@@ -511,9 +642,13 @@ internal sealed class Overlay
                 destinationToHiveWorldLine,
                 defenseDistanceCircle,
                 visiblePlayerSightLine,
+                lastKnownHiveNearCircle,
+                lastKnownHiveLineOfSightCircle,
+                beeEyeToLastKnownHiveLine,
                 beeMarker,
                 hiveMarker,
-                destinationMarker
+                destinationMarker,
+                lastKnownHiveMarker
             );
         }
 
@@ -546,7 +681,13 @@ internal sealed class Overlay
             }
         }
 
-        public void SetSpatialGuides(Vector3 hive, int defenseDistance, Vector3 beeEye, Vector3? visiblePlayer)
+        public void SetSpatialGuides(
+            Vector3 hive,
+            int defenseDistance,
+            Vector3 beeEye,
+            Vector3? visiblePlayer,
+            HiveMissingProbe hiveMissingProbe
+        )
         {
             if (worldRoot == null)
             {
@@ -558,7 +699,8 @@ internal sealed class Overlay
             // RedLocustBees stores defenseDistance as an integer radius around the hive. Drawing it
             // as a horizontal ring lets the player judge "near hive" before crossing the trigger
             // region, which is more useful than another late true/false row in the HUD.
-            SetDefenseDistanceCircle(defenseDistanceCircle, hive, defenseDistance);
+            SetWorldCircle(defenseDistanceCircle, hive, defenseDistance, DefenseDistanceColor);
+            SetHiveMissingProbe(beeEye, hiveMissingProbe);
 
             // The player line is drawn only when the game-side visibility query currently returns
             // a player. Absence of the line therefore means "not currently seen by this check",
@@ -572,6 +714,35 @@ internal sealed class Overlay
             {
                 visiblePlayerSightLine.gameObject.SetActive(false);
             }
+        }
+
+        private void SetHiveMissingProbe(Vector3 beeEye, HiveMissingProbe probe)
+        {
+            var lastKnownHive = probe.LastKnownHivePosition + Vector3.up * WorldYOffset;
+            lastKnownHiveMarker.SetActive(true);
+            lastKnownHiveMarker.transform.position = lastKnownHive;
+
+            // IsHiveMissing() first asks whether the bee is close enough to, or has line of sight
+            // to, lastKnownHivePosition. Centering these rings on that remembered point makes the
+            // state-2 risk zone visible independently from the current hive position.
+            SetWorldCircle(lastKnownHiveNearCircle, lastKnownHive, HiveMissingNearDistance, HiveMissingNearColor);
+            SetWorldCircle(
+                lastKnownHiveLineOfSightCircle,
+                lastKnownHive,
+                HiveMissingLineOfSightDistance,
+                HiveMissingLineOfSightColor
+            );
+
+            var probeLineColor = probe.CanEvaluateMissing
+                ? HiveMissingActiveLineColor
+                : HiveMissingInactiveLineColor;
+            SetWorldLine(beeEyeToLastKnownHiveLine, beeEye, lastKnownHive, probeLineColor);
+            beeEyeToLastKnownHiveLine.gameObject.SetActive(true);
+
+            // Keep the remembered hive marker slightly smaller than the three primary state points
+            // so it reads as diagnostic context instead of a fourth object competing with hive.
+            var markerScale = Mathf.Clamp(probe.EyeToLastKnownHiveDistance * 0.03f, 0.14f, 0.32f);
+            lastKnownHiveMarker.transform.localScale = Vector3.one * markerScale;
         }
 
         public void SetWorld(Vector3 bee, Vector3 destination, Vector3 hive, float markerDistance, Color destinationToHiveColor)
@@ -640,9 +811,9 @@ internal sealed class Overlay
             line.endColor = color;
         }
 
-        private static void SetDefenseDistanceCircle(LineRenderer line, Vector3 center, int radius)
+        private static void SetWorldCircle(LineRenderer line, Vector3 center, float radius, Color color)
         {
-            if (radius <= 0)
+            if (radius <= 0f)
             {
                 line.gameObject.SetActive(false);
                 return;
@@ -650,8 +821,8 @@ internal sealed class Overlay
 
             line.gameObject.SetActive(true);
             line.positionCount = DefenseDistanceCircleSegments + 1;
-            line.startColor = DefenseDistanceColor;
-            line.endColor = DefenseDistanceColor;
+            line.startColor = color;
+            line.endColor = color;
 
             for (var i = 0; i <= DefenseDistanceCircleSegments; i++)
             {
