@@ -41,10 +41,10 @@ internal sealed class Overlay
     // checks. That keeps dots, lines, and rings readable as "which object is this about?" instead
     // of mixing separate colors for every condition.
     private static readonly Color HudTextColor = new(1f, 0.85f, 0.1f, 0.95f);
-    private static readonly Color BeeColor = new(0.15f, 0.55f, 1f, 0.95f);
+    private static readonly Color BeeColor = new(1f, 0.85f, 0.1f, 0.95f);
     private static readonly Color HiveColor = new(0.25f, 1f, 0.35f, 0.95f);
-    private static readonly Color LastKnownHiveColor = new(0.95f, 0.35f, 1f, 0.95f);
-    private static readonly Color PlayerColor = new(1f, 0.58f, 0.1f, 0.95f);
+    private static readonly Color LastKnownHiveColor = new(0.15f, 0.55f, 1f, 0.95f);
+    private static readonly Color PlayerColor = new(1f, 0.15f, 0.1f, 0.95f);
     private static readonly Color InactiveLineColor = new(0.45f, 0.5f, 0.52f, 0.55f);
 
     private const float PlayerLineOfSightDistance = 16f;
