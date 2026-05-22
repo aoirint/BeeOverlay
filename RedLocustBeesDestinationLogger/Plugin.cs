@@ -50,6 +50,9 @@ internal sealed class Overlay
     private static readonly Color InactiveLineColor = new(0.18f, 0.18f, 0.18f, 0.58f);
     private static readonly Color BeePlayerHudColor = new(1f, 1f, 1f, 0.95f);
 
+    // Keep the important thresholds named at the overlay boundary. The goal is not to invent new
+    // gameplay rules here; each visual should point back to one specific base-game gate that can
+    // move RedLocustBees out of state 0.
     private const float PlayerLineOfSightDistance = 16f;
     private const float VisiblePlayerSightLineRenderYOffset = -0.35f;
     private const float HiveMissingNearDistance = 4f;
@@ -83,6 +86,8 @@ internal sealed class Overlay
 
     public void Tick()
     {
+        // Treat the overlay as disposable scene UI. If the vanilla HUD is not ready, hiding world
+        // probes is safer than leaving old markers in the scene with no matching status text.
         if (!TryEnsureHudRoot())
         {
             HideAll();
@@ -103,6 +108,9 @@ internal sealed class Overlay
         var localPlayerPosition = GetPlayerBodyPosition(localPlayer);
         foreach (var bee in bees)
         {
+            // Drawing and status construction both sample the same frame, but they intentionally
+            // stay separate: the 3D probes answer "where is the risky geometry?", while the HUD
+            // answers "which exact gates are currently true enough to care about?".
             DrawBee(bee, seen);
             statusBuilder.AppendLine();
             statusBuilder.Append(GetBeeStatusLine(bee, localPlayer, localPlayerPosition));
@@ -191,6 +199,9 @@ internal sealed class Overlay
         var localPlayer = GameNetworkManager.Instance != null ? GameNetworkManager.Instance.localPlayerController : null;
         var localPlayerPosition = GetPlayerSightTargetPosition(localPlayer);
         var canSeeLocalPlayer = visiblePlayer != null && visiblePlayer == localPlayer;
+        // Keep both probes even though they look similar in the scene. bee-hive is the pickup
+        // position proxy for state 0 -> 1 reasoning, while lastKnownHive is the remembered-position
+        // probe used by the state 0 -> 2 missing-hive path.
         var hiveMissingProbe = GetHiveMissingProbe(bee, beeEyePosition);
         var hiveSightProbe = GetHiveSightProbe(beeEyePosition, hive);
 
@@ -225,6 +236,9 @@ internal sealed class Overlay
 
     private static Vector3? GetPlayerBodyPosition(PlayerControllerB? player)
     {
+        // State 0 -> 1 checks the player's body against defenseDistance, not the camera. Keeping a
+        // separate body helper avoids accidentally reusing the camera target from the visibility
+        // line and overstating whether the player is actually inside the hive defense radius.
         return player != null ? player.transform.position : null;
     }
 
@@ -277,8 +291,9 @@ internal sealed class Overlay
         var hiveSightProbe = GetHiveSightProbe(beeEyePosition, hivePosition);
 
         // HUD rows intentionally avoid transition-derived labels such as missProbe. In practice the
-        // player needs quick distances and current game visibility booleans; the colored terms map
-        // to the same entity colors as the 3D dots/lines.
+        // player needs quick distances and current game visibility booleans, not another copy of
+        // the C# branch structure. The colored terms map to the same entity colors as the 3D
+        // dots/lines so the player can glance between HUD and world probes.
         return string.Join(
             "  ",
             Tag($"bee:{bee.thisEnemyIndex}", BeeColor),
@@ -339,6 +354,9 @@ internal sealed class Overlay
 
     private static bool? GetSyncedLastKnownHivePosition(RedLocustBees bee)
     {
+        // Harmony's FieldRef keeps the private base-game sync flag read-only from this mod. A null
+        // result means "could not inspect", not "false"; callers preserve that distinction so the
+        // overlay does not pretend to know a transition gate it could not read.
         return SyncedLastKnownHivePositionRef != null ? SyncedLastKnownHivePositionRef(bee) : null;
     }
 
@@ -384,6 +402,8 @@ internal sealed class Overlay
     {
         if (statusText != null)
         {
+            // The HUD string is already rich-text colored. Assigning one block keeps Unity's text
+            // rebuild cheap and avoids per-row objects that would have to be recreated with bees.
             statusText.text = text;
         }
     }
@@ -458,6 +478,8 @@ internal sealed class Overlay
 
         public bool CanEvaluateMissing { get; }
 
+        // Null means the private sync field was not readable. That is intentionally different from
+        // false, because false is an actual base-game gate that suppresses the missing-hive branch.
         public bool? SyncedLastKnownHivePosition { get; }
     }
 
@@ -484,6 +506,9 @@ internal sealed class Overlay
 
         public bool WithinPlayerSightRange { get; }
 
+        // This is the HUD/line color decision for the pickup proxy. It deliberately combines range
+        // and linecast so the player sees one practical answer: "would this hive point stand in for
+        // a visible player under the base game's 16u player sight rule?"
         public bool CanSeePickupProxy => WithinPlayerSightRange && !LinecastBlocked;
     }
 
@@ -691,6 +716,9 @@ internal sealed class Overlay
 
         private static void SetWorldLine(LineRenderer line, Vector3 start, Vector3 end, Color color)
         {
+            // Lines are recreated in place each frame instead of pooled per condition. The overlay
+            // has a fixed small number of diagnostics per bee, so clarity beats a more abstract
+            // renderer registry here.
             line.positionCount = 2;
             line.SetPosition(0, start);
             line.SetPosition(1, end);
@@ -702,6 +730,9 @@ internal sealed class Overlay
         {
             if (radius <= 0f)
             {
+                // A zero/negative radius means the base-game field is not useful for spatial
+                // guidance. Hide the ring instead of drawing a degenerate point that could be
+                // mistaken for a real marker.
                 line.gameObject.SetActive(false);
                 return;
             }
@@ -806,6 +837,9 @@ internal static class BeeLogPatch
             return;
         }
 
+        // Keep this log compact and base-state oriented. The live overlay owns the detailed
+        // distance/visibility diagnostics; the log is mainly for correlating behavior state, hive
+        // possession, and remembered hive position after a run.
         Plugin.Log?.LogInfo(
             $"[bee:{bee.thisEnemyIndex}] "
                 + $"state={bee.currentBehaviourStateIndex} "
