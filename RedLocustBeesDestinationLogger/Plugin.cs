@@ -44,6 +44,8 @@ internal sealed class Overlay
     private static readonly Color BeeColor = new(1f, 0.85f, 0.1f, 0.95f);
     private static readonly Color HiveColor = new(0.25f, 1f, 0.35f, 0.95f);
     private static readonly Color LastKnownHiveColor = new(0.15f, 0.55f, 1f, 0.95f);
+    private static readonly Color LastKnownHiveNearCircleColor = new(0.05f, 0.32f, 0.95f, 0.9f);
+    private static readonly Color LastKnownHiveLineOfSightCircleColor = new(0.45f, 0.75f, 1f, 0.45f);
     private static readonly Color PlayerColor = new(1f, 0.15f, 0.1f, 0.95f);
     private static readonly Color InactiveLineColor = new(0.45f, 0.5f, 0.52f, 0.55f);
 
@@ -461,6 +463,7 @@ internal sealed class Overlay
         private readonly LineRenderer defenseDistanceCircle;
         private readonly LineRenderer visiblePlayerSightLine;
         private readonly LineRenderer lastKnownHiveNearCircle;
+        private readonly LineRenderer lastKnownHiveLineOfSightCircle;
         private readonly LineRenderer beeEyeToLastKnownHiveLine;
         private readonly LineRenderer beeEyeToHiveLine;
         private readonly GameObject beeMarker;
@@ -473,6 +476,7 @@ internal sealed class Overlay
             LineRenderer defenseDistanceCircle,
             LineRenderer visiblePlayerSightLine,
             LineRenderer lastKnownHiveNearCircle,
+            LineRenderer lastKnownHiveLineOfSightCircle,
             LineRenderer beeEyeToLastKnownHiveLine,
             LineRenderer beeEyeToHiveLine,
             GameObject beeMarker,
@@ -485,6 +489,7 @@ internal sealed class Overlay
             this.defenseDistanceCircle = defenseDistanceCircle;
             this.visiblePlayerSightLine = visiblePlayerSightLine;
             this.lastKnownHiveNearCircle = lastKnownHiveNearCircle;
+            this.lastKnownHiveLineOfSightCircle = lastKnownHiveLineOfSightCircle;
             this.beeEyeToLastKnownHiveLine = beeEyeToLastKnownHiveLine;
             this.beeEyeToHiveLine = beeEyeToHiveLine;
             this.beeMarker = beeMarker;
@@ -508,6 +513,7 @@ internal sealed class Overlay
             var defenseDistanceCircle = CreateWorldLine("DefenseDistanceCircle", worldRoot.transform, lineMaterial);
             var visiblePlayerSightLine = CreateWorldLine("VisiblePlayerSightLine", worldRoot.transform, lineMaterial);
             var lastKnownHiveNearCircle = CreateWorldLine("LastKnownHiveNearCircle", worldRoot.transform, lineMaterial);
+            var lastKnownHiveLineOfSightCircle = CreateWorldLine("LastKnownHiveLineOfSightCircle", worldRoot.transform, lineMaterial);
             var beeEyeToLastKnownHiveLine = CreateWorldLine("BeeEyeToLastKnownHiveLine", worldRoot.transform, lineMaterial);
             var beeEyeToHiveLine = CreateWorldLine("BeeEyeToHiveLine", worldRoot.transform, lineMaterial);
             var beeMarker = CreateWorldMarker("BeeEyeWorldMarker", worldRoot.transform, beeMaterial);
@@ -520,6 +526,7 @@ internal sealed class Overlay
             defenseDistanceCircle.gameObject.SetActive(false);
             visiblePlayerSightLine.gameObject.SetActive(false);
             lastKnownHiveNearCircle.gameObject.SetActive(false);
+            lastKnownHiveLineOfSightCircle.gameObject.SetActive(false);
             beeEyeToLastKnownHiveLine.gameObject.SetActive(false);
             beeEyeToHiveLine.gameObject.SetActive(false);
             beeMarker.SetActive(false);
@@ -532,6 +539,7 @@ internal sealed class Overlay
                 defenseDistanceCircle,
                 visiblePlayerSightLine,
                 lastKnownHiveNearCircle,
+                lastKnownHiveLineOfSightCircle,
                 beeEyeToLastKnownHiveLine,
                 beeEyeToHiveLine,
                 beeMarker,
@@ -608,10 +616,21 @@ internal sealed class Overlay
             lastKnownHiveMarker.SetActive(true);
             lastKnownHiveMarker.transform.position = lastKnownHive;
 
-            // The 4u ring marks the close-range IsHiveMissing() trigger directly. The 8u
-            // line-of-sight trigger is intentionally left as text plus the bee-to-memory line so
-            // it does not compete with the more actionable pickup sightline guides.
-            SetWorldCircle(lastKnownHiveNearCircle, lastKnownHive, HiveMissingNearDistance, LastKnownHiveColor);
+            // Both rings use the last-known-hive blue family, but not the exact same shade: the
+            // 4u close-range trigger is darker and more urgent, while the 8u line-of-sight gate is
+            // lighter so it reads as the outer context instead of competing with the inner ring.
+            SetWorldCircle(
+                lastKnownHiveNearCircle,
+                lastKnownHive,
+                HiveMissingNearDistance,
+                LastKnownHiveNearCircleColor
+            );
+            SetWorldCircle(
+                lastKnownHiveLineOfSightCircle,
+                lastKnownHive,
+                HiveMissingLineOfSightDistance,
+                LastKnownHiveLineOfSightCircleColor
+            );
 
             var probeLineColor = probe.CanEvaluateMissing
                 ? LastKnownHiveColor
