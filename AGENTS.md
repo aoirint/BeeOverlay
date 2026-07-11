@@ -12,7 +12,11 @@ Use repository-local Agent Skills from:
   Lethal Company's `RedLocustBees`. Put BeeOverlay UI, visualization, and
   architecture decisions in `docs/architecture.md`.
 
-## Analysis Document Structure
+## Implementation Analysis
+
+When creating or updating implementation-analysis documentation:
+
+### Documentation structure
 
 - Record the target game version and Steam manifest ID. When the target version
   changes, update both values and replace the findings in the existing document
@@ -21,10 +25,6 @@ Use repository-local Agent Skills from:
   `ClassName.MethodName()` rather than `MethodName()` in headings.
 - Add related game classes under `Observed members` in their own class-named
   subsection, and explain how each one affects the primary subject class.
-
-## Implementation Analysis
-
-When creating or updating implementation-analysis documentation:
 
 ### Evidence and reasoning
 
