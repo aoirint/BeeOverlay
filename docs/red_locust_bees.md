@@ -11,8 +11,8 @@ observations in this document rather than creating a version-specific copy.
 ## Scope
 
 This document records observed implementation behavior of Lethal Company's
-`RedLocustBees` class. It does not document BeeOverlay UI, visualization, or
-architecture decisions.
+`RedLocustBees` class. It does not document UI, visualization, or architecture
+decisions.
 
 ## Confirmed observations
 
