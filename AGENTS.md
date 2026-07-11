@@ -42,5 +42,6 @@ When creating or updating implementation-analysis documentation:
 - Do not reproduce decompiled proprietary method bodies or substantial portions
   of proprietary code. Refer to the class and member, then write a concise
   behavioral summary or the minimum necessary signature detail.
-- Do not copy raw runtime logs into analysis documentation. Summarize only the
-  observations needed to support the finding and preserve relevant uncertainty.
+- Runtime logs may be quoted when they are needed as evidence. Mask sensitive
+  or machine-specific information. Prefer including only the portion needed to
+  support the finding and preserve relevant uncertainty.
