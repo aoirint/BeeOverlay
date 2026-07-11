@@ -1,4 +1,4 @@
-# RedLocustBees Class Analysis
+# RedLocustBees Implementation Analysis
 
 This reference records observed members and state-transition conditions of Lethal Company's `RedLocustBees` class.
 
