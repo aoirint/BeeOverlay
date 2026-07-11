@@ -1,0 +1,9 @@
+{
+  "name": "BeeOverlay",
+  "version_number": "0.0.0",
+  "website_url": "https://github.com/aoirint/BeeOverlay",
+  "description": "[v73] Visualizes RedLocustBees spatial checks.",
+  "dependencies": [
+    "BepInEx-BepInExPack-5.4.2305"
+  ]
+}

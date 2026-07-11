@@ -216,6 +216,21 @@ DOTNET_CLI_UI_LANGUAGE=en dotnet build --configuration Release
 Release automation is not configured while the project version remains
 unassigned at `0.0.0`.
 
+When assigning a release version, update:
+
+1. `BeeOverlay/BeeOverlay.csproj`
+2. `assets/manifest.json`
+3. `assets/CHANGELOG.md`
+
+For a Thunderstore package, place the following files at the ZIP root:
+
+- `com.aoirint.BeeOverlay.dll`
+- `assets/manifest.json` as `manifest.json`
+- `assets/icon.png`
+- `assets/README.md` as `README.md`
+- `assets/CHANGELOG.md` as `CHANGELOG.md`
+- `LICENSE`
+
 ## Documentation
 
 - [RedLocustBees implementation analysis](docs/red_locust_bees.md)

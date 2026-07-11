@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">BeeOverlay</title>
+  <desc id="desc">Black square icon with white Bee and Overlay text on separate lines.</desc>
+  <rect width="256" height="256" fill="#000000" />
+  <g
+    fill="#ffffff"
+    font-family="GenJyuuGothic-Bold, sans-serif"
+    font-size="56"
+    font-weight="700"
+    text-anchor="middle"
+  >
+    <text x="128" y="105">Bee</text>
+    <text x="128" y="185">Overlay</text>
+  </g>
+</svg>
