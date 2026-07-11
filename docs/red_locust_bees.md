@@ -37,6 +37,9 @@ PlayerControllerB EnemyAI.CheckLineOfSightForPlayer(
 )
 ```
 
+Role: finds a player that satisfies the configured sight-check parameters for
+enemy AI behavior.
+
 ### `RedLocustBees` members
 
 | Member | C# type | Role |
@@ -51,6 +54,8 @@ PlayerControllerB EnemyAI.CheckLineOfSightForPlayer(
 ```csharp
 bool RedLocustBees.IsHiveMissing()
 ```
+
+Role: evaluates whether `RedLocustBees` considers its hive missing.
 
 ## Behavior analysis
 
