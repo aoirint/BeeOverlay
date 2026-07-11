@@ -15,7 +15,7 @@ using PlayerControllerB = LethalCompany::GameNetcodeStuff.PlayerControllerB;
 using UiText = LethalCompany::UnityEngine.UI.Text;
 using UnityObject = UnityEngine::UnityEngine.Object;
 
-namespace RedLocustBeesDestinationLogger;
+namespace BeeOverlay;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 [BepInProcess("Lethal Company.exe")]
