@@ -16,6 +16,12 @@ Use repository-local Agent Skills from:
       Company's `RedLocustBees`.
     - `architecture.md` covers BeeOverlay UI, visualization, and architecture
       decisions.
+    - `icon-authoring.md` covers package-icon authoring and rendering.
+
+## Icon Assets
+
+When changing `assets/icon.svg` or regenerating `assets/icon.png`, follow
+`docs/icon-authoring.md`.
 
 ## Implementation Analysis
 
