@@ -14,7 +14,7 @@ This document records observed implementation behavior of Lethal Company's
 `RedLocustBees` class. It does not document UI, visualization, or architecture
 decisions.
 
-## Confirmed observations
+## Implementation surface
 
 ### `EnemyAI` members inherited by `RedLocustBees`
 
@@ -24,17 +24,6 @@ decisions.
 | --- | --- | --- |
 | `EnemyAI.thisEnemyIndex` | `int` | Stable per-bee tracking key. |
 | `EnemyAI.eye` | `Transform` | Origin used for sight checks. |
-
-### `RedLocustBees` members
-
-| Member | C# type | Role |
-| --- | --- | --- |
-| `RedLocustBees.hive` | `GrabbableObject` | Current hive reference; its position is available from `RedLocustBees.hive.transform.position`. |
-| `RedLocustBees.defenseDistance` | `int` | Distance used for hive-proximity checks. |
-| `RedLocustBees.lastKnownHivePosition` | `Vector3` | Remembered hive position used by missing-hive evaluation. |
-| `RedLocustBees.syncedLastKnownHivePosition` | `bool` | Private synchronization flag for `RedLocustBees.lastKnownHivePosition`. |
-
-### `RedLocustBees`: state 0 to state 1
 
 #### `EnemyAI.CheckLineOfSightForPlayer()`
 
@@ -48,10 +37,27 @@ PlayerControllerB EnemyAI.CheckLineOfSightForPlayer(
 )
 ```
 
+### `RedLocustBees` members
+
+| Member | C# type | Role |
+| --- | --- | --- |
+| `RedLocustBees.hive` | `GrabbableObject` | Current hive reference; its position is available from `RedLocustBees.hive.transform.position`. |
+| `RedLocustBees.defenseDistance` | `int` | Distance used for hive-proximity checks. |
+| `RedLocustBees.lastKnownHivePosition` | `Vector3` | Remembered hive position used by missing-hive evaluation. |
+| `RedLocustBees.syncedLastKnownHivePosition` | `bool` | Private synchronization flag for `RedLocustBees.lastKnownHivePosition`. |
+
+#### `RedLocustBees.IsHiveMissing()`
+
+```csharp
+bool RedLocustBees.IsHiveMissing()
+```
+
+## Behavior analysis
+
+### `RedLocustBees`: state 0 to state 1
+
 `RedLocustBees.CheckLineOfSightForPlayer(360f, 16, 1)` checks whether the bee
 can see the local player from `EnemyAI.eye`. Its distance gate is 16 units.
-
-#### `RedLocustBees.defenseDistance`
 
 `RedLocustBees.defenseDistance` is compared with the distance between the hive
 and the local player's body position. This check uses the body position rather
@@ -60,10 +66,6 @@ than the camera position.
 ### `RedLocustBees`: state 0 to state 2
 
 #### `RedLocustBees.IsHiveMissing()` spatial gates
-
-```csharp
-bool RedLocustBees.IsHiveMissing()
-```
 
 The following spatial gates were observed inside
 `RedLocustBees.IsHiveMissing()`:
