@@ -14,11 +14,13 @@ Use repository-local Agent Skills from:
 - Record the target game version and Steam manifest ID. When the target version
   changes, update both values and replace the findings in the existing document
   instead of creating version-specific copies.
+
+## Analysis Document Structure
+
 - Name the owning class for documented members and methods. For example, use
-  `RedLocustBees.CheckLineOfSightForPlayer()` rather than
-  `CheckLineOfSightForPlayer()` in headings.
+  `ClassName.MethodName()` rather than `MethodName()` in headings.
 - Add related game classes under `Observed members` in their own class-named
-  subsection, and explain how each one affects `RedLocustBees` behavior.
+  subsection, and explain how each one affects the primary subject class.
 
 ## Implementation Analysis
 
