@@ -1,17 +1,17 @@
-# RedLocustBees Analysis Notes
+# RedLocustBees Class Analysis
 
-This developer reference documents the state 0 retention and transition conditions of `RedLocustBees` visualized by BeeOverlay.
+`RedLocustBees` is a game-supplied Lethal Company class that represents red locust bee behavior.
+This reference records observed members and state-transition conditions of that class.
+
 The current target game version is Lethal Company v73.
 When updating the supported game version, replace this file's analysis with findings for the new version instead of adding version-specific documents.
-See [architecture.md](architecture.md) for the implementation and visualization design.
 
-## Scope and goal
+## Subject and scope
 
-- Target: `RedLocustBees` in the current Lethal Company v73 release line.
-- Goal: identify locations that keep bees from leaving state 0.
-- Scope: spatial conditions for transitions from state 0 to states 1 and 2.
+- Subject: the `RedLocustBees` class in the current Lethal Company v73 release line.
+- Scope: observed members and spatial conditions for transitions from state 0 to states 1 and 2.
 
-## Game data observed
+## Observed members
 
 - `thisEnemyIndex`: stable per-bee key used for tracking.
 - `hive`: the current hive and its `transform.position`.
@@ -30,24 +30,16 @@ If `syncedLastKnownHivePosition` cannot be read, treat its state as unknown rath
 Its distance gate is 16 units.
 
 - Sight checks and distance calculations use the local player's actual position.
-- The hive pickup proxy treats a player picking up the hive as `player ≒ hive`; it does not test the player's collider itself.
 
 ### Hive proximity
 
 Compare the distance between the local player's body and the hive with `RedLocustBees.defenseDistance`.
 This check uses the player's body position, not the camera position.
 
-### Hive pickup proxy
-
-Check the linecast and distance from the bee's eye to the current hive position.
-
-- When the distance is below 16 units and the linecast is clear, the bee is likely able to see a player picking up the hive at that position.
-- When the linecast is blocked or the distance is at least 16 units, this spatial condition is not met.
-
 ## State 0 to state 2 conditions
 
-Because avoiding the state 0 to state 1 transition is the primary goal, only the spatial gates related to `IsHiveMissing()` are considered for state 2.
-The actual transition still depends on game-side conditions, including hive state.
+The following observations cover the spatial gates related to `IsHiveMissing()`.
+The actual transition also depends on game-side conditions, including hive state.
 
 ### `IsHiveMissing()` spatial gates
 
@@ -57,5 +49,4 @@ Use `lastKnownHivePosition` as the reference point and check these conditions fr
 - A distance below 8 units with a clear linecast enters the line-of-sight gate.
 - Do not evaluate the condition when `syncedLastKnownHivePosition` is false.
 
-This analysis excludes `hive.isHeld`.
-Its purpose is to identify positions that could lead to state 2 assuming the hive is held.
+`hive.isHeld` is not part of these spatial gates.
