@@ -29,18 +29,9 @@ decisions.
 
 #### Methods
 
-`RedLocustBees` inherits this method from `EnemyAI`:
-
-```csharp
-PlayerControllerB EnemyAI.CheckLineOfSightForPlayer(
-    float width,
-    int range,
-    int proximityAwareness
-)
-```
-
-Role: finds a player that satisfies the configured sight-check parameters for
-enemy AI behavior.
+| Method | Return type | Parameters | Role |
+| --- | --- | --- | --- |
+| `EnemyAI.CheckLineOfSightForPlayer` | `PlayerControllerB` | `float width`, `int range`, `int proximityAwareness` | Finds a player that satisfies the configured sight-check parameters for enemy AI behavior. |
 
 ### `RedLocustBees`
 
@@ -55,11 +46,9 @@ enemy AI behavior.
 
 #### Methods
 
-```csharp
-bool RedLocustBees.IsHiveMissing()
-```
-
-Role: evaluates whether `RedLocustBees` considers its hive missing.
+| Method | Return type | Parameters | Role |
+| --- | --- | --- | --- |
+| `RedLocustBees.IsHiveMissing` | `bool` | None | Evaluates whether `RedLocustBees` considers its hive missing. |
 
 ## Behavior analysis
 
