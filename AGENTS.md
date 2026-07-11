@@ -14,9 +14,9 @@ Use repository-local Agent Skills from:
 - `docs/` contains developer documentation.
     - `red_locust_bees.md` covers the implementation and behavior of Lethal
       Company's `RedLocustBees`.
-  - `architecture.md` covers BeeOverlay UI, visualization, and architecture
+    - `architecture.md` covers BeeOverlay UI, visualization, and architecture
       decisions.
-  - `icon-authoring.md` covers package-icon authoring and rendering.
+    - `icon-authoring.md` covers package-icon authoring and rendering.
 
 ## Icon Assets
 
