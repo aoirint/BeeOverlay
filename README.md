@@ -4,7 +4,7 @@
 [![Lint](https://github.com/aoirint/BeeOverlay/actions/workflows/lint.yml/badge.svg)](https://github.com/aoirint/BeeOverlay/actions/workflows/lint.yml)
 
 A [Lethal Company][lethal-company-steam] diagnostic overlay mod that visualizes
-the state-related spatial checks used by `RedLocustBees`.
+RedLocustBees spatial checks.
 
 The current analysis and implementation target Lethal Company v73.
 
