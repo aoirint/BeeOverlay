@@ -3,12 +3,12 @@
 `RedLocustBees` is a game-supplied Lethal Company class that represents red locust bee behavior.
 This reference records observed members and state-transition conditions of that class.
 
-The current target game version is Lethal Company v73.
+The target game version is Lethal Company v73.
 When updating the supported game version, replace this file's analysis with findings for the new version instead of adding version-specific documents.
 
 ## Subject and scope
 
-- Subject: the `RedLocustBees` class in the current Lethal Company v73 release line.
+- Subject: the `RedLocustBees` class in Lethal Company v73.
 - Scope: observed members and spatial conditions for transitions from state 0 to states 1 and 2.
 
 ## Observed members
