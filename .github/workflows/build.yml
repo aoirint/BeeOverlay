@@ -1,0 +1,48 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    # Build stays on ubuntu-latest because it compiles the mod with the hosted
+    # .NET environment. Revisit this runner only if the build's requirements
+    # change.
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout is required before restore and build because they read the
+      # solution, project, and committed dependency lock file.
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Set up .NET
+        # Keep dotnet-version aligned with lint.yml so formatter and analyzer
+        # behavior matches compilation. The cache path is intentionally the
+        # project lock file; update it only if the lock file moves or projects
+        # are added.
+        uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+        with:
+          dotnet-version: 10.x
+          cache: true
+          cache-dependency-path: BeeOverlay/packages.lock.json
+
+      - name: Restore NuGet packages
+        # Restore once in locked mode so build uses the committed dependency
+        # graph and does not rewrite package resolution in CI.
+        run: dotnet restore --locked-mode
+
+      - name: Build release assembly
+        run: dotnet build --no-restore --configuration Release
