@@ -16,25 +16,40 @@ decisions.
 
 ## Confirmed observations
 
+### `EnemyAI` members inherited by `RedLocustBees`
+
+`RedLocustBees` inherits these `EnemyAI` members:
+
+| Member | C# type | Role in `RedLocustBees` behavior |
+| --- | --- | --- |
+| `EnemyAI.thisEnemyIndex` | `int` | Stable per-bee tracking key. |
+| `EnemyAI.eye` | `Transform` | Origin used for sight checks. |
+
 ### `RedLocustBees` members
 
-- `RedLocustBees.thisEnemyIndex`: stable per-bee tracking key.
-- `RedLocustBees.hive`: current hive reference; the hive position is available
-  from `RedLocustBees.hive.transform.position`.
-- `RedLocustBees.eye`: origin used for sight checks.
-- `RedLocustBees.defenseDistance`: distance used for hive-proximity checks.
-- `RedLocustBees.lastKnownHivePosition`: remembered hive position used by
-  missing-hive evaluation.
-- `RedLocustBees.syncedLastKnownHivePosition`: private synchronization flag for
-  `RedLocustBees.lastKnownHivePosition`.
+| Member | C# type | Role |
+| --- | --- | --- |
+| `RedLocustBees.hive` | `GrabbableObject` | Current hive reference; its position is available from `RedLocustBees.hive.transform.position`. |
+| `RedLocustBees.defenseDistance` | `int` | Distance used for hive-proximity checks. |
+| `RedLocustBees.lastKnownHivePosition` | `Vector3` | Remembered hive position used by missing-hive evaluation. |
+| `RedLocustBees.syncedLastKnownHivePosition` | `bool` | Private synchronization flag for `RedLocustBees.lastKnownHivePosition`. |
 
 ### `RedLocustBees`: state 0 to state 1
 
-#### `RedLocustBees.CheckLineOfSightForPlayer()`
+#### `EnemyAI.CheckLineOfSightForPlayer()`
+
+`RedLocustBees` inherits this method from `EnemyAI`:
+
+```csharp
+PlayerControllerB EnemyAI.CheckLineOfSightForPlayer(
+    float width,
+    int range,
+    int proximityAwareness
+)
+```
 
 `RedLocustBees.CheckLineOfSightForPlayer(360f, 16, 1)` checks whether the bee
-can see the local player from `RedLocustBees.eye`. Its distance gate is 16
-units.
+can see the local player from `EnemyAI.eye`. Its distance gate is 16 units.
 
 #### `RedLocustBees.defenseDistance`
 
@@ -46,13 +61,17 @@ than the camera position.
 
 #### `RedLocustBees.IsHiveMissing()` spatial gates
 
+```csharp
+bool RedLocustBees.IsHiveMissing()
+```
+
 The following spatial gates were observed inside
 `RedLocustBees.IsHiveMissing()`:
 
-- A distance below 4 units from `RedLocustBees.eye` to
+- A distance below 4 units from `EnemyAI.eye` to
   `RedLocustBees.lastKnownHivePosition` enters the near-distance gate.
 - A distance below 8 units with a clear linecast between
-  `RedLocustBees.eye` and `RedLocustBees.lastKnownHivePosition` enters the
+  `EnemyAI.eye` and `RedLocustBees.lastKnownHivePosition` enters the
   line-of-sight gate.
 - The spatial gates are not evaluated when
   `RedLocustBees.syncedLastKnownHivePosition` is false.
