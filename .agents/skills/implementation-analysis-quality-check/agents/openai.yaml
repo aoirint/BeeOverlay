@@ -1,0 +1,4 @@
+interface:
+  display_name: "Implementation Analysis Quality Check"
+  short_description: "Verify implementation-analysis documents"
+  default_prompt: "Use $implementation-analysis-quality-check to review this implementation-analysis document."
