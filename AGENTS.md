@@ -6,11 +6,7 @@ Use repository-local Agent Skills from:
 
 - `.agents/skills/`
 
-## Implementation Analysis
-
-When creating or updating implementation-analysis documentation:
-
-### Scope and structure
+## Documentation Structure
 
 - Keep `docs/red_locust_bees.md` focused on the implementation and behavior of
   Lethal Company's `RedLocustBees`. Put BeeOverlay UI, visualization, and
@@ -22,6 +18,10 @@ When creating or updating implementation-analysis documentation:
   `CheckLineOfSightForPlayer()` in headings.
 - Add related game classes under `Observed members` in their own class-named
   subsection, and explain how each one affects `RedLocustBees` behavior.
+
+## Implementation Analysis
+
+When creating or updating implementation-analysis documentation:
 
 ### Evidence and reasoning
 
