@@ -27,8 +27,8 @@ Install [Visual Studio 2022][visual-studio-download].
 Install [Docker][docker-install] if you plan to use the documented local
 Markdown lint command.
 
-Install [`actionlint`][actionlint-repo] and [pinact][pinact-repo] if you plan
-to run GitHub Actions quality checks locally.
+Install [ShellCheck][shellcheck-repo], [`actionlint`][actionlint-repo], and
+[pinact][pinact-repo] if you plan to run GitHub Actions quality checks locally.
 
 Restore NuGet packages.
 
@@ -195,11 +195,9 @@ This repository currently does not use GitHub Actions variables.
 
 #### GitHub Secrets
 
-This repository currently does not use GitHub Actions secrets.
-
 | Name | Used by | Description |
 | :--- | :------ | :---------- |
-| None | Not applicable | No repository secrets are currently used. |
+| `THUNDERSTORE_TOKEN` | `.github/workflows/build.yml` | Thunderstore service-account token used only when publishing a stable release. |
 
 ## Build
 
@@ -213,16 +211,19 @@ DOTNET_CLI_UI_LANGUAGE=en dotnet build --configuration Release
 
 ## Release
 
-Release automation is not configured while the project version remains
-unassigned at `0.0.0`.
+The build workflow creates an artifact for every push to `main`. It treats
+`0.0.0` and already-tagged versions as edge builds, so neither creates a GitHub
+Release or publishes to Thunderstore.
 
-When assigning a release version, update:
+For a stable release:
 
-1. `BeeOverlay/BeeOverlay.csproj`
-2. `assets/manifest.json`
-3. `assets/CHANGELOG.md`
+1. Update the canonical [CHANGELOG.md](CHANGELOG.md).
+2. Derive the user-facing stable release notes in `assets/CHANGELOG.md`.
+3. Replace `0.0.0` in `BeeOverlay/BeeOverlay.csproj` with the release version.
+4. Push the commit to `main`.
 
-For a Thunderstore package, place the following files at the ZIP root:
+The workflow packages the following files at the ZIP root, creates an immutable
+GitHub Release, and publishes stable releases to Thunderstore:
 
 - `com.aoirint.BeeOverlay.dll`
 - `assets/manifest.json` as `manifest.json`
@@ -240,6 +241,13 @@ For a Thunderstore package, place the following files at the ZIP root:
 
 This project is licensed under the [MIT License](LICENSE).
 
+## AI Disclosure
+
+Some parts of this project were developed with AI tools based on large language
+models (LLMs), including agent-based tools. The project maintainer reviews the
+code. This disclosure is made in compliance with Thunderstore and community
+policies.
+
 [actionlint-repo]: https://github.com/rhysd/actionlint
 [docker-install]: https://docs.docker.com/get-started/get-docker/
 [dotnet-sdk-download]: https://dotnet.microsoft.com/en-us/download/dotnet/10.0
@@ -248,4 +256,5 @@ This project is licensed under the [MIT License](LICENSE).
 [markdownlint-cli2-repo]: https://github.com/DavidAnson/markdownlint-cli2
 [pinact-repo]: https://github.com/suzuki-shunsuke/pinact
 [powershell-install]: https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell-on-windows
+[shellcheck-repo]: https://www.shellcheck.net/
 [visual-studio-download]: https://visualstudio.microsoft.com/en-us/vs/

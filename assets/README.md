@@ -22,3 +22,10 @@ Install BeeOverlay on the client that should see its diagnostic overlay.
 
 For implementation details, see the
 [repository documentation](https://github.com/aoirint/BeeOverlay/tree/main/docs).
+
+## AI Disclosure
+
+Some parts of this project were developed with AI tools based on large language
+models (LLMs), including agent-based tools. The project maintainer reviews the
+code. This disclosure is made in compliance with Thunderstore and community
+policies.

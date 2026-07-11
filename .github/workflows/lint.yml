@@ -123,6 +123,9 @@ jobs:
           tar -xzf "${archive_path}" -C "${tool_dir}" actionlint
           echo "${tool_dir}" >> "${GITHUB_PATH}"
 
+      - name: Lint Thunderstore publisher
+        run: shellcheck .github/actions/publish-thunderstore/publish-thunderstore.sh
+
       - name: Run actionlint
         # ShellCheck is installed above so actionlint can inspect inline shell
         # scripts. Revisit the pyflakes disablement if Python is added.
