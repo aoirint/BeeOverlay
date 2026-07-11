@@ -11,12 +11,12 @@ Use repository-local Agent Skills from:
 - Keep `docs/red_locust_bees.md` focused on the implementation and behavior of
   Lethal Company's `RedLocustBees`. Put BeeOverlay UI, visualization, and
   architecture decisions in `docs/architecture.md`.
-- Record the target game version and Steam manifest ID. When the target version
-  changes, update both values and replace the findings in the existing document
-  instead of creating version-specific copies.
 
 ## Analysis Document Structure
 
+- Record the target game version and Steam manifest ID. When the target version
+  changes, update both values and replace the findings in the existing document
+  instead of creating version-specific copies.
 - Name the owning class for documented members and methods. For example, use
   `ClassName.MethodName()` rather than `MethodName()` in headings.
 - Add related game classes under `Observed members` in their own class-named
