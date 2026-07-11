@@ -1,5 +1,7 @@
 # Agent Instructions
 
+## Agent Skills
+
 Use repository-local Agent Skills from:
 
 - `.agents/skills/`
