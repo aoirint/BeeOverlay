@@ -1,11 +1,13 @@
-# RedLocustBees v73 解析メモ
+# RedLocustBees 解析メモ
 
-この資料は、Lethal Company v73 系の `RedLocustBees` について、BeeOverlay が可視化する state 0 維持・遷移条件をまとめた開発者向け解析メモです。
+この資料は、BeeOverlay が可視化する `RedLocustBees` の state 0 維持・遷移条件をまとめた開発者向け解析メモです。
+現在の対象ゲームバージョンは Lethal Company v73 系です。
+ゲームの対応バージョンを更新する際は、バージョン別の資料を追加せず、このファイルの解析結果を新しいバージョン向けに置き換えます。
 実装構成と表示の設計は [architecture.md](architecture.md) を参照してください。
 
 ## 対象と目的
 
-- 対象: Lethal Company v73 系の `RedLocustBees`
+- 対象: 現在は Lethal Company v73 系の `RedLocustBees`
 - 調査目的: 蜂を state 0 から遷移させない場所を判断する
 - 対象範囲: state 0 から state 1 および state 2 へ移る際の空間条件
 

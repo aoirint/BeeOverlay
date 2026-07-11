@@ -1,7 +1,7 @@
 # BeeOverlay アーキテクチャ
 
 BeeOverlay は、Lethal Company の `RedLocustBees` に関する state 0 の空間条件を、HUD と 3D ガイドで同じフレームに可視化する診断用MODです。
-ゲーム側 v73 の解析結果は [red_locust_bees_v73.md](red_locust_bees_v73.md) を参照してください。
+ゲーム側の現行バージョンに対する解析結果は [red_locust_bees.md](red_locust_bees.md) を参照してください。
 
 ## 構成
 
