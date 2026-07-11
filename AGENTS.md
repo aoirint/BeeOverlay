@@ -27,10 +27,20 @@ When creating or updating implementation-analysis documentation:
 - Record the target game version and Steam manifest ID. When the target version
   changes, update both values and replace the findings in the existing document
   instead of creating version-specific copies.
-- Name the owning class for documented members and methods. For example, use
-  `ClassName.MethodName()` rather than `MethodName()` in headings.
-- Add related game classes under `Observed members` in their own class-named
-  subsection, and explain how each one affects the primary subject class.
+- Separate the implementation reference from behavior analysis. The reference
+  identifies the code to inspect; the analysis records what the implementation
+  does.
+- Use an `Implementation reference` section for fields and methods relevant to
+  the analysis. Do not call it an implementation surface when it includes
+  non-public members.
+- Group the reference by owning class using class-named subsections. Within
+  such a subsection, list member and method names without repeating the class
+  name. Use qualified names such as `ClassName.MethodName()` in headings,
+  cross-references, and other contexts where the owner is not already clear.
+- List fields and methods separately. For each field, record its C# type and
+  role; for each method, record its return type, parameters, and role.
+- Add related game classes in their own class-named subsection, and explain
+  how each one affects the primary subject class.
 
 ### Evidence and reasoning
 

@@ -14,11 +14,11 @@ This document records observed implementation behavior of Lethal Company's
 `RedLocustBees` class. It does not document UI, visualization, or architecture
 decisions.
 
-## Implementation surface
+## Implementation reference
 
 ### `EnemyAI`
 
-`RedLocustBees` inherits the following `EnemyAI` implementation surface.
+`RedLocustBees` inherits the following `EnemyAI` members.
 
 #### Fields
 
