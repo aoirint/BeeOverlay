@@ -1,16 +1,16 @@
-# Lethal Company Class Analysis
+# RedLocustBees Class Analysis
 
-This reference records observed members and state-transition conditions of Lethal Company game classes.
+This reference records observed members and state-transition conditions of Lethal Company's `RedLocustBees` class.
 
 The target game version is Lethal Company v73.
 When updating the supported game version, replace this file's analysis with findings for the new version instead of adding version-specific documents.
 
-## RedLocustBees
+## Observed members
 
 `RedLocustBees` is a game-supplied Lethal Company class that represents red locust bee behavior.
-This section covers observed `RedLocustBees` members and spatial conditions for transitions from state 0 to states 1 and 2.
+Related game classes can be added here in their own class-named subsections when they affect `RedLocustBees` behavior.
 
-### Observed members
+### `RedLocustBees`
 
 - `thisEnemyIndex`: stable per-bee key used for tracking.
 - `hive`: the current hive and its `transform.position`.
@@ -21,26 +21,28 @@ This section covers observed `RedLocustBees` members and spatial conditions for 
 
 If `syncedLastKnownHivePosition` cannot be read, treat its state as unknown rather than false.
 
-### State 0 to state 1 conditions
+## State transitions
 
-#### Player line of sight
+### `RedLocustBees`: state 0 to state 1
+
+#### `RedLocustBees.CheckLineOfSightForPlayer()`
 
 `CheckLineOfSightForPlayer(360f, 16, 1)` checks whether the bee can see the local player from its eye.
 Its distance gate is 16 units.
 
 - Sight checks and distance calculations use the local player's actual position.
 
-#### Hive proximity
+#### `RedLocustBees.defenseDistance`
 
 Compare the distance between the local player's body and the hive with `RedLocustBees.defenseDistance`.
 This check uses the player's body position, not the camera position.
 
-### State 0 to state 2 conditions
+### `RedLocustBees`: state 0 to state 2
 
-The following observations cover the spatial gates related to `IsHiveMissing()`.
+The following observations cover the spatial gates related to `RedLocustBees.IsHiveMissing()`.
 The actual transition also depends on game-side conditions, including hive state.
 
-#### `IsHiveMissing()` spatial gates
+#### `RedLocustBees.IsHiveMissing()` spatial gates
 
 Use `lastKnownHivePosition` as the reference point and check these conditions from the bee's eye:
 
