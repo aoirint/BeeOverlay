@@ -1,71 +1,71 @@
-# RedLocustBees 解析メモ
+# RedLocustBees Analysis Notes
 
-この資料は、BeeOverlay が可視化する `RedLocustBees` の state 0 維持・遷移条件をまとめた開発者向け解析メモです。
-現在の対象ゲームバージョンは Lethal Company v73 系です。
-ゲームの対応バージョンを更新する際は、バージョン別の資料を追加せず、このファイルの解析結果を新しいバージョン向けに置き換えます。
-実装構成と表示の設計は [architecture.md](architecture.md) を参照してください。
+This developer reference documents the state 0 retention and transition conditions of `RedLocustBees` visualized by BeeOverlay.
+The current target game version is Lethal Company v73.
+When updating the supported game version, replace this file's analysis with findings for the new version instead of adding version-specific documents.
+See [architecture.md](architecture.md) for the implementation and visualization design.
 
-## 対象と目的
+## Scope and goal
 
-- 対象: 現在は Lethal Company v73 系の `RedLocustBees`
-- 調査目的: 蜂を state 0 から遷移させない場所を判断する
-- 対象範囲: state 0 から state 1 および state 2 へ移る際の空間条件
+- Target: `RedLocustBees` in the current Lethal Company v73 release line.
+- Goal: identify locations that keep bees from leaving state 0.
+- Scope: spatial conditions for transitions from state 0 to states 1 and 2.
 
-## 観測するゲーム側のデータ
+## Game data observed
 
-- `thisEnemyIndex`: 蜂ごとの安定した追跡用キー。
-- `hive`: 現在の hive と、その `transform.position`。
-- `eye`: 視線判定の始点。存在しない場合は蜂本体位置を代用する。
-- `defenseDistance`: hive とローカルプレイヤー間の近接判定に使う距離。
-- `lastKnownHivePosition`: hive 不明時の位置判定に使う記憶済み座標。
-- `syncedLastKnownHivePosition`: private field。同期済みかを判定するため、Harmony の `AccessTools.FieldRefAccess` で読み取る。
+- `thisEnemyIndex`: stable per-bee key used for tracking.
+- `hive`: the current hive and its `transform.position`.
+- `eye`: origin for sight checks; the bee's body position is used when it is unavailable.
+- `defenseDistance`: distance used for the proximity check between the hive and local player.
+- `lastKnownHivePosition`: remembered position used when evaluating a missing hive.
+- `syncedLastKnownHivePosition`: private field read with Harmony's `AccessTools.FieldRefAccess` to determine whether the remembered position has synchronized.
 
-`syncedLastKnownHivePosition` を読み取れない場合は、状態を false と見なさず「不明」として扱う必要があります。
+If `syncedLastKnownHivePosition` cannot be read, treat its state as unknown rather than false.
 
-## state 0 から state 1 への条件
+## State 0 to state 1 conditions
 
-### プレイヤー視認
+### Player line of sight
 
-`CheckLineOfSightForPlayer(360f, 16, 1)` は、蜂 eye を始点にローカルプレイヤーを視認できるかを確認します。
-距離ゲートは 16u です。
+`CheckLineOfSightForPlayer(360f, 16, 1)` checks whether the bee can see the local player from its eye.
+Its distance gate is 16 units.
 
-- 視線判定と距離計算は、ローカルプレイヤーの実座標を使う。
-- 描画上の視認線だけは、ちらつく赤線が視界中央を横切ることを抑えるため、プレイヤー側の端を 0.35u 下げる。
-- `bee-hive` の表示は、プレイヤーが hive を拾う瞬間を `player ≒ hive` と見なすための事前予測であり、プレイヤー collider 自体を判定するものではない。
+- Sight checks and distance calculations use the local player's actual position.
+- The rendered sight line lowers only the player-side endpoint by 0.35 units so a flickering red line is less likely to cross the center of the view.
+- The `bee-hive` display is a predictive proxy: it treats a player picking up the hive as `player ≒ hive`; it does not test the player's collider itself.
 
-### hive 周辺の近接
+### Hive proximity
 
-ローカルプレイヤー本体と hive の距離を `RedLocustBees.defenseDistance` と比較します。
-この判定はカメラ位置ではなくプレイヤー本体位置を使います。
+Compare the distance between the local player's body and the hive with `RedLocustBees.defenseDistance`.
+This check uses the player's body position, not the camera position.
 
-### hive pickup proxy
+### Hive pickup proxy
 
-蜂 eye から現在の hive 位置への linecast と距離を調べます。
+Check the linecast and distance from the bee's eye to the current hive position.
 
-- 16u 未満かつ linecast clear のとき、hive 位置で拾うプレイヤーを蜂が見られる可能性が高い。
-- linecast blocked または 16u 以上のとき、この空間条件は満たされない。
+- When the distance is below 16 units and the linecast is clear, the bee is likely able to see a player picking up the hive at that position.
+- When the linecast is blocked or the distance is at least 16 units, this spatial condition is not met.
 
-## state 0 から state 2 への条件
+## State 0 to state 2 conditions
 
-state 0 から state 1 を避けることが主目的のため、state 2 側は `IsHiveMissing()` に関係する空間ゲートだけを扱います。
-実際の遷移は hive 状態も含むゲーム側の条件に依存します。
+Because avoiding the state 0 to state 1 transition is the primary goal, only the spatial gates related to `IsHiveMissing()` are considered for state 2.
+The actual transition still depends on game-side conditions, including hive state.
 
-### IsHiveMissing() の空間ゲート
+### `IsHiveMissing()` spatial gates
 
-`lastKnownHivePosition` を基準に、蜂 eye から次の条件を確認します。
+Use `lastKnownHivePosition` as the reference point and check these conditions from the bee's eye:
 
-- 4u 未満なら近距離ゲートに入る。
-- 8u 未満かつ linecast clear なら視線ゲートに入る。
-- `syncedLastKnownHivePosition` が false のときは評価しない。
+- A distance below 4 units enters the near-distance gate.
+- A distance below 8 units with a clear linecast enters the line-of-sight gate.
+- Do not evaluate the condition when `syncedLastKnownHivePosition` is false.
 
-`hive.isHeld` は意図的に可視化しません。
-この資料とBeeOverlayの目的は、持っていると仮定したときに state 2 へ落ちうる位置を判断することです。
+`hive.isHeld` is intentionally not visualized.
+The purpose of this reference and BeeOverlay is to identify positions that could lead to state 2 assuming the hive is held.
 
-## 表示用の解釈
+## Visualization meanings
 
-BeeOverlay は状態遷移そのものを決定せず、ゲーム側の空間条件を可視化します。
+BeeOverlay does not decide state transitions; it visualizes the game-side spatial conditions.
 
-- `SEEN`: 視認できている、または対象の距離・linecast 条件を満たす。
-- `blocked`: 視認できない、linecast が遮られている、または距離条件を満たさない。
-- `INSIDE`: `defenseDistance` 内。
-- `outside`: `defenseDistance` 外。
+- `SEEN`: visible, or the relevant distance and linecast conditions are satisfied.
+- `blocked`: not visible, the linecast is obstructed, or the distance condition is not satisfied.
+- `INSIDE`: within `defenseDistance`.
+- `outside`: outside `defenseDistance`.

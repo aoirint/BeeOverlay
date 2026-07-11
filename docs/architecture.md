@@ -1,47 +1,47 @@
-# BeeOverlay アーキテクチャ
+# BeeOverlay Architecture
 
-BeeOverlay は、Lethal Company の `RedLocustBees` に関する state 0 の空間条件を、HUD と 3D ガイドで同じフレームに可視化する診断用MODです。
-ゲーム側の現行バージョンに対する解析結果は [red_locust_bees.md](red_locust_bees.md) を参照してください。
+BeeOverlay is a diagnostic mod that visualizes state 0 spatial conditions for Lethal Company's `RedLocustBees` in the HUD and as 3D guides from the same frame.
+See [red_locust_bees.md](red_locust_bees.md) for analysis of the current game version.
 
-## 構成
+## Components
 
-- エントリーポイント: `BeeOverlay/Plugin.cs` の `Plugin`。
-- 更新契機: `HUDManager.Update` の Harmony postfix。
-- 表示管理: `Overlay`。
-- 蜂ごとのワールド表示: `BeeView`。
+- Entry point: `Plugin` in `BeeOverlay/Plugin.cs`.
+- Update hook: Harmony postfix on `HUDManager.Update`.
+- Display manager: `Overlay`.
+- Per-bee world display: `BeeView`.
 
-`Plugin.Awake()` が `Overlay` を作成し、Harmony patch を適用します。
-`Overlay.Tick()` は毎フレーム、HUDの準備、蜂の列挙、ワールドガイドの描画、左上ステータスの再構築を行います。
+`Plugin.Awake()` creates the `Overlay` and applies the Harmony patches.
+`Overlay.Tick()` prepares the HUD, enumerates bees, renders world guides, and rebuilds the upper-left status every frame.
 
-## HUD のライフサイクル
+## HUD lifecycle
 
-`Overlay` は `HUDManager.Instance.HUDContainer` 配下に左上ステータスUIを作成します。
-HUDコンテナが存在しない、またはシーン遷移で親が変わった場合は、古い表示を隠して再作成します。
+`Overlay` creates the upper-left status UI under `HUDManager.Instance.HUDContainer`.
+If no HUD container exists, or its parent changes during a scene transition, the overlay hides its old displays and recreates them.
 
-- `RedLocustBees` は `thisEnemyIndex` 順に並べる。
-- HUDの `bee:*` 番号は、ソート後の 1 始まりの連番。
-- `BeeView` の内部キーとログは、追跡しやすさのため `thisEnemyIndex` を使う。
-- ステータスはキャッシュせず、毎フレーム組み立てる。これにより despawn や不完全な navigation data による古い行が残らない。
+- `RedLocustBees` are sorted by `thisEnemyIndex`.
+- HUD `bee:*` labels use one-based ordinals after sorting.
+- `BeeView` internal keys and logs use `thisEnemyIndex` for stable tracking.
+- The status is rebuilt each frame rather than cached, so stale rows disappear when a bee despawns or has incomplete navigation data.
 
-## 3D ガイド
+## 3D guides
 
-hive を持つ蜂について、state 0 維持に関係する空間条件だけを描画します。
+For bees with a hive, the overlay renders only the spatial conditions relevant to retaining state 0.
 
-| 対象 | 表示 | 色 |
+| Subject | Display | Color |
 | --- | --- | --- |
-| hive | `defenseDistance` の水平円とマーカー | 緑 |
-| `lastKnownHivePosition` | マーカー、4u円、8u円、蜂 eye からの線 | 青系 |
-| bee eye | 視認距離の水平円とマーカー | 黄色 |
-| ローカルプレイヤー | bee eye からの視認線とマーカー | 赤 |
-| 現在の hive への視線 | bee eye から hive への線 | 白、条件外はグレー |
-| inactive / blocked | 線 | グレー |
+| Hive | `defenseDistance` horizontal ring and marker | Green |
+| `lastKnownHivePosition` | Marker, 4-unit ring, 8-unit ring, and line from the bee eye | Blue shades |
+| Bee eye | Sight-range horizontal ring and marker | Yellow |
+| Local player | Sight line from the bee eye and marker | Red |
+| Sight to current hive | Line from the bee eye to the hive | White; gray when the condition is not met |
+| Inactive or blocked | Lines | Gray |
 
-マーカーは、地形・hive メッシュ・蜂本体に埋もれないよう、サンプル座標から少し上に描画します。
-ワールドマーカーの collider は削除し、ゲームの物理、raycast、近傍 collider を調べる他MODの挙動を変えないようにします。
+Markers are drawn slightly above their sampled positions so terrain, hive meshes, and bee bodies do not obscure them.
+World-marker colliders are removed so the overlay cannot affect gameplay physics, raycasts, or other mods that inspect nearby colliders.
 
-## 左上ステータス
+## Upper-left status
 
-ステータスは次の形式です。
+The status uses this format:
 
 ```text
 Bee Overlay | bees=2
@@ -49,32 +49,32 @@ bee:1  bee-player=6.20u/SEEN  hive-player=5.12u/INSIDE  bee-hive=7.10u/SEEN  bee
 bee:2  bee-player=10.85u/blocked  hive-player=8.34u/outside  bee-hive=9.44u/blocked  bee-knownHive=9.80u/blocked
 ```
 
-- `bee-player`: 蜂 eye からローカルプレイヤー本体までの距離と、ローカルプレイヤーを見ているか。
-- `hive-player`: hive からローカルプレイヤー本体までの距離と、`defenseDistance` 内か。
-- `bee-hive`: 蜂 eye から現在の hive までの距離と、16u 未満かつ linecast clear か。
-- `bee-knownHive`: 蜂 eye から `lastKnownHivePosition` までの距離と、linecast clear か。
+- `bee-player`: distance from the bee eye to the local player's body and whether the bee sees the local player.
+- `hive-player`: distance from the hive to the local player's body and whether it is within `defenseDistance`.
+- `bee-hive`: distance from the bee eye to the current hive and whether it is below 16 units with a clear linecast.
+- `bee-knownHive`: distance from the bee eye to `lastKnownHivePosition` and whether the linecast is clear.
 
-HUD文字色はワールドの固有色に合わせます。`bee-player` は赤、`hive-player` は緑、`bee:*` は黄色、`bee-hive` は白、`bee-knownHive` は青です。
+HUD text colors match the world-display entity colors: red for `bee-player`, green for `hive-player`, yellow for `bee:*`, white for `bee-hive`, and blue for `bee-knownHive`.
 
-## ログ方針
+## Logging policy
 
-通常の heartbeat ログは出しません。
-距離、視認、state 0 維持に関係する情報は、HUD と 3D表示へ集約します。
-ログが必要な場合は、調査対象を絞った一時ログとして追加します。
+The mod does not emit regular heartbeat logs.
+Distance, visibility, and state 0 retention information are consolidated in the HUD and 3D display.
+When logs are needed, add temporary logging focused on a specific investigation target.
 
-## 動作確認
+## Verification
 
-ビルドは次のコマンドで確認します。
+Build with:
 
 ```powershell
 dotnet build BeeOverlay.sln -c Release
 ```
 
-ゲーム内では次を確認します。
+In game, verify the following:
 
-- 左上に `Bee Overlay | bees=N` が表示される。
-- hive 周囲に緑の `defenseDistance` 円が表示される。
-- 蜂とローカルプレイヤーの線は、視認中は赤、非視認時はグレーになる。
-- 蜂 eye から hive への緑またはグレーの線が表示される。
-- `lastKnownHivePosition` の青点、4uの中間青円、8uの薄い青円が表示される。
-- `IsHiveMissing()` の空間ゲートが成立しうるとき、蜂 eye から `lastKnownHivePosition` への線が青になる。
+- `Bee Overlay | bees=N` appears in the upper-left corner.
+- A green `defenseDistance` ring appears around each hive.
+- The bee-to-local-player line is red when the bee sees the player and gray otherwise.
+- A green or gray line appears from the bee eye to the hive.
+- A blue marker, intermediate 4-unit ring, and lighter 8-unit ring appear for `lastKnownHivePosition`.
+- The line from the bee eye to `lastKnownHivePosition` is blue when the spatial gate for `IsHiveMissing()` could be satisfied.
