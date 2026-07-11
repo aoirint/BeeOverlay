@@ -1,53 +1,62 @@
 # RedLocustBees Implementation Analysis
 
-This reference records observed members and state-transition conditions of Lethal Company's `RedLocustBees` class.
+## Target
 
-The target game version is Lethal Company v73.
-When updating the supported game version, replace this file's analysis with findings for the new version instead of adding version-specific documents.
+- Game: Lethal Company v73
+- Steam manifest ID: `1749099131234587692`
 
-## Observed members
+When the target version changes, update both identifiers and replace the
+observations in this document rather than creating a version-specific copy.
 
-`RedLocustBees` is a game-supplied Lethal Company class that represents red locust bee behavior.
-Related game classes can be added here in their own class-named subsections when they affect `RedLocustBees` behavior.
+## Scope
 
-### `RedLocustBees`
+This document records observed implementation behavior of Lethal Company's
+`RedLocustBees` class. It does not document BeeOverlay UI, visualization, or
+architecture decisions.
 
-- `thisEnemyIndex`: stable per-bee key used for tracking.
-- `hive`: the current hive and its `transform.position`.
-- `eye`: origin for sight checks; the bee's body position is used when it is unavailable.
-- `defenseDistance`: distance used for the proximity check between the hive and local player.
-- `lastKnownHivePosition`: remembered position used when evaluating a missing hive.
-- `syncedLastKnownHivePosition`: private field read with Harmony's `AccessTools.FieldRefAccess` to determine whether the remembered position has synchronized.
+## Confirmed observations
 
-If `syncedLastKnownHivePosition` cannot be read, treat its state as unknown rather than false.
+### `RedLocustBees` members
 
-## State transitions
+- `RedLocustBees.thisEnemyIndex`: stable per-bee tracking key.
+- `RedLocustBees.hive`: current hive reference; the hive position is available
+  from `RedLocustBees.hive.transform.position`.
+- `RedLocustBees.eye`: origin used for sight checks.
+- `RedLocustBees.defenseDistance`: distance used for hive-proximity checks.
+- `RedLocustBees.lastKnownHivePosition`: remembered hive position used by
+  missing-hive evaluation.
+- `RedLocustBees.syncedLastKnownHivePosition`: private synchronization flag for
+  `RedLocustBees.lastKnownHivePosition`.
 
 ### `RedLocustBees`: state 0 to state 1
 
 #### `RedLocustBees.CheckLineOfSightForPlayer()`
 
-`CheckLineOfSightForPlayer(360f, 16, 1)` checks whether the bee can see the local player from its eye.
-Its distance gate is 16 units.
-
-- Sight checks and distance calculations use the local player's actual position.
+`RedLocustBees.CheckLineOfSightForPlayer(360f, 16, 1)` checks whether the bee
+can see the local player from `RedLocustBees.eye`. Its distance gate is 16
+units.
 
 #### `RedLocustBees.defenseDistance`
 
-Compare the distance between the local player's body and the hive with `RedLocustBees.defenseDistance`.
-This check uses the player's body position, not the camera position.
+`RedLocustBees.defenseDistance` is compared with the distance between the hive
+and the local player's body position. This check uses the body position rather
+than the camera position.
 
 ### `RedLocustBees`: state 0 to state 2
 
-The following observations cover the spatial gates related to `RedLocustBees.IsHiveMissing()`.
-The actual transition also depends on game-side conditions, including hive state.
-
 #### `RedLocustBees.IsHiveMissing()` spatial gates
 
-Use `lastKnownHivePosition` as the reference point and check these conditions from the bee's eye:
+The following spatial gates were observed inside
+`RedLocustBees.IsHiveMissing()`:
 
-- A distance below 4 units enters the near-distance gate.
-- A distance below 8 units with a clear linecast enters the line-of-sight gate.
-- Do not evaluate the condition when `syncedLastKnownHivePosition` is false.
+- A distance below 4 units from `RedLocustBees.eye` to
+  `RedLocustBees.lastKnownHivePosition` enters the near-distance gate.
+- A distance below 8 units with a clear linecast between
+  `RedLocustBees.eye` and `RedLocustBees.lastKnownHivePosition` enters the
+  line-of-sight gate.
+- The spatial gates are not evaluated when
+  `RedLocustBees.syncedLastKnownHivePosition` is false.
 
-`hive.isHeld` is not part of these spatial gates.
+`RedLocustBees.IsHiveMissing()` also depends on hive state. These observations
+describe its spatial gates only; they do not claim to enumerate every condition
+that can cause a state transition.
