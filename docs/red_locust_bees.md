@@ -16,16 +16,18 @@ decisions.
 
 ## Implementation surface
 
-### `EnemyAI` members inherited by `RedLocustBees`
+### `EnemyAI`
 
-`RedLocustBees` inherits these `EnemyAI` members:
+`RedLocustBees` inherits the following `EnemyAI` implementation surface.
+
+#### Fields
 
 | Member | C# type | Role in `RedLocustBees` behavior |
 | --- | --- | --- |
 | `EnemyAI.thisEnemyIndex` | `int` | Stable per-bee tracking key. |
 | `EnemyAI.eye` | `Transform` | Origin used for sight checks. |
 
-#### `EnemyAI.CheckLineOfSightForPlayer()`
+#### Methods
 
 `RedLocustBees` inherits this method from `EnemyAI`:
 
@@ -40,7 +42,9 @@ PlayerControllerB EnemyAI.CheckLineOfSightForPlayer(
 Role: finds a player that satisfies the configured sight-check parameters for
 enemy AI behavior.
 
-### `RedLocustBees` members
+### `RedLocustBees`
+
+#### Fields
 
 | Member | C# type | Role |
 | --- | --- | --- |
@@ -49,7 +53,7 @@ enemy AI behavior.
 | `RedLocustBees.lastKnownHivePosition` | `Vector3` | Remembered hive position used by missing-hive evaluation. |
 | `RedLocustBees.syncedLastKnownHivePosition` | `bool` | Private synchronization flag for `RedLocustBees.lastKnownHivePosition`. |
 
-#### `RedLocustBees.IsHiveMissing()`
+#### Methods
 
 ```csharp
 bool RedLocustBees.IsHiveMissing()
