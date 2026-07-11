@@ -1,6 +1,7 @@
 # BeeOverlay
 
-[![CI](https://github.com/aoirint/BeeOverlay/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aoirint/BeeOverlay/actions/workflows/ci.yml)
+[![Build](https://github.com/aoirint/BeeOverlay/actions/workflows/build.yml/badge.svg)](https://github.com/aoirint/BeeOverlay/actions/workflows/build.yml)
+[![Lint](https://github.com/aoirint/BeeOverlay/actions/workflows/lint.yml/badge.svg)](https://github.com/aoirint/BeeOverlay/actions/workflows/lint.yml)
 
 BeeOverlay is a diagnostic overlay mod for Lethal Company. It visualizes the
 state-related spatial checks used by `RedLocustBees`, including the bee, hive,
@@ -23,7 +24,7 @@ The current analysis and implementation target Lethal Company v73.
 Install the .NET 10 SDK, then restore packages and build the solution.
 
 ```powershell
-dotnet restore BeeOverlay.sln
+dotnet restore BeeOverlay.sln --locked-mode
 dotnet build BeeOverlay.sln --configuration Release
 ```
 

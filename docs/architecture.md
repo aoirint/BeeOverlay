@@ -1,6 +1,8 @@
 # BeeOverlay Architecture
 
-BeeOverlay is a diagnostic mod that visualizes state 0 spatial conditions for Lethal Company's `RedLocustBees` in the HUD and as 3D guides from the same frame.
+BeeOverlay is a diagnostic mod that visualizes state 0 spatial conditions for
+Lethal Company's `RedLocustBees` in the HUD and as 3D guides from the same
+frame.
 See [red_locust_bees.md](red_locust_bees.md) for analysis of the current game version.
 
 ## Components
@@ -11,17 +13,20 @@ See [red_locust_bees.md](red_locust_bees.md) for analysis of the current game ve
 - Per-bee world display: `BeeView`.
 
 `Plugin.Awake()` creates the `Overlay` and applies the Harmony patches.
-`Overlay.Tick()` prepares the HUD, enumerates bees, renders world guides, and rebuilds the upper-left status every frame.
+`Overlay.Tick()` prepares the HUD, enumerates bees, renders world guides, and
+rebuilds the upper-left status every frame.
 
 ## HUD lifecycle
 
 `Overlay` creates the upper-left status UI under `HUDManager.Instance.HUDContainer`.
-If no HUD container exists, or its parent changes during a scene transition, the overlay hides its old displays and recreates them.
+If no HUD container exists, or its parent changes during a scene transition,
+the overlay hides its old displays and recreates them.
 
 - `RedLocustBees` are sorted by `thisEnemyIndex`.
 - HUD `bee:*` labels use one-based ordinals after sorting.
 - `BeeView` internal keys and logs use `thisEnemyIndex` for stable tracking.
-- The status is rebuilt each frame rather than cached, so stale rows disappear when a bee despawns or has incomplete navigation data.
+- The status is rebuilt each frame rather than cached, so stale rows disappear
+  when a bee despawns or has incomplete navigation data.
 
 ## 3D guides
 
@@ -37,13 +42,16 @@ For bees with a hive, the overlay renders only the spatial conditions relevant t
 | Inactive or blocked | Lines | Gray |
 
 Markers are drawn slightly above their sampled positions so terrain, hive meshes, and bee bodies do not obscure them.
-World-marker colliders are removed so the overlay cannot affect gameplay physics, raycasts, or other mods that inspect nearby colliders.
+World-marker colliders are removed so the overlay cannot affect gameplay
+physics, raycasts, or other mods that inspect nearby colliders.
 
 ### Rendering conventions
 
-- The player-side endpoint of the rendered sight line is lowered by 0.35 units so a flickering red line is less likely to cross the center of the view.
+- The player-side endpoint of the rendered sight line is lowered by 0.35 units
+  so a flickering red line is less likely to cross the center of the view.
 - The `bee-hive` HUD label is a predictive pickup proxy, not a player-collider visibility check.
-- `hive.isHeld` is intentionally not visualized. The overlay focuses on positions that could lead to state 2 if the hive is held.
+- `hive.isHeld` is intentionally not visualized. The overlay focuses on
+  positions that could lead to state 2 if the hive is held.
 - `SEEN` means that a target is visible or that the relevant distance and linecast conditions are satisfied.
 - `blocked` means that a target is not visible, the linecast is obstructed, or the distance condition is not satisfied.
 - `INSIDE` and `outside` indicate whether the local player is within `defenseDistance`.
@@ -63,7 +71,9 @@ bee:2  bee-player=10.85u/blocked  hive-player=8.34u/outside  bee-hive=9.44u/bloc
 - `bee-hive`: distance from the bee eye to the current hive and whether it is below 16 units with a clear linecast.
 - `bee-knownHive`: distance from the bee eye to `lastKnownHivePosition` and whether the linecast is clear.
 
-HUD text colors match the world-display entity colors: red for `bee-player`, green for `hive-player`, yellow for `bee:*`, white for `bee-hive`, and blue for `bee-knownHive`.
+HUD text colors match the world-display entity colors: red for `bee-player`,
+green for `hive-player`, yellow for `bee:*`, white for `bee-hive`, and blue for
+`bee-knownHive`.
 
 ## Logging policy
 
