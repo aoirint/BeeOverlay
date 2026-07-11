@@ -18,6 +18,8 @@ When creating or updating implementation-analysis documentation:
 
 ### Documentation structure
 
+- Organize analysis documentation into separate files by concern. Keep one
+  concern per file, and add a file when a new independent concern emerges.
 - Record the target game version and Steam manifest ID. When the target version
   changes, update both values and replace the findings in the existing document
   instead of creating version-specific copies.
