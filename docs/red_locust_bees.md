@@ -24,14 +24,14 @@ decisions.
 
 | Member | C# type | Role in `RedLocustBees` behavior |
 | --- | --- | --- |
-| `EnemyAI.thisEnemyIndex` | `int` | Stable per-bee tracking key. |
-| `EnemyAI.eye` | `Transform` | Origin used for sight checks. |
+| `thisEnemyIndex` | `int` | Stable per-bee tracking key. |
+| `eye` | `Transform` | Origin used for sight checks. |
 
 #### Methods
 
 | Method | Return type | Parameters | Role |
 | --- | --- | --- | --- |
-| `EnemyAI.CheckLineOfSightForPlayer` | `PlayerControllerB` | `float width`, `int range`, `int proximityAwareness` | Finds a player that satisfies the configured sight-check parameters for enemy AI behavior. |
+| `CheckLineOfSightForPlayer` | `PlayerControllerB` | `float width`, `int range`, `int proximityAwareness` | Finds a player that satisfies the configured sight-check parameters for enemy AI behavior. |
 
 ### `RedLocustBees`
 
@@ -39,16 +39,16 @@ decisions.
 
 | Member | C# type | Role |
 | --- | --- | --- |
-| `RedLocustBees.hive` | `GrabbableObject` | Current hive reference; its position is available from `RedLocustBees.hive.transform.position`. |
-| `RedLocustBees.defenseDistance` | `int` | Distance used for hive-proximity checks. |
-| `RedLocustBees.lastKnownHivePosition` | `Vector3` | Remembered hive position used by missing-hive evaluation. |
-| `RedLocustBees.syncedLastKnownHivePosition` | `bool` | Private synchronization flag for `RedLocustBees.lastKnownHivePosition`. |
+| `hive` | `GrabbableObject` | Current hive reference; its position is available from `RedLocustBees.hive.transform.position`. |
+| `defenseDistance` | `int` | Distance used for hive-proximity checks. |
+| `lastKnownHivePosition` | `Vector3` | Remembered hive position used by missing-hive evaluation. |
+| `syncedLastKnownHivePosition` | `bool` | Private synchronization flag for `RedLocustBees.lastKnownHivePosition`. |
 
 #### Methods
 
 | Method | Return type | Parameters | Role |
 | --- | --- | --- | --- |
-| `RedLocustBees.IsHiveMissing` | `bool` | None | Evaluates whether `RedLocustBees` considers its hive missing. |
+| `IsHiveMissing` | `bool` | None | Evaluates whether `RedLocustBees` considers its hive missing. |
 
 ## Behavior analysis
 
