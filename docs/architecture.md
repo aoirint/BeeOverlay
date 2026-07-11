@@ -39,6 +39,15 @@ For bees with a hive, the overlay renders only the spatial conditions relevant t
 Markers are drawn slightly above their sampled positions so terrain, hive meshes, and bee bodies do not obscure them.
 World-marker colliders are removed so the overlay cannot affect gameplay physics, raycasts, or other mods that inspect nearby colliders.
 
+### Rendering conventions
+
+- The player-side endpoint of the rendered sight line is lowered by 0.35 units so a flickering red line is less likely to cross the center of the view.
+- The `bee-hive` HUD label is a predictive pickup proxy, not a player-collider visibility check.
+- `hive.isHeld` is intentionally not visualized. The overlay focuses on positions that could lead to state 2 if the hive is held.
+- `SEEN` means that a target is visible or that the relevant distance and linecast conditions are satisfied.
+- `blocked` means that a target is not visible, the linecast is obstructed, or the distance condition is not satisfied.
+- `INSIDE` and `outside` indicate whether the local player is within `defenseDistance`.
+
 ## Upper-left status
 
 The status uses this format:

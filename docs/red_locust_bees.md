@@ -30,8 +30,7 @@ If `syncedLastKnownHivePosition` cannot be read, treat its state as unknown rath
 Its distance gate is 16 units.
 
 - Sight checks and distance calculations use the local player's actual position.
-- The rendered sight line lowers only the player-side endpoint by 0.35 units so a flickering red line is less likely to cross the center of the view.
-- The `bee-hive` display is a predictive proxy: it treats a player picking up the hive as `player ≒ hive`; it does not test the player's collider itself.
+- The hive pickup proxy treats a player picking up the hive as `player ≒ hive`; it does not test the player's collider itself.
 
 ### Hive proximity
 
@@ -58,14 +57,5 @@ Use `lastKnownHivePosition` as the reference point and check these conditions fr
 - A distance below 8 units with a clear linecast enters the line-of-sight gate.
 - Do not evaluate the condition when `syncedLastKnownHivePosition` is false.
 
-`hive.isHeld` is intentionally not visualized.
-The purpose of this reference and BeeOverlay is to identify positions that could lead to state 2 assuming the hive is held.
-
-## Visualization meanings
-
-BeeOverlay does not decide state transitions; it visualizes the game-side spatial conditions.
-
-- `SEEN`: visible, or the relevant distance and linecast conditions are satisfied.
-- `blocked`: not visible, the linecast is obstructed, or the distance condition is not satisfied.
-- `INSIDE`: within `defenseDistance`.
-- `outside`: outside `defenseDistance`.
+This analysis excludes `hive.isHeld`.
+Its purpose is to identify positions that could lead to state 2 assuming the hive is held.
