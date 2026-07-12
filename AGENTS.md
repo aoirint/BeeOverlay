@@ -23,6 +23,19 @@ Use repository-local Agent Skills from:
 When changing `assets/icon.svg` or regenerating `assets/icon.png`, follow
 `docs/icon-authoring.md`.
 
+## Local Prerelease Builds
+
+When building a prerelease DLL for local installation or runtime validation,
+pass a BepInEx-compatible plugin metadata version:
+
+```powershell
+dotnet build BeeOverlay.sln -c Release /p:BepInExPluginVersion=0.0.0
+```
+
+BepInEx 5 validates plugin metadata as `System.Version` and rejects SemVer
+prerelease suffixes. Keep the project `Version` as the release identity; do
+not add a persistent `BepInExPluginVersion` override to the project file.
+
 ## Implementation Analysis
 
 Use `.agents/skills/implementation-analysis-quality-check/` when creating,
