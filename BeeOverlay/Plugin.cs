@@ -57,7 +57,11 @@ internal sealed class Overlay
     private const float VisiblePlayerSightLineRenderYOffset = -0.35f;
     private const float HiveMissingNearDistance = 4f;
     private const float HiveMissingLineOfSightDistance = 8f;
-    private const int WireframeSphereSegments = 96;
+    // Six 48-segment loops produce almost the same vertex count as the previous three 96-segment
+    // great circles, while latitude and longitude cues make the guide read as a sphere at a glance.
+    private const int WireframeSphereSegments = 48;
+    private const float WireframeLatitudeOffsetFactor = 0.5f;
+    private const float WireframeLatitudeRadiusFactor = 0.8660254f;
 
     // Markers are lifted a little above the sampled positions so they are not hidden by terrain,
     // hive meshes, or the bee body while still representing the same horizontal point.
@@ -776,23 +780,39 @@ internal sealed class Overlay
 
         private sealed class WireframeSphere
         {
-            private readonly LineRenderer horizontal;
-            private readonly LineRenderer verticalX;
-            private readonly LineRenderer verticalZ;
+            private readonly LineRenderer equator;
+            private readonly LineRenderer northLatitude;
+            private readonly LineRenderer southLatitude;
+            private readonly LineRenderer meridian0;
+            private readonly LineRenderer meridian60;
+            private readonly LineRenderer meridian120;
 
-            private WireframeSphere(LineRenderer horizontal, LineRenderer verticalX, LineRenderer verticalZ)
+            private WireframeSphere(
+                LineRenderer equator,
+                LineRenderer northLatitude,
+                LineRenderer southLatitude,
+                LineRenderer meridian0,
+                LineRenderer meridian60,
+                LineRenderer meridian120
+            )
             {
-                this.horizontal = horizontal;
-                this.verticalX = verticalX;
-                this.verticalZ = verticalZ;
+                this.equator = equator;
+                this.northLatitude = northLatitude;
+                this.southLatitude = southLatitude;
+                this.meridian0 = meridian0;
+                this.meridian60 = meridian60;
+                this.meridian120 = meridian120;
             }
 
             public static WireframeSphere Create(string name, Transform parent, Material material)
             {
                 return new WireframeSphere(
-                    CreateWorldLine($"{name}Horizontal", parent, material),
-                    CreateWorldLine($"{name}VerticalX", parent, material),
-                    CreateWorldLine($"{name}VerticalZ", parent, material)
+                    CreateWorldLine($"{name}Equator", parent, material),
+                    CreateWorldLine($"{name}NorthLatitude", parent, material),
+                    CreateWorldLine($"{name}SouthLatitude", parent, material),
+                    CreateWorldLine($"{name}Meridian0", parent, material),
+                    CreateWorldLine($"{name}Meridian60", parent, material),
+                    CreateWorldLine($"{name}Meridian120", parent, material)
                 );
             }
 
@@ -808,41 +828,77 @@ internal sealed class Overlay
                 }
 
                 SetVisible(true);
-                SetGreatCircle(horizontal, center, radius, color, 0);
-                SetGreatCircle(verticalX, center, radius, color, 1);
-                SetGreatCircle(verticalZ, center, radius, color, 2);
+                SetLatitude(equator, center, radius, 0f, color);
+                SetLatitude(northLatitude, center, radius, WireframeLatitudeOffsetFactor, color);
+                SetLatitude(southLatitude, center, radius, -WireframeLatitudeOffsetFactor, color);
+                SetMeridian(meridian0, center, radius, 0f, color);
+                SetMeridian(meridian60, center, radius, Mathf.PI / 3f, color);
+                SetMeridian(meridian120, center, radius, Mathf.PI * 2f / 3f, color);
             }
 
             public void SetVisible(bool visible)
             {
-                horizontal.gameObject.SetActive(visible);
-                verticalX.gameObject.SetActive(visible);
-                verticalZ.gameObject.SetActive(visible);
+                equator.gameObject.SetActive(visible);
+                northLatitude.gameObject.SetActive(visible);
+                southLatitude.gameObject.SetActive(visible);
+                meridian0.gameObject.SetActive(visible);
+                meridian60.gameObject.SetActive(visible);
+                meridian120.gameObject.SetActive(visible);
             }
 
-            private static void SetGreatCircle(
+            private static void SetLatitude(
                 LineRenderer line,
                 Vector3 center,
                 float radius,
-                Color color,
-                int plane
+                float heightFactor,
+                Color color
             )
             {
                 line.positionCount = WireframeSphereSegments + 1;
                 line.startColor = color;
                 line.endColor = color;
 
+                var circleRadius = radius * (
+                    heightFactor == 0f ? 1f : WireframeLatitudeRadiusFactor
+                );
+                var height = radius * heightFactor;
+
                 for (var i = 0; i <= WireframeSphereSegments; i++)
                 {
                     var radians = Mathf.PI * 2f * i / WireframeSphereSegments;
-                    var cos = Mathf.Cos(radians) * radius;
-                    var sin = Mathf.Sin(radians) * radius;
-                    var offset = plane switch
-                    {
-                        0 => new Vector3(cos, 0f, sin),
-                        1 => new Vector3(cos, sin, 0f),
-                        _ => new Vector3(0f, sin, cos),
-                    };
+                    var offset = new Vector3(
+                        Mathf.Cos(radians) * circleRadius,
+                        height,
+                        Mathf.Sin(radians) * circleRadius
+                    );
+                    line.SetPosition(i, center + offset);
+                }
+            }
+
+            private static void SetMeridian(
+                LineRenderer line,
+                Vector3 center,
+                float radius,
+                float longitude,
+                Color color
+            )
+            {
+                line.positionCount = WireframeSphereSegments + 1;
+                line.startColor = color;
+                line.endColor = color;
+
+                var horizontalX = Mathf.Cos(longitude);
+                var horizontalZ = Mathf.Sin(longitude);
+
+                for (var i = 0; i <= WireframeSphereSegments; i++)
+                {
+                    var radians = Mathf.PI * 2f * i / WireframeSphereSegments;
+                    var horizontalRadius = Mathf.Cos(radians) * radius;
+                    var offset = new Vector3(
+                        horizontalX * horizontalRadius,
+                        Mathf.Sin(radians) * radius,
+                        horizontalZ * horizontalRadius
+                    );
                     line.SetPosition(i, center + offset);
                 }
             }
