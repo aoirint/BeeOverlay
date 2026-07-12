@@ -49,7 +49,9 @@ physics, raycasts, or other mods that inspect nearby colliders.
 
 - The player-side endpoint of the rendered sight line is lowered by 0.35 units
   so a flickering red line is less likely to cross the center of the view.
-- Each distance guide is a wireframe sphere made from horizontal and two vertical great circles.
+- Each distance guide is a wireframe sphere made from an equator, two latitude
+  rings, and three meridians. This preserves the former guide's approximate
+  vertex count while making its three-dimensional shape easier to read.
 - The `bee-hive` HUD label is a predictive pickup proxy, not a player-collider visibility check.
 - `hive.isHeld` is intentionally not visualized. The overlay focuses on
   positions that could lead to state 2 if the hive is held.
