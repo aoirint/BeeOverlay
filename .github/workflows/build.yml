@@ -52,6 +52,7 @@ jobs:
             # in Version, and scope the loader-facing fallback to this build.
             dotnet_build_args+=(/p:BepInExPluginVersion=0.0.0)
           fi
+
           dotnet build "${dotnet_build_args[@]}"
       - name: Create artifact
         run: |
