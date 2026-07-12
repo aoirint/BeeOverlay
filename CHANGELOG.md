@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Unreleased
 
+## v0.1.0-alpha.2 - 2026-07-12 UTC
+
+### Fixed
+
+- Fixed BepInEx 5 rejecting the prerelease plugin metadata before startup:
+  `BepInExPluginVersion` is now `0.0.0`, while the project version retains the
+  `0.1.0-alpha.2` release identity used by CI and GitHub artifacts.
+
 ## v0.1.0-alpha.1 - 2026-07-11 UTC
 
 ### Added
