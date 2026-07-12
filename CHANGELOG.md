@@ -10,14 +10,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Unreleased
 
-## v0.1.0-alpha.2 - 2026-07-12 UTC
+## v0.1.0-alpha.3 - 2026-07-12 UTC
 
 ### Fixed
 
-- Fixed BepInEx 5 rejecting the prerelease plugin metadata before startup:
-  GitHub Actions supplies `BepInExPluginVersion=0.0.0` only for nonstable
-  builds, while the project version retains the `0.1.0-alpha.2` release
-  identity used by CI and GitHub artifacts.
+- Ported the current CruiserJumpPractice build workflow to BeeOverlay with only
+  project-specific identifiers changed:
+    - Nonstable builds continue to pass `BepInExPluginVersion=0.0.0` only to
+      the CI build, preserving the project version as the release identity.
+    - Added CJP's workflow diagnostics, package artifact summaries, and
+      maintainer-facing CI comments.
+
+## v0.1.0-alpha.2 - 2026-07-12 UTC
+
+### Changed
+
+- Updated release metadata without adding the required CI workflow change.
+  This release is superseded by `v0.1.0-alpha.3` for the BepInEx prerelease
+  metadata fix.
 
 ## v0.1.0-alpha.1 - 2026-07-11 UTC
 
