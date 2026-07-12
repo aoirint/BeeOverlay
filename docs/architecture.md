@@ -34,9 +34,9 @@ For bees with a hive, the overlay renders only the spatial conditions relevant t
 
 | Subject | Display | Color |
 | --- | --- | --- |
-| Hive | `defenseDistance` horizontal ring and marker | Green |
-| `lastKnownHivePosition` | Marker, 4-unit ring, 8-unit ring, and line from the bee eye | Blue shades |
-| Bee eye | Sight-range horizontal ring and marker | Yellow |
+| Hive | `defenseDistance` wireframe sphere and marker | Green |
+| `lastKnownHivePosition` | Marker, 4-unit sphere, 8-unit sphere, and line from the bee eye | Blue shades |
+| Bee eye | Sight-range wireframe sphere and marker | Yellow |
 | Local player | Sight line from the bee eye and marker | Red |
 | Sight to current hive | Line from the bee eye to the hive | White; gray when the condition is not met |
 | Inactive or blocked | Lines | Gray |
@@ -49,6 +49,7 @@ physics, raycasts, or other mods that inspect nearby colliders.
 
 - The player-side endpoint of the rendered sight line is lowered by 0.35 units
   so a flickering red line is less likely to cross the center of the view.
+- Each distance guide is a wireframe sphere made from horizontal and two vertical great circles.
 - The `bee-hive` HUD label is a predictive pickup proxy, not a player-collider visibility check.
 - `hive.isHeld` is intentionally not visualized. The overlay focuses on
   positions that could lead to state 2 if the hive is held.
@@ -92,8 +93,8 @@ dotnet build BeeOverlay.sln -c Release
 In game, verify the following:
 
 - `Bee Overlay | bees=N` appears in the upper-left corner.
-- A green `defenseDistance` ring appears around each hive.
+- A green `defenseDistance` wireframe sphere appears around each hive.
 - The bee-to-local-player line is red when the bee sees the player and gray otherwise.
 - A green or gray line appears from the bee eye to the hive.
-- A blue marker, intermediate 4-unit ring, and lighter 8-unit ring appear for `lastKnownHivePosition`.
+- A blue marker, intermediate 4-unit sphere, and lighter 8-unit sphere appear for `lastKnownHivePosition`.
 - The line from the bee eye to `lastKnownHivePosition` is blue when the spatial gate for `IsHiveMissing()` could be satisfied.

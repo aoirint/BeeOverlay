@@ -38,14 +38,14 @@ public sealed class Plugin : BaseUnityPlugin
 internal sealed class Overlay
 {
     // The state transition overlay uses entity colors first, then grey only for blocked/inactive
-    // checks. That keeps dots, lines, and rings readable as "which object is this about?" instead
+    // checks. That keeps dots, lines, and wireframes readable as "which object is this about?" instead
     // of mixing separate colors for every condition.
     private static readonly Color HudTextColor = new(1f, 0.85f, 0.1f, 0.95f);
     private static readonly Color BeeColor = new(1f, 0.85f, 0.1f, 0.95f);
     private static readonly Color HiveColor = new(0.25f, 1f, 0.35f, 0.95f);
     private static readonly Color LastKnownHiveColor = new(0.05f, 0.32f, 1f, 0.95f);
-    private static readonly Color LastKnownHiveNearCircleColor = new(0.15f, 0.55f, 1f, 0.7f);
-    private static readonly Color LastKnownHiveLineOfSightCircleColor = new(0.25f, 0.6f, 1f, 0.3f);
+    private static readonly Color LastKnownHiveNearSphereColor = new(0.15f, 0.55f, 1f, 0.7f);
+    private static readonly Color LastKnownHiveLineOfSightSphereColor = new(0.25f, 0.6f, 1f, 0.3f);
     private static readonly Color PlayerColor = new(1f, 0.15f, 0.1f, 0.95f);
     private static readonly Color PickupProxyColor = new(1f, 1f, 1f, 0.95f);
     private static readonly Color InactiveLineColor = new(0.18f, 0.18f, 0.18f, 0.58f);
@@ -57,7 +57,7 @@ internal sealed class Overlay
     private const float VisiblePlayerSightLineRenderYOffset = -0.35f;
     private const float HiveMissingNearDistance = 4f;
     private const float HiveMissingLineOfSightDistance = 8f;
-    private const int DefenseDistanceCircleSegments = 96;
+    private const int WireframeSphereSegments = 96;
 
     // Markers are lifted a little above the sampled positions so they are not hidden by terrain,
     // hive meshes, or the bee body while still representing the same horizontal point.
@@ -520,11 +520,11 @@ internal sealed class Overlay
     private sealed class BeeView
     {
         private readonly GameObject worldRoot;
-        private readonly LineRenderer beeSightRangeCircle;
-        private readonly LineRenderer defenseDistanceCircle;
+        private readonly WireframeSphere beeSightRangeSphere;
+        private readonly WireframeSphere defenseDistanceSphere;
         private readonly LineRenderer visiblePlayerSightLine;
-        private readonly LineRenderer lastKnownHiveNearCircle;
-        private readonly LineRenderer lastKnownHiveLineOfSightCircle;
+        private readonly WireframeSphere lastKnownHiveNearSphere;
+        private readonly WireframeSphere lastKnownHiveLineOfSightSphere;
         private readonly LineRenderer beeEyeToLastKnownHiveLine;
         private readonly LineRenderer beeEyeToHiveLine;
         private readonly GameObject beeMarker;
@@ -534,11 +534,11 @@ internal sealed class Overlay
 
         private BeeView(
             GameObject worldRoot,
-            LineRenderer beeSightRangeCircle,
-            LineRenderer defenseDistanceCircle,
+            WireframeSphere beeSightRangeSphere,
+            WireframeSphere defenseDistanceSphere,
             LineRenderer visiblePlayerSightLine,
-            LineRenderer lastKnownHiveNearCircle,
-            LineRenderer lastKnownHiveLineOfSightCircle,
+            WireframeSphere lastKnownHiveNearSphere,
+            WireframeSphere lastKnownHiveLineOfSightSphere,
             LineRenderer beeEyeToLastKnownHiveLine,
             LineRenderer beeEyeToHiveLine,
             GameObject beeMarker,
@@ -548,11 +548,11 @@ internal sealed class Overlay
         )
         {
             this.worldRoot = worldRoot;
-            this.beeSightRangeCircle = beeSightRangeCircle;
-            this.defenseDistanceCircle = defenseDistanceCircle;
+            this.beeSightRangeSphere = beeSightRangeSphere;
+            this.defenseDistanceSphere = defenseDistanceSphere;
             this.visiblePlayerSightLine = visiblePlayerSightLine;
-            this.lastKnownHiveNearCircle = lastKnownHiveNearCircle;
-            this.lastKnownHiveLineOfSightCircle = lastKnownHiveLineOfSightCircle;
+            this.lastKnownHiveNearSphere = lastKnownHiveNearSphere;
+            this.lastKnownHiveLineOfSightSphere = lastKnownHiveLineOfSightSphere;
             this.beeEyeToLastKnownHiveLine = beeEyeToLastKnownHiveLine;
             this.beeEyeToHiveLine = beeEyeToHiveLine;
             this.beeMarker = beeMarker;
@@ -573,11 +573,11 @@ internal sealed class Overlay
             var worldRoot = new GameObject($"BeeWorldOverlay_{beeIndex}");
             UnityObject.DontDestroyOnLoad(worldRoot);
 
-            var beeSightRangeCircle = CreateWorldLine("BeeSightRangeCircle", worldRoot.transform, lineMaterial);
-            var defenseDistanceCircle = CreateWorldLine("DefenseDistanceCircle", worldRoot.transform, lineMaterial);
+            var beeSightRangeSphere = WireframeSphere.Create("BeeSightRangeSphere", worldRoot.transform, lineMaterial);
+            var defenseDistanceSphere = WireframeSphere.Create("DefenseDistanceSphere", worldRoot.transform, lineMaterial);
             var visiblePlayerSightLine = CreateWorldLine("VisiblePlayerSightLine", worldRoot.transform, lineMaterial);
-            var lastKnownHiveNearCircle = CreateWorldLine("LastKnownHiveNearCircle", worldRoot.transform, lineMaterial);
-            var lastKnownHiveLineOfSightCircle = CreateWorldLine("LastKnownHiveLineOfSightCircle", worldRoot.transform, lineMaterial);
+            var lastKnownHiveNearSphere = WireframeSphere.Create("LastKnownHiveNearSphere", worldRoot.transform, lineMaterial);
+            var lastKnownHiveLineOfSightSphere = WireframeSphere.Create("LastKnownHiveLineOfSightSphere", worldRoot.transform, lineMaterial);
             var beeEyeToLastKnownHiveLine = CreateWorldLine("BeeEyeToLastKnownHiveLine", worldRoot.transform, lineMaterial);
             var beeEyeToHiveLine = CreateWorldLine("BeeEyeToHiveLine", worldRoot.transform, lineMaterial);
             var beeMarker = CreateWorldMarker("BeeEyeWorldMarker", worldRoot.transform, beeMaterial);
@@ -587,11 +587,11 @@ internal sealed class Overlay
 
             // These guides are conditional frame-by-frame. Start hidden so a newly allocated view
             // never flashes stale geometry before the first real sample is written.
-            beeSightRangeCircle.gameObject.SetActive(false);
-            defenseDistanceCircle.gameObject.SetActive(false);
+            beeSightRangeSphere.SetVisible(false);
+            defenseDistanceSphere.SetVisible(false);
             visiblePlayerSightLine.gameObject.SetActive(false);
-            lastKnownHiveNearCircle.gameObject.SetActive(false);
-            lastKnownHiveLineOfSightCircle.gameObject.SetActive(false);
+            lastKnownHiveNearSphere.SetVisible(false);
+            lastKnownHiveLineOfSightSphere.SetVisible(false);
             beeEyeToLastKnownHiveLine.gameObject.SetActive(false);
             beeEyeToHiveLine.gameObject.SetActive(false);
             beeMarker.SetActive(false);
@@ -601,11 +601,11 @@ internal sealed class Overlay
 
             return new BeeView(
                 worldRoot,
-                beeSightRangeCircle,
-                defenseDistanceCircle,
+                beeSightRangeSphere,
+                defenseDistanceSphere,
                 visiblePlayerSightLine,
-                lastKnownHiveNearCircle,
-                lastKnownHiveLineOfSightCircle,
+                lastKnownHiveNearSphere,
+                lastKnownHiveLineOfSightSphere,
                 beeEyeToLastKnownHiveLine,
                 beeEyeToHiveLine,
                 beeMarker,
@@ -634,16 +634,15 @@ internal sealed class Overlay
             SetMarker(beeMarker, beeEye, 0.16f);
             SetMarker(hiveMarker, hive, 0.18f);
 
-            // This yellow ring is the spatial version of the 16u player sight range used by the
+            // This yellow sphere is the spatial version of the 16u player sight range used by the
             // base game's CheckLineOfSightForPlayer call. It is centered on the bee eye because
             // both the real player check and the hive pickup proxy start their visibility test
             // from that point.
-            SetWorldCircle(beeSightRangeCircle, beeEye, PlayerLineOfSightDistance, BeeColor);
+            beeSightRangeSphere.Set(beeEye, PlayerLineOfSightDistance, BeeColor);
 
-            // RedLocustBees stores defenseDistance as an integer radius around the hive. Drawing it
-            // as a horizontal ring lets the player judge "near hive" before crossing the trigger
-            // region, which is more useful than another late true/false row in the HUD.
-            SetWorldCircle(defenseDistanceCircle, hive, defenseDistance, HiveColor);
+            // RedLocustBees stores defenseDistance as an integer radius around the hive. A sphere
+            // makes the full three-dimensional trigger range visible before it is crossed.
+            defenseDistanceSphere.Set(hive, defenseDistance, HiveColor);
             SetHiveMissingProbe(beeEye, hiveMissingProbe);
             SetHiveSightProbe(beeEye, hiveSightProbe);
 
@@ -688,20 +687,18 @@ internal sealed class Overlay
             lastKnownHiveMarker.SetActive(true);
             lastKnownHiveMarker.transform.position = lastKnownHive;
 
-            // Both rings use the last-known-hive blue family, but not the exact same shade: the
+            // Both spheres use the last-known-hive blue family, but not the exact same shade: the
             // 4u close-range trigger is darker and more urgent, while the 8u line-of-sight gate is
             // lighter so it reads as the outer context instead of competing with the inner ring.
-            SetWorldCircle(
-                lastKnownHiveNearCircle,
+            lastKnownHiveNearSphere.Set(
                 lastKnownHive,
                 HiveMissingNearDistance,
-                LastKnownHiveNearCircleColor
+                LastKnownHiveNearSphereColor
             );
-            SetWorldCircle(
-                lastKnownHiveLineOfSightCircle,
+            lastKnownHiveLineOfSightSphere.Set(
                 lastKnownHive,
                 HiveMissingLineOfSightDistance,
-                LastKnownHiveLineOfSightCircleColor
+                LastKnownHiveLineOfSightSphereColor
             );
 
             var probeLineColor = probe.CanEvaluateMissing
@@ -743,30 +740,6 @@ internal sealed class Overlay
             line.endColor = color;
         }
 
-        private static void SetWorldCircle(LineRenderer line, Vector3 center, float radius, Color color)
-        {
-            if (radius <= 0f)
-            {
-                // A zero/negative radius means the base-game field is not useful for spatial
-                // guidance. Hide the ring instead of drawing a degenerate point that could be
-                // mistaken for a real marker.
-                line.gameObject.SetActive(false);
-                return;
-            }
-
-            line.gameObject.SetActive(true);
-            line.positionCount = DefenseDistanceCircleSegments + 1;
-            line.startColor = color;
-            line.endColor = color;
-
-            for (var i = 0; i <= DefenseDistanceCircleSegments; i++)
-            {
-                var radians = Mathf.PI * 2f * i / DefenseDistanceCircleSegments;
-                var offset = new Vector3(Mathf.Cos(radians) * radius, 0f, Mathf.Sin(radians) * radius);
-                line.SetPosition(i, center + offset);
-            }
-        }
-
         private static LineRenderer CreateWorldLine(string name, Transform parent, Material material)
         {
             var lineObject = new GameObject(name);
@@ -799,6 +772,80 @@ internal sealed class Overlay
             }
 
             return marker;
+        }
+
+        private sealed class WireframeSphere
+        {
+            private readonly LineRenderer horizontal;
+            private readonly LineRenderer verticalX;
+            private readonly LineRenderer verticalZ;
+
+            private WireframeSphere(LineRenderer horizontal, LineRenderer verticalX, LineRenderer verticalZ)
+            {
+                this.horizontal = horizontal;
+                this.verticalX = verticalX;
+                this.verticalZ = verticalZ;
+            }
+
+            public static WireframeSphere Create(string name, Transform parent, Material material)
+            {
+                return new WireframeSphere(
+                    CreateWorldLine($"{name}Horizontal", parent, material),
+                    CreateWorldLine($"{name}VerticalX", parent, material),
+                    CreateWorldLine($"{name}VerticalZ", parent, material)
+                );
+            }
+
+            public void Set(Vector3 center, float radius, Color color)
+            {
+                if (radius <= 0f)
+                {
+                    // A zero/negative radius means the base-game field is not useful for spatial
+                    // guidance. Hide the guide instead of drawing a degenerate point that could
+                    // be mistaken for a real marker.
+                    SetVisible(false);
+                    return;
+                }
+
+                SetVisible(true);
+                SetGreatCircle(horizontal, center, radius, color, 0);
+                SetGreatCircle(verticalX, center, radius, color, 1);
+                SetGreatCircle(verticalZ, center, radius, color, 2);
+            }
+
+            public void SetVisible(bool visible)
+            {
+                horizontal.gameObject.SetActive(visible);
+                verticalX.gameObject.SetActive(visible);
+                verticalZ.gameObject.SetActive(visible);
+            }
+
+            private static void SetGreatCircle(
+                LineRenderer line,
+                Vector3 center,
+                float radius,
+                Color color,
+                int plane
+            )
+            {
+                line.positionCount = WireframeSphereSegments + 1;
+                line.startColor = color;
+                line.endColor = color;
+
+                for (var i = 0; i <= WireframeSphereSegments; i++)
+                {
+                    var radians = Mathf.PI * 2f * i / WireframeSphereSegments;
+                    var cos = Mathf.Cos(radians) * radius;
+                    var sin = Mathf.Sin(radians) * radius;
+                    var offset = plane switch
+                    {
+                        0 => new Vector3(cos, 0f, sin),
+                        1 => new Vector3(cos, sin, 0f),
+                        _ => new Vector3(0f, sin, cos),
+                    };
+                    line.SetPosition(i, center + offset);
+                }
+            }
         }
 
         private static void Center(RectTransform rect)
