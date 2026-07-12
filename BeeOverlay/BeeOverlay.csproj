@@ -6,10 +6,6 @@
     <RootNamespace>BeeOverlay</RootNamespace>
     <!-- !!APP_VERSION_MARKER!! -->
     <Version>0.1.0-alpha.2</Version>
-    <!-- BepInEx 5 validates plugin metadata as System.Version, which rejects
-         SemVer prerelease suffixes. Keep the loader-facing metadata compatible
-         while Version remains the release identity for CI and artifacts. -->
-    <BepInExPluginVersion>0.0.0</BepInExPluginVersion>
     <TargetFramework>netstandard2.1</TargetFramework>
     <LangVersion>13.0</LangVersion>
   </PropertyGroup>
