@@ -10,12 +10,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Unreleased
 
+## v0.1.0-alpha.3 - 2026-07-12 UTC
+
+### Added
+
+- Replaced circular spatial guides with latitude-and-longitude wireframe spheres
+  for clearer three-dimensional distance cues.
+
 ### Changed
 
 - Ported the current CruiserJumpPractice build workflow to BeeOverlay with only
   project-specific identifiers changed.
 - Removed one trailing whitespace character from the ported workflow because
   BeeOverlay's `actionlint` rejects it.
+
+### Notes
+
+- This prerelease creates a GitHub prerelease and build artifact. Thunderstore
+  publishing remains limited to stable releases.
 
 ## v0.1.0-alpha.2 - 2026-07-12 UTC
 
