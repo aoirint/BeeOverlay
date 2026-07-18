@@ -5,7 +5,7 @@
 - Game: Lethal Company v73
 - Steam manifest ID: `1749099131234587692`
 
-The `HUDManager` members below are v73 base-game members. The Unity UI and
+The `HUDManager` members below are base-game members. The Unity UI and
 renderer APIs are framework APIs used to create mod-owned visuals; verify them
 against the Unity assemblies referenced by the target game when updating the
 game dependency.
@@ -105,7 +105,7 @@ updated diagnostic table.
 
 #### Assume a TextMeshPro component or create a separate canvas
 
-The v73 HUD container is the integration point established by the game. A TMP
+The HUD container is the integration point established by the game. A TMP
 component or separate canvas adds a different dependency and does not by itself
 inherit the active HUD's lifecycle or layout.
 
