@@ -31,6 +31,15 @@ Reconfirm their declarations when changing the target game version.
 | Sight origin | `public Transform eye` | Origin of bee line-of-sight and hive-distance tests. |
 | Sight check | `public PlayerControllerB CheckLineOfSightForPlayer(float width = 45f, int range = 60, int proximityAwareness = -1)` | The state-0 defensive check calls it as `CheckLineOfSightForPlayer(360f, 16, 1)`. |
 
+## Implementation choices
+
+| Decision | Options | Recommended approach | Why |
+| --- | --- | --- | --- |
+| Observe a behaviour transition | Patch `DoAIInterval()`; patch `IsHiveMissing()`; poll fields in a separate update | Patch `DoAIInterval()` when the transition and its resulting state matter. | It is the state-machine owner and establishes the order between the missing-hive test, sight test, and state change. |
+| Observe only the missing-hive predicate | Patch `DoAIInterval()`; patch `IsHiveMissing()` | Patch `IsHiveMissing()`. | It isolates the predicate from unrelated state-0 and state-2 work, while retaining the exact private no-argument target. |
+| Reproduce the missing-hive spatial test | Use bee root position; use camera position; use `EnemyAI.eye` | Use `EnemyAI.eye` and the documented `Physics.Linecast` mask. | The base predicate measures from `eye.position`; substituting another origin changes both distance gates and line-of-sight results. |
+| Handle hive-position synchronization | Read `lastKnownHivePosition` alone; also gate on `syncedLastKnownHivePosition`; infer position from `hive.transform` | Keep the flag and position together. | The base predicate refuses to evaluate until synchronization completes, and the remembered position is intentionally distinct from the hive's current transform. |
+
 ## State and lifecycle
 
 `RedLocustBees.DoAIInterval()` owns the relevant behaviour states.
