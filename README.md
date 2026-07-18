@@ -234,7 +234,7 @@ GitHub Release, and publishes stable releases to Thunderstore:
 
 ## Documentation
 
-- [RedLocustBees implementation analysis](docs/red_locust_bees.md)
+- [RedLocustBees implementation analysis](docs/red-locust-bees.md)
 - [BeeOverlay architecture](docs/architecture.md)
 
 ## License
