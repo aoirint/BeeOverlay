@@ -61,6 +61,23 @@ physics, raycasts, or other mods that inspect nearby colliders.
 - `blocked` means that a target is not visible, the linecast is obstructed, or the distance condition is not satisfied.
 - `INSIDE` and `outside` indicate whether the local player is within `defenseDistance`.
 
+### Observation boundaries
+
+BeeOverlay distinguishes game observations from its own derived displays.
+
+- `bee-player` uses the base-game player sight result and reports the sampled
+  bee-eye-to-player-body distance.
+- `hive-player` compares the sampled player-body position with the current
+  hive's `defenseDistance`.
+- `bee-knownHive` displays only the documented spatial and synchronization
+  gates of `IsHiveMissing()`; it is not a complete missing-hive result because
+  hive state remains a game-side condition.
+- `bee-hive` is a pickup-position proxy: it tests the bee eye against the
+  current hive under the 16-unit range. It is not player-collider visibility.
+
+Keep the labels and guide colors aligned with these boundaries. A proxy must
+not be presented as a complete base-game state decision.
+
 ## Upper-left status
 
 The status uses this format:

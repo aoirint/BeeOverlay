@@ -79,7 +79,3 @@ The following spatial gates were observed inside
 `RedLocustBees.IsHiveMissing()` also depends on hive state. These observations
 describe its spatial gates only; they do not claim to enumerate every condition
 that can cause a state transition.
-
-BeeOverlay's rendering rules are documented separately in
-[diagnostic-visualization.md](diagnostic-visualization.md). The `bee-hive`
-label is a pickup-position proxy, not a player-collider visibility result.
