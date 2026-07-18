@@ -10,6 +10,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Unreleased
 
+## v0.1.0 - 2026-07-18 UTC
+
+### Added
+
+- Added the initial stable RedLocustBees diagnostic overlay for Lethal Company
+  v73.
+- Added latitude-and-longitude wireframe spheres that make the overlay's
+  distance guides easier to read in three dimensions.
+
+### Changed
+
+- Stabilized the release, package, and publishing workflow used to distribute
+  the overlay through GitHub Releases and Thunderstore.
+
+### Notes
+
+- Compatibility: Lethal Company v73 (Steam manifest ID
+  `1749099131234587692`).
+- This stable release supersedes the v0.1.0-alpha.1 through v0.1.0-alpha.3
+  prereleases. Thunderstore publishing is enabled for this stable version.
+
 ## v0.1.0-alpha.3 - 2026-07-12 UTC
 
 ### Added
