@@ -80,58 +80,6 @@ The following spatial gates were observed inside
 describe its spatial gates only; they do not claim to enumerate every condition
 that can cause a state transition.
 
-## Overlay domain model
-
-BeeOverlay uses these observations to visualize state-0 spatial context. It
-does not modify the game's AI or claim to reproduce every state-transition
-condition.
-
-### Spatial points
-
-| Term | Source | Meaning in the overlay |
-| --- | --- | --- |
-| Bee eye | `EnemyAI.eye` | Origin for bee sight and remembered-hive probes. |
-| Current hive | `RedLocustBees.hive.transform.position` | Current pickup position. |
-| Remembered hive | `RedLocustBees.lastKnownHivePosition` | Position considered by missing-hive spatial gates. |
-| Local player body | `PlayerControllerB` body position | Point used for hive-distance display. |
-
-All displayed distances are Unity world units sampled during the current HUD
-update. Marker offsets are visual-only and do not change the sampled point.
-
-### Direct observations
-
-- `bee-player` calls `CheckLineOfSightForPlayer(360f, 16, 1)` and reports the
-  bee-eye-to-player-body distance.
-- `hive-player` compares the local-player-body distance with
-  `defenseDistance` around the current hive.
-- `bee-knownHive` evaluates the documented spatial and synchronization gates
-  for `IsHiveMissing()` against `lastKnownHivePosition`.
-
-`bee-knownHive` is intentionally not a complete `IsHiveMissing()` result.
-Hive state remains an additional game-side condition.
-
-### Pickup-position proxy
-
-`bee-hive` tests a clear linecast from the bee eye to the current hive under
-the 16-unit sight range. It helps answer whether the hive point could stand in
-for a player at that position. It is not a player-collider visibility result
-and must not be presented as one.
-
-### Display conventions
-
-- `SEEN` means the corresponding direct visibility call or spatial probe is
-  satisfied.
-- `blocked` means the visibility or spatial condition is not satisfied.
-- `INSIDE` and `outside` apply only to the player position relative to
-  `defenseDistance`.
-- Gray guides indicate inactive or blocked diagnostic output; they do not show
-  that the game skipped the underlying code.
-
-### Change checklist
-
-Before changing a probe, confirm:
-
-1. The target game version and manifest still match the implementation evidence.
-2. The probe is labelled as a direct observation or a proxy.
-3. A proxy cannot be read as a complete game-state decision.
-4. Overlay geometry has no colliders and cannot affect physics or raycasts.
+BeeOverlay's rendering rules are documented separately in
+[diagnostic-visualization.md](diagnostic-visualization.md). The `bee-hive`
+label is a pickup-position proxy, not a player-collider visibility result.

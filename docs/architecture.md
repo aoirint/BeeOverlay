@@ -4,6 +4,8 @@ BeeOverlay is a diagnostic mod that visualizes state 0 spatial conditions for
 Lethal Company's `RedLocustBees` in the HUD and as 3D guides from the same
 frame.
 See [red-locust-bees.md](red-locust-bees.md) for analysis of the current game version.
+See [diagnostic-visualization.md](diagnostic-visualization.md) for reusable HUD
+and world-guide rendering practices.
 
 ## Components
 
