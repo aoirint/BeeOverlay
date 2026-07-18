@@ -36,10 +36,10 @@ BepInEx 5 validates plugin metadata as `System.Version` and rejects SemVer
 prerelease suffixes. Keep the project `Version` as the release identity; do
 not add a persistent `BepInExPluginVersion` override to the project file.
 
-## Implementation Analysis
+## Documentation Skill
 
-Use `.agents/skills/implementation-analysis-quality-check/` when creating,
-updating, or reviewing implementation-analysis documentation.
+Use `.agents/skills/maintain-mod-documentation/` when creating, restructuring,
+maintaining, or reviewing developer documentation.
 
 ## Documentation Boundaries
 
