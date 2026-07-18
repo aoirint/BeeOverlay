@@ -1,5 +1,9 @@
 # Rendering Lifecycle
 
+This document applies the reusable rendering practices in
+[Diagnostic visualization](../domain/diagnostic-visualization.md) to
+BeeOverlay's owned HUD and world-view objects.
+
 ## Ownership
 
 `Overlay` owns its HUD root, status text, per-bee `BeeView` instances, and
@@ -34,4 +38,3 @@ despawned bee cannot leave a stale row behind.
 World guides are visual-only. Their colliders are removed, and they do not add
 physics, raycast, or network components. This preserves the diagnostic role of
 the overlay and avoids changing gameplay or other mods' nearby-object queries.
-
