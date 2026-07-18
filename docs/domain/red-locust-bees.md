@@ -12,7 +12,7 @@ Reconfirm their declarations when changing the target game version.
 
 ### `RedLocustBees : EnemyAI`
 
-| Member | Declaration | Use |
+| Member | Declaration | Role |
 | --- | --- | --- |
 | Hive reference | `public GrabbableObject hive` | Read the current hive and its `transform.position`; its held state is `hive.isHeld`. |
 | Defence radius | `public int defenseDistance` | The player-to-hive radius used when entering and leaving defensive pursuit. |
@@ -26,7 +26,7 @@ Reconfirm their declarations when changing the target game version.
 
 ### `EnemyAI`
 
-| Member | Declaration | Use |
+| Member | Declaration | Role |
 | --- | --- | --- |
 | Sight origin | `public Transform eye` | Origin of bee line-of-sight and hive-distance tests. |
 | Sight check | `public PlayerControllerB CheckLineOfSightForPlayer(float width = 45f, int range = 60, int proximityAwareness = -1)` | The state-0 defensive check calls it as `CheckLineOfSightForPlayer(360f, 16, 1)`. |
