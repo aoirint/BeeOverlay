@@ -33,12 +33,48 @@ Reconfirm their declarations when changing the target game version.
 
 ## Implementation choices
 
-| Decision | Options | Recommended approach | Why |
-| --- | --- | --- | --- |
-| Observe a behaviour transition | Patch `DoAIInterval()`; patch `IsHiveMissing()`; poll fields in a separate update | Patch `DoAIInterval()` when the transition and its resulting state matter. | It is the state-machine owner and establishes the order between the missing-hive test, sight test, and state change. |
-| Observe only the missing-hive predicate | Patch `DoAIInterval()`; patch `IsHiveMissing()` | Patch `IsHiveMissing()`. | It isolates the predicate from unrelated state-0 and state-2 work, while retaining the exact private no-argument target. |
-| Reproduce the missing-hive spatial test | Use bee root position; use camera position; use `EnemyAI.eye` | Use `EnemyAI.eye` and the documented `Physics.Linecast` mask. | The base predicate measures from `eye.position`; substituting another origin changes both distance gates and line-of-sight results. |
-| Handle hive-position synchronization | Read `lastKnownHivePosition` alone; also gate on `syncedLastKnownHivePosition`; infer position from `hive.transform` | Keep the flag and position together. | The base predicate refuses to evaluate until synchronization completes, and the remembered position is intentionally distinct from the hive's current transform. |
+### Observe a behaviour transition
+
+#### Patch `DoAIInterval()` — recommended when the transition and resulting state matter
+
+`DoAIInterval()` owns the relevant state machine and establishes the order
+between the missing-hive test, sight test, and state change. Patch it when the
+transition itself is the subject of the implementation.
+
+#### Patch `IsHiveMissing()`
+
+This isolates the missing-hive predicate, but omits unrelated work in states 0
+and 2. Choose it when the predicate rather than the state transition is the
+subject of the implementation.
+
+#### Poll fields in a separate update
+
+This observes state after an unspecified point in the game update sequence.
+It is unsuitable when the order of the base-game checks is significant.
+
+### Reproduce the missing-hive spatial test
+
+#### Use `EnemyAI.eye` — recommended
+
+The base predicate measures both distance gates and linecasts from
+`eye.position`. Use the documented linecast mask with this origin.
+
+#### Use the bee root transform or camera position
+
+Neither is the origin used by `IsHiveMissing()`; substituting either changes
+the distance and line-of-sight result.
+
+### Handle hive-position synchronization
+
+#### Keep `lastKnownHivePosition` and `syncedLastKnownHivePosition` together — recommended
+
+The base predicate refuses to evaluate until synchronization completes, and
+the remembered position is intentionally distinct from the hive transform.
+
+#### Infer the position from `hive.transform` alone
+
+This loses both the synchronization gate and the remembered-position semantics,
+so it cannot reproduce the base missing-hive decision.
 
 ## State and lifecycle
 
