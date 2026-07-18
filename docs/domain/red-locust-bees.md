@@ -80,9 +80,14 @@ so it cannot reproduce the base missing-hive decision.
 
 `RedLocustBees.DoAIInterval()` owns the relevant behaviour states.
 
-- **State 0:** calls `IsHiveMissing()` first. If it returns false, the bee can enter state 1 when `CheckLineOfSightForPlayer(360f, 16, 1)` returns a player whose `transform.position` is less than `defenseDistance` from the hive.
-- **State 1:** returns to state 0 when the target is invalid or more than `defenseDistance + 5f` from the hive; it enters state 2 when the target is holding `hive`.
-- **State 2:** returns to state 0 when `IsHivePlacedAndInLOS()` succeeds and no player is within `defenseDistance`; otherwise it searches or pursues.
+- **State 0:** calls `IsHiveMissing()` first. If it returns false, the bee can
+  enter state 1 when `CheckLineOfSightForPlayer(360f, 16, 1)` returns a player
+  whose `transform.position` is less than `defenseDistance` from the hive.
+- **State 1:** returns to state 0 when the target is invalid or more than
+  `defenseDistance + 5f` from the hive; it enters state 2 when the target is
+  holding `hive`.
+- **State 2:** returns to state 0 when `IsHivePlacedAndInLOS()` succeeds and
+  no player is within `defenseDistance`; otherwise it searches or pursues.
 
 `IsHiveMissing()` returns false until `syncedLastKnownHivePosition` is true.
 It evaluates the hive only when the distance from `eye.position` to

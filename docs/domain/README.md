@@ -9,4 +9,3 @@ design decisions.
   analysis.
 - [Diagnostic visualization](diagnostic-visualization.md) records reusable
   practices for HUD and world-space diagnostic rendering.
-

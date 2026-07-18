@@ -44,4 +44,3 @@ colors so a row can be matched to its geometry without a second legend.
 The mod uses `SEEN` and `blocked` for the displayed sight or spatial
 condition, and `INSIDE` / `outside` for the hive defence-radius comparison.
 These are overlay labels, not names for base-game behaviour states.
-

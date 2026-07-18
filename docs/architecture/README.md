@@ -10,4 +10,3 @@ knowledge is documented in
   meanings, and deliberate proxy boundaries.
 - [Rendering lifecycle](rendering-lifecycle.md) defines ownership and
   replacement of HUD and world-view objects.
-
