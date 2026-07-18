@@ -5,6 +5,14 @@
 - Game: Lethal Company v73
 - Steam manifest ID: `1749099131234587692`
 
+## Evidence
+
+The implementation claims below are `direct_static` observations from the
+target-build decompilation: `RedLocustBees.cs` and `EnemyAI.cs`. The v73 asset
+root was also inspected; this document does not rely on a serialized override
+for its stated distances or member relationships. Runtime timing, object
+enumeration, and network arrival remain outside this document's claim scope.
+
 When the target version changes, update both identifiers and replace the
 observations in this document rather than creating a version-specific copy.
 
