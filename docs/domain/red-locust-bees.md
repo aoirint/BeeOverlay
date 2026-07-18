@@ -5,82 +5,56 @@
 - Game: Lethal Company v73
 - Steam manifest ID: `1749099131234587692`
 
-## Relevant implementation
+Use the members below as the version-specific Harmony or reflection targets.
+Reconfirm their declarations when changing the target game version.
 
-The observations below concern `RedLocustBees`, especially
-`IsHiveMissing()` and its calls to `EnemyAI.CheckLineOfSightForPlayer`.
+## Patch and access targets
 
-When the target version changes, update both identifiers and replace the
-observations in this document rather than creating a version-specific copy.
+### `RedLocustBees : EnemyAI`
 
-## Scope
-
-This document records observed implementation behavior of Lethal Company's
-`RedLocustBees` class. It does not document UI, visualization, or architecture
-decisions.
-
-## Implementation reference
+| Member | Declaration | Use |
+| --- | --- | --- |
+| Hive reference | `public GrabbableObject hive` | Read the current hive and its `transform.position`; its held state is `hive.isHeld`. |
+| Defence radius | `public int defenseDistance` | The player-to-hive radius used when entering and leaving defensive pursuit. |
+| Remembered hive position | `public Vector3 lastKnownHivePosition` | The position against which missing-hive checks are made. |
+| Position-sync flag | `private bool syncedLastKnownHivePosition` | Gate for `IsHiveMissing()`; access with non-public instance binding if required. |
+| AI update | `public override void DoAIInterval()` | State-machine update containing the transitions below. |
+| Missing-hive test | `private bool IsHiveMissing()` | Use `AccessTools.Method(typeof(RedLocustBees), "IsHiveMissing")` for a private-method patch. |
+| Placed-hive test | `private bool IsHivePlacedAndInLOS()` | Companion predicate used by `IsHiveMissing()` and state 2. |
+| Hive-position sync | `public void SyncLastKnownHivePositionServerRpc(Vector3 hivePosition)` | Sends the current remembered position before ownership changes. |
+| Hive-position apply | `public void SyncLastKnownHivePositionClientRpc(Vector3 hivePosition)` | Assigns `lastKnownHivePosition` and sets the sync flag. |
 
 ### `EnemyAI`
 
-`RedLocustBees` inherits the following `EnemyAI` members.
-
-#### Fields
-
-| Member | C# type | Role in `RedLocustBees` behavior |
+| Member | Declaration | Use |
 | --- | --- | --- |
-| `thisEnemyIndex` | `int` | Stable per-bee tracking key. |
-| `eye` | `Transform` | Origin used for sight checks. |
+| Sight origin | `public Transform eye` | Origin of bee line-of-sight and hive-distance tests. |
+| Sight check | `public PlayerControllerB CheckLineOfSightForPlayer(float width = 45f, int range = 60, int proximityAwareness = -1)` | The state-0 defensive check calls it as `CheckLineOfSightForPlayer(360f, 16, 1)`. |
 
-#### Methods
+## State and lifecycle
 
-| Method | Return type | Parameters | Role |
-| --- | --- | --- | --- |
-| `CheckLineOfSightForPlayer` | `PlayerControllerB` | `float width`, `int range`, `int proximityAwareness` | Finds a player that satisfies the configured sight-check parameters for enemy AI behavior. |
+`RedLocustBees.DoAIInterval()` owns the relevant behaviour states.
 
-### `RedLocustBees`
+- **State 0:** calls `IsHiveMissing()` first. If it returns false, the bee can enter state 1 when `CheckLineOfSightForPlayer(360f, 16, 1)` returns a player whose `transform.position` is less than `defenseDistance` from the hive.
+- **State 1:** returns to state 0 when the target is invalid or more than `defenseDistance + 5f` from the hive; it enters state 2 when the target is holding `hive`.
+- **State 2:** returns to state 0 when `IsHivePlacedAndInLOS()` succeeds and no player is within `defenseDistance`; otherwise it searches or pursues.
 
-#### Fields
+`IsHiveMissing()` returns false until `syncedLastKnownHivePosition` is true.
+It evaluates the hive only when the distance from `eye.position` to
+`lastKnownHivePosition` is below 4 units, or below 8 units with no `Physics.Linecast`
+hit using `StartOfRound.Instance.collidersAndRoomMaskAndDefault`. Within that
+gate it returns true when the hive is held, or when its position is more than
+6 units from `lastKnownHivePosition` and `IsHivePlacedAndInLOS()` is false.
 
-| Member | C# type | Role |
-| --- | --- | --- |
-| `hive` | `GrabbableObject` | Current hive reference; its position is available from `RedLocustBees.hive.transform.position`. |
-| `defenseDistance` | `int` | Distance used for hive-proximity checks. |
-| `lastKnownHivePosition` | `Vector3` | Remembered hive position used by missing-hive evaluation. |
-| `syncedLastKnownHivePosition` | `bool` | Private synchronization flag for `RedLocustBees.lastKnownHivePosition`. |
+`IsHivePlacedAndInLOS()` returns false for a held hive, a hive more than 9
+units from `eye.position`, or a blocked linecast using the same mask.
 
-#### Methods
+## Change checklist
 
-| Method | Return type | Parameters | Role |
-| --- | --- | --- | --- |
-| `IsHiveMissing` | `bool` | None | Evaluates whether `RedLocustBees` considers its hive missing. |
-
-## Behavior analysis
-
-### `RedLocustBees`: state 0 to state 1
-
-`RedLocustBees.CheckLineOfSightForPlayer(360f, 16, 1)` checks whether the bee
-can see the local player from `EnemyAI.eye`. Its distance gate is 16 units.
-
-`RedLocustBees.defenseDistance` is compared with the distance between the hive
-and the local player's body position. This check uses the body position rather
-than the camera position.
-
-### `RedLocustBees`: state 0 to state 2
-
-#### `RedLocustBees.IsHiveMissing()` spatial gates
-
-The following spatial gates were observed inside
-`RedLocustBees.IsHiveMissing()`:
-
-- A distance below 4 units from `EnemyAI.eye` to
-  `RedLocustBees.lastKnownHivePosition` enters the near-distance gate.
-- A distance below 8 units with a clear linecast between
-  `EnemyAI.eye` and `RedLocustBees.lastKnownHivePosition` enters the
-  line-of-sight gate.
-- The spatial gates are not evaluated when
-  `RedLocustBees.syncedLastKnownHivePosition` is false.
-
-`RedLocustBees.IsHiveMissing()` also depends on hive state. These observations
-describe its spatial gates only; they do not claim to enumerate every condition
-that can cause a state transition.
+1. Patch `DoAIInterval()` for state-transition timing; patch `IsHiveMissing()`
+   only for the missing-hive predicate itself.
+2. Keep the `Vector3` parameter on both hive-position RPC targets.
+3. Treat `syncedLastKnownHivePosition` as a required precondition, not as a
+   replacement for the remembered position.
+4. Use `EnemyAI.eye`, not the camera or bee root transform, for the documented
+   sight and distance checks.
