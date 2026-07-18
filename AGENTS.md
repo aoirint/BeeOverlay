@@ -12,10 +12,10 @@ Use repository-local Agent Skills from:
 - `BeeOverlay.sln` is the solution entry point.
 - `assets/` contains Thunderstore package metadata and package-facing files.
 - `docs/` contains developer documentation.
-    - `red-locust-bees.md` covers the implementation and behavior of Lethal
-      Company's `RedLocustBees`.
-    - `architecture.md` covers BeeOverlay UI, visualization, and architecture
-      decisions.
+    - `domain/` contains versioned base-game and reusable implementation
+      knowledge without BeeOverlay-specific product decisions.
+    - `architecture/` contains BeeOverlay models, workflows, responsibilities,
+      and design decisions; it links to the domain knowledge it uses.
     - `icon-authoring.md` covers package-icon authoring and rendering.
 
 ## Icon Assets
@@ -40,3 +40,10 @@ not add a persistent `BepInExPluginVersion` override to the project file.
 
 Use `.agents/skills/implementation-analysis-quality-check/` when creating,
 updating, or reviewing implementation-analysis documentation.
+
+## Documentation Boundaries
+
+Add base-game or reusable technical knowledge to `docs/domain/`. Add a new
+domain document when an architecture document needs knowledge not already
+documented there. Add BeeOverlay-specific models, logic, workflows, and design
+decisions to `docs/architecture/`; do not duplicate base-game analysis there.
