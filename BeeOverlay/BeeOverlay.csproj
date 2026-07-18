@@ -5,7 +5,7 @@
     <Product>BeeOverlay</Product>
     <RootNamespace>BeeOverlay</RootNamespace>
     <!-- !!APP_VERSION_MARKER!! -->
-    <Version>0.1.0-alpha.3</Version>
+    <Version>0.1.0</Version>
     <TargetFramework>netstandard2.1</TargetFramework>
     <LangVersion>13.0</LangVersion>
   </PropertyGroup>
