@@ -7,6 +7,6 @@ design decisions.
 - [RedLocustBees implementation analysis](red-locust-bees.md) records the v73
   base-game members, behaviour, and implementation choices relevant to bee
   analysis.
-- [Diagnostic visualization](diagnostic-visualization.md) identifies the v81
+- [Diagnostic visualization](diagnostic-visualization.md) identifies the v73
   HUD lifecycle and the Unity UI and world-rendering APIs used to implement
   diagnostic visuals.

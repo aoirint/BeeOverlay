@@ -96,6 +96,10 @@ hit using `StartOfRound.Instance.collidersAndRoomMaskAndDefault`. Within that
 gate it returns true when the hive is held, or when its position is more than
 6 units from `lastKnownHivePosition` and `IsHivePlacedAndInLOS()` is false.
 
+When that gated evaluation finds the hive present, it refreshes
+`lastKnownHivePosition` to `hive.transform.position + Vector3.up * 0.5f` before
+returning false. A later remembered-hive probe must account for this update.
+
 `IsHivePlacedAndInLOS()` returns false for a held hive, a hive more than 9
 units from `eye.position`, or a blocked linecast using the same mask.
 

@@ -8,8 +8,11 @@ the current bees, builds the HUD status, and updates the corresponding
 `BeeView` world guides in the same tick.
 
 The game meanings of bee state, sight, and hive tests are defined in
-[../domain/red-locust-bees.md](../domain/red-locust-bees.md). This document
-defines only BeeOverlay's interpretation and presentation of those values.
+[../domain/red-locust-bees.md](../domain/red-locust-bees.md). The HUD update
+and world-rendering integration are defined in
+[../domain/diagnostic-visualization.md](../domain/diagnostic-visualization.md).
+This document defines only BeeOverlay's interpretation and presentation of
+those values.
 
 ## Subjects and identity
 

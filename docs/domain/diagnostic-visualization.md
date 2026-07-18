@@ -2,10 +2,10 @@
 
 ## Target
 
-- Game: Lethal Company v81
-- Steam manifest ID: `6423525044216269478`
+- Game: Lethal Company v73
+- Steam manifest ID: `1749099131234587692`
 
-The `HUDManager` members below are v81 base-game members. The Unity UI and
+The `HUDManager` members below are v73 base-game members. The Unity UI and
 renderer APIs are framework APIs used to create mod-owned visuals; verify them
 against the Unity assemblies referenced by the target game when updating the
 game dependency.
@@ -25,7 +25,7 @@ defines reusable rendering, ownership, and lifecycle practices.
 
 | Member | Declaration | Role |
 | --- | --- | --- |
-| Singleton | `public static HUDManager Instance` | Resolve the current HUD manager; it can be unavailable before HUD setup. |
+| Singleton | `public static HUDManager Instance { get; private set; }` | Resolve the current HUD manager; it can be unavailable before HUD setup. |
 | HUD root | `public GameObject HUDContainer` | Parent custom HUD objects below this game-owned container. |
 | Setup | `private void Awake()` | A postfix observes that this manager's base setup has completed. |
 | Frame update | `private void Update()` | A postfix supplies a HUD-timed update hook. |
@@ -105,7 +105,7 @@ updated diagnostic table.
 
 #### Assume a TextMeshPro component or create a separate canvas
 
-The v81 HUD container is the integration point established by the game. A TMP
+The v73 HUD container is the integration point established by the game. A TMP
 component or separate canvas adds a different dependency and does not by itself
 inherit the active HUD's lifecycle or layout.
 
