@@ -40,8 +40,8 @@ jobs:
     runs-on: ubuntu-slim
 
     steps:
-      # Checkout is required before every lint check because dotnet format and
-      # Markdown lint read repository-local configuration and source files.
+      # Checkout is required before every lint check because both dotnet format
+      # and Markdown lint read repository-local configuration and source files.
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Cache ShellCheck
@@ -123,13 +123,16 @@ jobs:
           tar -xzf "${archive_path}" -C "${tool_dir}" actionlint
           echo "${tool_dir}" >> "${GITHUB_PATH}"
 
-      - name: Lint Thunderstore publisher
-        run: shellcheck .github/actions/publish-thunderstore/publish-thunderstore.sh
-
       - name: Run actionlint
-        # ShellCheck is installed above so actionlint can inspect inline shell
-        # scripts. Revisit the pyflakes disablement if Python is added.
+        # ShellCheck is installed above so actionlint can inspect inline
+        # workflow scripts. No Python files are currently in this repository;
+        # revisit the pyflakes disablement when Python scripts are added.
         run: actionlint -color -pyflakes=
+
+      - name: Run ShellCheck
+        # actionlint checks inline workflow scripts; this explicit pass covers
+        # standalone shell files used by composite actions.
+        run: shellcheck .github/actions/publish-thunderstore/publish-thunderstore.sh
 
       - name: Cache pinact
         # Cache only the release archive. The install step verifies SHA256 on
@@ -175,14 +178,14 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: pinact run --check --min-age 7
 
-      - name: Set up .NET
+      - name: Setup .NET
         # Keep dotnet-version aligned with build.yml per the README .NET and
         # C# tooling update policy. The cache path is intentionally the project
         # lock file; update it only if the lock file moves or projects are
         # added.
         uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
         with:
-          dotnet-version: 10.x
+          dotnet-version: '10.x'
           cache: true
           cache-dependency-path: BeeOverlay/packages.lock.json
 
@@ -191,7 +194,7 @@ jobs:
         # use --no-restore without silently changing dependency resolution.
         run: dotnet restore --locked-mode
 
-      - name: Check C# formatting
+      - name: Run dotnet format
         # dotnet format is the aggregate check here: it verifies whitespace,
         # built-in code style, and fixable analyzer diagnostics. Build still
         # reports Roslyn analyzer diagnostics, including non-fixable ones.
