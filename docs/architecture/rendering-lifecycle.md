@@ -12,9 +12,8 @@ vanilla HUD container, or game-owned bee and hive objects.
 
 A `BeeView` owns the visual objects for one `thisEnemyIndex`. It receives
 world-guide values from `Overlay`; it does not independently query game state
-while applying those values. The overlay currently samples HUD and world-guide
-values separately; see [Per-frame update and cleanup](#per-frame-update-and-cleanup)
-for the resulting snapshot-improvement requirement.
+while applying those values. HUD text and world guides consume the same
+immutable Core frame.
 
 ## HUD replacement
 
@@ -39,17 +38,16 @@ the root's actual parent; then replace the current procedure with that lifecycle
 
 ## Per-frame update and cleanup
 
-`Overlay.Tick()` rebuilds the complete status text from the current sorted bee
-set. It then hides every view whose key was not observed during that tick. The
-status text is a single rich-text block rather than one UI object per row, so a
-despawned bee cannot leave a stale row behind.
+`Overlay.Present()` rebuilds the complete status text from the current sorted
+Core frame. It then hides every view whose key was not observed during that
+update. The status text is a single rich-text block rather than one UI object
+per row, so a despawned bee cannot leave a stale row behind.
 
-The current implementation calculates world-guide values in `DrawBee()` and
-then independently calculates status values in `GetBeeStatusLine()`. It does
-not yet use the shared snapshot required by the diagnostic-visualization domain
-guidance, so values can differ if game state changes between those reads. A
-future refactor should sample each bee once, then supply that immutable sample
-to both rendering paths.
+`BeeObservationSource` captures the local player and each bee once per update.
+Core derives distances and probe conditions from that observation, and
+`Overlay.Present()` supplies the same `BeeDiagnostic` to status formatting and
+world rendering. The presenter does not retain the frame after the update;
+only the Unity view objects survive for reuse.
 
 World guides are visual-only. Their colliders are removed, and they do not add
 physics, raycast, or network components. This preserves the diagnostic role of
