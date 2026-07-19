@@ -2,27 +2,32 @@
 
 ## Responsibility
 
-`Plugin.Awake()` is the composition root: it creates one `Overlay` and installs
-Harmony patches, but does not own diagnostic or rendering policy.
-The `HUDManager.Update` postfix drives `Overlay.Tick()`.
-Files under `BeeOverlay/Interop/` divide the implementation by boundary:
+`Plugin.Awake()` constructs `PluginController` before installing Harmony
+patches. `PluginController` is the composition root: it connects the Core frame
+handler to the game observation source and Unity presenter. The
+`HUDManager.Update` postfix delegates one update to that controller and guards
+the game callback from observation, presentation, and logging failures.
 
-- `Overlay.cs` owns the HUD lifecycle, per-frame orchestration, and shared
-  resources.
-- `Overlay.Diagnostics.cs` samples base-game state and builds diagnostic
-  values and status labels.
-- `Rendering/Overlay.BeeView.cs` owns per-bee Unity rendering objects.
-- `HudUpdatePatch.cs` is the thin Harmony callback that delegates to the
-  overlay.
+The implementation has two dependency boundaries:
 
-The partial `Overlay` files deliberately remain one lifecycle owner.
-Separating them into independently mutable services would make it easier for
-HUD text and world guides to observe different frame state without solving the
-existing snapshot boundary described in
-[Rendering lifecycle](rendering-lifecycle.md#per-frame-update-and-cleanup).
-A separate Core module is not used because the current diagnostic model is
-dominated by Unity vectors and base-game observations; introducing one would
-add transport abstractions without isolating meaningful framework-free policy.
+- `Core/` owns plain observations, derived diagnostic models, thresholds, the
+  frame-building use case, the frame handler, and its observation and
+  presentation ports. It has no BepInEx, Harmony, Unity, or Lethal Company
+  references.
+- `Interop/` owns live `RedLocustBees` and player sampling, private-field and
+  physics access, HUD lifecycle, status formatting, Unity rendering objects,
+  and the Harmony callback.
+
+`Interop/Game/BeeObservationSource.cs` converts live objects and Unity vectors
+to one `OverlayFrameObservation`. `BuildOverlayFrameUseCase` sorts subjects and
+derives distances and diagnostic conditions. `Overlay` then presents the
+resulting immutable `OverlayFrame`; neither the HUD path nor `BeeView` reads
+game state.
+
+The frame is transient rather than stored across updates. BeeOverlay does not
+currently compare frames, smooth values, or retain diagnostic history, so a
+mutable latest-frame store would imply a lifecycle the feature does not need.
+Add Core state only when a future feature has an explicit cross-frame rule.
 
 The game meanings of bee state, sight, and hive tests are defined in
 [../domain/red-locust-bees.md](../domain/red-locust-bees.md). The HUD update
@@ -33,14 +38,29 @@ those values.
 
 ## Subjects and identity
 
-The overlay enumerates `RedLocustBees`, sorts them by `thisEnemyIndex`, and
-uses that value as the `BeeView` dictionary key. The HUD uses one-based
-ordinals after sorting so that rows remain readable without making display
-ordinals into persistent identities.
+The observation source enumerates `RedLocustBees` and captures
+`thisEnemyIndex` as the stable subject identity. Core sorts observations by
+that identity. The presenter uses it as the `BeeView` dictionary key, while
+the HUD uses one-based ordinals after sorting so that rows remain readable
+without making display ordinals into persistent identities.
 
-A bee without a readable hive has a status row but no spatial guides. A view
-not seen during the current tick is hidden, preventing guides from a despawned
-bee from remaining in the scene.
+A bee without a readable hive remains in the Core frame and has a status row
+but no spatial guides. A view not seen during the current update is hidden,
+preventing guides from a despawned bee from remaining in the scene.
+
+## Frame model
+
+`OverlayFrameObservation` is the direct-observation mirror for one update. It
+contains plain vectors and values, keeps the player's body and sight-target
+positions distinct, represents an absent hive explicitly, and preserves the
+difference between an unreadable private sync field and a game value of
+`false`.
+
+`OverlayFrame` combines each observation with values derived by Core. Both the
+HUD and world-guide presenter receive the same derived object. This deliberately
+changes the old implementation, which called sight and physics queries once
+for HUD text and again for world guides; a changing game state can no longer
+make those two presentations disagree within one update.
 
 ## Diagnostic model
 

@@ -3,10 +3,11 @@
 extern alias LethalCompany;
 extern alias UnityEngine;
 
-using System;
 using System.Collections.Generic;
 using System.Text;
-using HarmonyLib;
+using BeeOverlay.Core.Models;
+using BeeOverlay.Core.Ports;
+using BepInEx.Logging;
 using LethalCompany;
 using UnityEngine::UnityEngine;
 using UiText = LethalCompany::UnityEngine.UI.Text;
@@ -14,7 +15,7 @@ using UnityObject = UnityEngine::UnityEngine.Object;
 
 namespace BeeOverlay.Interop;
 
-internal sealed partial class Overlay
+internal sealed partial class Overlay : IOverlayPresenter
 {
     // Keep one lifecycle owner for HUD and per-bee views. The partial files separate sampling and
     // rendering details without creating independent mutable services that could drift per frame.
@@ -34,10 +35,7 @@ internal sealed partial class Overlay
     // Keep the important thresholds named at the overlay boundary. The goal is not to invent new
     // gameplay rules here; each visual should point back to one specific base-game gate that can
     // move RedLocustBees out of state 0.
-    private const float PlayerLineOfSightDistance = 16f;
     private const float VisiblePlayerSightLineRenderYOffset = -0.35f;
-    private const float HiveMissingNearDistance = 4f;
-    private const float HiveMissingLineOfSightDistance = 8f;
     // Six 48-segment loops produce almost the same vertex count as the previous three 96-segment
     // great circles, while latitude and longitude cues make the guide read as a sphere at a glance.
     private const int WireframeSphereSegments = 48;
@@ -50,6 +48,7 @@ internal sealed partial class Overlay
 
     private readonly Dictionary<int, BeeView> views = new();
     private readonly Font? font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+    private readonly ManualLogSource logger;
 
     // LineRenderer vertex colors are updated per segment every frame. A white material avoids
     // tinting those runtime colors and lets the normal/warning colors match the HUD lines.
@@ -59,50 +58,34 @@ internal sealed partial class Overlay
     private readonly Material lastKnownHiveMaterial = CreateMaterial(LastKnownHiveColor);
     private readonly Material playerMaterial = CreateMaterial(PlayerColor);
 
-    private static readonly AccessTools.FieldRef<RedLocustBees, bool>? SyncedLastKnownHivePositionRef =
-        CreateSyncedLastKnownHivePositionRef();
-
     private RectTransform? hudRoot;
     private UiText? statusText;
     private Transform? attachedHudContainer;
     private float nextWaitingLogTime;
 
-    public static Overlay? Instance { get; set; }
-
-    public void Tick()
+    public Overlay(ManualLogSource logger)
     {
-        // Treat the overlay as disposable scene UI. If the vanilla HUD is not ready, hiding world
-        // probes is safer than leaving old markers in the scene with no matching status text.
-        if (!TryEnsureHudRoot())
-        {
-            HideAll();
-            LogWaitingForHud();
-            return;
-        }
+        this.logger = logger;
+    }
 
-        var bees = UnityObject.FindObjectsOfType<RedLocustBees>();
+    public bool TryPrepare()
+    {
+        return TryEnsureHudRoot();
+    }
 
-        // Stable ordering makes the top-left status useful for screenshots and frame-to-frame
-        // comparison. Unity's object enumeration order is not a good identity signal by itself.
-        Array.Sort(bees, static (left, right) => left.thisEnemyIndex.CompareTo(right.thisEnemyIndex));
-
+    public void Present(OverlayFrame frame)
+    {
         var seen = new HashSet<int>();
         var statusBuilder = new StringBuilder();
-        statusBuilder.Append($"Bee Overlay | bees={bees.Length}");
-        var localPlayer = GameNetworkManager.Instance != null ? GameNetworkManager.Instance.localPlayerController : null;
-        var localPlayerPosition = GetPlayerBodyPosition(localPlayer);
-        for (var i = 0; i < bees.Length; i++)
+        statusBuilder.Append($"Bee Overlay | bees={frame.Bees.Count}");
+        foreach (var bee in frame.Bees)
         {
-            var bee = bees[i];
-            // Drawing and status construction both sample the same frame, but they intentionally
-            // stay separate: the 3D probes answer "where is the risky geometry?", while the HUD
-            // answers "which exact gates are currently true enough to care about?".
             DrawBee(bee, seen);
             statusBuilder.AppendLine();
             // HUD numbers are compact per-frame ordinals after sorting, while the view dictionary
-            // still uses thisEnemyIndex below. That keeps the overlay readable without giving up
-            // the stable identity Unity exposes for hiding old per-bee world objects.
-            statusBuilder.Append(GetBeeStatusLine(bee, i + 1, localPlayer, localPlayerPosition));
+            // still uses the stable identity below. That keeps the overlay readable without giving
+            // up the identity Unity exposes for hiding old per-bee world objects.
+            statusBuilder.Append(GetBeeStatusLine(bee));
         }
 
         foreach (var pair in views)
@@ -169,7 +152,7 @@ internal sealed partial class Overlay
         statusText.horizontalOverflow = HorizontalWrapMode.Overflow;
         statusText.verticalOverflow = VerticalWrapMode.Overflow;
 
-        Plugin.Log?.LogInfo($"Overlay attached to HUDContainer='{hudContainer.name}'.");
+        logger.LogInfo($"Overlay attached to HUDContainer='{hudContainer.name}'.");
         return true;
     }
 
@@ -202,7 +185,7 @@ internal sealed partial class Overlay
         }
     }
 
-    private void HideAll()
+    public void HideAll()
     {
         foreach (var view in views.Values)
         {
@@ -210,7 +193,7 @@ internal sealed partial class Overlay
         }
     }
 
-    private void LogWaitingForHud()
+    public void LogWaitingForHud()
     {
         if (Time.realtimeSinceStartup < nextWaitingLogTime)
         {
@@ -218,7 +201,7 @@ internal sealed partial class Overlay
         }
 
         nextWaitingLogTime = Time.realtimeSinceStartup + 5f;
-        Plugin.Log?.LogInfo("Overlay waiting for HUDManager.HUDContainer.");
+        logger.LogInfo("Overlay waiting for HUDManager.HUDContainer.");
     }
 
     private static void Stretch(RectTransform rect)

@@ -32,17 +32,23 @@ directly.
 
 ## Project Directory Structure
 
-- `BeeOverlay/Plugin.cs` is the BepInEx entry point and composition root. Keep
-  startup limited to logger setup, overlay construction, and bounded Harmony
-  registration.
+- `BeeOverlay/Plugin.cs` is the BepInEx entry point. Keep startup limited to
+  logger setup, controller construction, and bounded Harmony registration.
+- `BeeOverlay/PluginController.cs` is the composition root and plugin-facing
+  callback facade. Wire concrete Interop adapters to Core ports there.
+- `BeeOverlay/Core/` owns framework-free observations, diagnostic models,
+  thresholds, use cases, callback handlers, and port interfaces. Do not
+  reference BepInEx, Harmony, Unity, or Lethal Company types from Core.
 - `BeeOverlay/Interop/` owns BepInEx, Harmony, Unity, and base-game integration.
-  Keep HUD lifecycle and orchestration in `Overlay.cs`, game-state sampling and
-  diagnostic interpretation in `Overlay.Diagnostics.cs`, rendering in
-  `Rendering/`, and Harmony callbacks in dedicated patch files.
-- Keep the mod as one C# project while these modules share one per-frame
-  lifecycle and one packaged assembly. Add a framework-free Core module only
-  when policy, state, or use cases can be isolated without transporting Unity
-  or base-game types through an artificial abstraction.
+  Keep live game sampling in `Game/`, HUD ownership and presentation in
+  `Overlay.cs`, status formatting in `Overlay.Diagnostics.cs`, Unity rendering
+  in `Rendering/`, and Harmony callbacks in dedicated patch files.
+- Capture one immutable observation per HUD update and derive both HUD text and
+  world guides from the resulting Core frame. Do not add a cross-frame store
+  unless a feature needs history, smoothing, or change detection.
+- Keep the mod as one C# project while Core and Interop share one packaged
+  assembly. Add another project only for a concrete testing, reuse, build, or
+  dependency-isolation requirement.
 - `BeeOverlay.sln` is the solution entry point.
 - `assets/` contains Thunderstore package metadata and package-facing files.
 - `docs/` contains developer documentation.

@@ -13,14 +13,18 @@ public sealed class Plugin : BaseUnityPlugin
 {
     internal static ManualLogSource? Log { get; private set; }
 
+    private static PluginController? controller;
+
+    internal static PluginController Controller => controller!;
+
     private Harmony? harmony;
 
     private void Awake()
     {
-        // Keep the loader entry point as the composition root. Game sampling, HUD lifecycle, and
-        // rendering stay behind the Interop boundary so plugin startup does not accumulate policy.
+        // Keep the loader entry point small. The controller composition root wires Core to game
+        // observation and Unity presentation before the first Harmony callback can run.
         Log = Logger;
-        Overlay.Instance = new Overlay();
+        controller = PluginController.Create(Logger);
         harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
         harmony.PatchAll(typeof(Plugin).Assembly);
         Logger.LogInfo($"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION} loaded.");

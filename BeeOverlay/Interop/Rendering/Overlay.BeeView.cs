@@ -2,6 +2,8 @@
 
 extern alias UnityEngine;
 
+using BeeOverlay.Core;
+using BeeOverlay.Core.Models;
 using UnityEngine::UnityEngine;
 using UnityObject = UnityEngine::UnityEngine.Object;
 
@@ -130,7 +132,7 @@ internal sealed partial class Overlay
             // base game's CheckLineOfSightForPlayer call. It is centered on the bee eye because
             // both the real player check and the hive pickup proxy start their visibility test
             // from that point.
-            beeSightRangeSphere.Set(beeEye, PlayerLineOfSightDistance, BeeColor);
+            beeSightRangeSphere.Set(beeEye, OverlayRules.PlayerLineOfSightDistance, BeeColor);
 
             // RedLocustBees stores defenseDistance as an integer radius around the hive. A sphere
             // makes the full three-dimensional trigger range visible before it is crossed.
@@ -167,7 +169,7 @@ internal sealed partial class Overlay
             // This is a predictive helper for the pickup moment: if the player is effectively at
             // the hive, the bee-to-hive ray is the closest stable proxy for whether the bee could
             // see that pickup position before the player collider is actually there.
-            var hiveTarget = probe.HivePosition + Vector3.up * WorldYOffset;
+            var hiveTarget = ToUnityVector3(probe.HivePosition) + Vector3.up * WorldYOffset;
             var lineColor = probe.CanSeePickupProxy ? PickupProxyColor : InactiveLineColor;
             SetWorldLine(beeEyeToHiveLine, beeEye, hiveTarget, lineColor);
             beeEyeToHiveLine.gameObject.SetActive(true);
@@ -175,7 +177,8 @@ internal sealed partial class Overlay
 
         private void SetHiveMissingProbe(Vector3 beeEye, HiveMissingProbe probe)
         {
-            var lastKnownHive = probe.LastKnownHivePosition + Vector3.up * WorldYOffset;
+            var lastKnownHive =
+                ToUnityVector3(probe.LastKnownHivePosition) + Vector3.up * WorldYOffset;
             lastKnownHiveMarker.SetActive(true);
             lastKnownHiveMarker.transform.position = lastKnownHive;
 
@@ -184,12 +187,12 @@ internal sealed partial class Overlay
             // lighter so it reads as the outer context instead of competing with the inner ring.
             lastKnownHiveNearSphere.Set(
                 lastKnownHive,
-                HiveMissingNearDistance,
+                OverlayRules.HiveMissingNearDistance,
                 LastKnownHiveNearSphereColor
             );
             lastKnownHiveLineOfSightSphere.Set(
                 lastKnownHive,
-                HiveMissingLineOfSightDistance,
+                OverlayRules.HiveMissingLineOfSightDistance,
                 LastKnownHiveLineOfSightSphereColor
             );
 
