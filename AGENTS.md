@@ -32,7 +32,17 @@ directly.
 
 ## Project Directory Structure
 
-- `BeeOverlay/` contains the mod source and project file.
+- `BeeOverlay/Plugin.cs` is the BepInEx entry point and composition root. Keep
+  startup limited to logger setup, overlay construction, and bounded Harmony
+  registration.
+- `BeeOverlay/Interop/` owns BepInEx, Harmony, Unity, and base-game integration.
+  Keep HUD lifecycle and orchestration in `Overlay.cs`, game-state sampling and
+  diagnostic interpretation in `Overlay.Diagnostics.cs`, rendering in
+  `Rendering/`, and Harmony callbacks in dedicated patch files.
+- Keep the mod as one C# project while these modules share one per-frame
+  lifecycle and one packaged assembly. Add a framework-free Core module only
+  when policy, state, or use cases can be isolated without transporting Unity
+  or base-game types through an artificial abstraction.
 - `BeeOverlay.sln` is the solution entry point.
 - `assets/` contains Thunderstore package metadata and package-facing files.
 - `docs/` contains developer documentation.

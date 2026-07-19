@@ -2,10 +2,27 @@
 
 ## Responsibility
 
-`Plugin.Awake()` creates one `Overlay` and installs Harmony patches.
-The `HUDManager.Update` postfix drives `Overlay.Tick()`. The overlay samples
-the current bees, builds the HUD status, and updates the corresponding
-`BeeView` world guides in the same tick.
+`Plugin.Awake()` is the composition root: it creates one `Overlay` and installs
+Harmony patches, but does not own diagnostic or rendering policy.
+The `HUDManager.Update` postfix drives `Overlay.Tick()`.
+Files under `BeeOverlay/Interop/` divide the implementation by boundary:
+
+- `Overlay.cs` owns the HUD lifecycle, per-frame orchestration, and shared
+  resources.
+- `Overlay.Diagnostics.cs` samples base-game state and builds diagnostic
+  values and status labels.
+- `Rendering/Overlay.BeeView.cs` owns per-bee Unity rendering objects.
+- `HudUpdatePatch.cs` is the thin Harmony callback that delegates to the
+  overlay.
+
+The partial `Overlay` files deliberately remain one lifecycle owner.
+Separating them into independently mutable services would make it easier for
+HUD text and world guides to observe different frame state without solving the
+existing snapshot boundary described in
+[Rendering lifecycle](rendering-lifecycle.md#per-frame-update-and-cleanup).
+A separate Core module is not used because the current diagnostic model is
+dominated by Unity vectors and base-game observations; introducing one would
+add transport abstractions without isolating meaningful framework-free policy.
 
 The game meanings of bee state, sight, and hive tests are defined in
 [../domain/red-locust-bees.md](../domain/red-locust-bees.md). The HUD update
