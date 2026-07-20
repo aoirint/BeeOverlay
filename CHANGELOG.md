@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Unreleased
 
+## v0.2.0-alpha.1 - 2026-07-20 UTC
+
 ### Changed
 
 - Updated the Lethal Company compatibility target and compile-time GameLibs
@@ -19,6 +21,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - The v81 target is supported by managed-code and asset inspection. Runtime
   validation of HUD behavior in a clean v81 game profile remains pending.
+- This prerelease is published to GitHub only. Thunderstore publication remains
+  limited to stable releases.
 
 ## v0.1.0 - 2026-07-18 UTC
 
