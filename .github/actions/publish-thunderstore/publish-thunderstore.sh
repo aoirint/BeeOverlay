@@ -69,7 +69,10 @@ jq --compact-output '.upload_urls[]' <<< "${upload_response}" | while read -r up
       --data-binary @- \
       "${part_url}"
 
-  etag=$(awk 'tolower($1) == "etag:" { value = $2; sub(/\r$/, "", value); print value }' "${headers_file}" | tail -n 1)
+  etag=$(
+    awk 'tolower($1) == "etag:" { value = $2; sub(/\r$/, "", value); print value }' "${headers_file}" \
+      | tail -n 1
+  )
   rm -f "${headers_file}"
 
   if [ -z "${etag}" ]; then
@@ -84,17 +87,36 @@ jq --compact-output '.upload_urls[]' <<< "${upload_response}" | while read -r up
     >> "${parts_file}"
 done
 
-jq --slurp --compact-output '{parts: .}' "${parts_file}" | api_post "${thunderstore_repo}/api/experimental/usermedia/${upload_uuid}/finish-upload/" > /dev/null
+jq --slurp --compact-output '{parts: .}' "${parts_file}" \
+  | api_post "${thunderstore_repo}/api/experimental/usermedia/${upload_uuid}/finish-upload/" \
+  > /dev/null
 
-community_categories=$(printf '%s\n' "${THUNDERSTORE_COMMUNITY_CATEGORIES}" | tr '[:space:]' '\n' | sed '/^$/d' | jq --raw-input . | jq --slurp --compact-output .)
+community_categories=$(
+  # Workflow YAML keeps categories readable as lines; Thunderstore requires a
+  # compact JSON array under the community-specific category map.
+  printf '%s\n' "${THUNDERSTORE_COMMUNITY_CATEGORIES}" \
+    | tr '[:space:]' '\n' \
+    | sed '/^$/d' \
+    | jq --raw-input . \
+    | jq --slurp --compact-output .
+)
 
-submission_response=$(jq --null-input --compact-output \
-  --arg author_name "${THUNDERSTORE_NAMESPACE}" \
-  --arg community "${THUNDERSTORE_COMMUNITY}" \
-  --arg upload_uuid "${upload_uuid}" \
-  --argjson community_categories "${community_categories}" \
-  '{author_name: $author_name, categories: [], community_categories: {($community): $community_categories}, communities: [$community], has_nsfw_content: false, upload_uuid: $upload_uuid}' \
-  | api_post "${thunderstore_repo}/api/experimental/submission/submit/")
+submission_response=$(
+  jq --null-input --compact-output \
+    --arg author_name "${THUNDERSTORE_NAMESPACE}" \
+    --arg community "${THUNDERSTORE_COMMUNITY}" \
+    --arg upload_uuid "${upload_uuid}" \
+    --argjson community_categories "${community_categories}" \
+    '{
+      author_name: $author_name,
+      categories: [],
+      community_categories: {($community): $community_categories},
+      communities: [$community],
+      has_nsfw_content: false,
+      upload_uuid: $upload_uuid
+    }' \
+    | api_post "${thunderstore_repo}/api/experimental/submission/submit/"
+)
 
 download_url=$(jq --raw-output '.package_version.download_url // empty' <<< "${submission_response}")
 community_url=$(jq --raw-output '.available_communities[0].url // empty' <<< "${submission_response}")

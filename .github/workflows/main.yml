@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
@@ -234,7 +237,6 @@ jobs:
           community: lethal-company
           community_categories: |
             mods
-            serverside
             tweaks-and-quality-of-life
             ai-generated
 
