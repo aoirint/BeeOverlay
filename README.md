@@ -1,8 +1,5 @@
 # BeeOverlay
 
-[![Build](https://github.com/aoirint/BeeOverlay/actions/workflows/build.yml/badge.svg)](https://github.com/aoirint/BeeOverlay/actions/workflows/build.yml)
-[![Lint](https://github.com/aoirint/BeeOverlay/actions/workflows/lint.yml/badge.svg)](https://github.com/aoirint/BeeOverlay/actions/workflows/lint.yml)
-
 A [Lethal Company][lethal-company-steam] diagnostic overlay mod that visualizes
 RedLocustBees spatial checks.
 
@@ -209,7 +206,7 @@ This repository currently does not use GitHub Actions variables.
 
 | Name | Used by | Description |
 | :--- | :------ | :---------- |
-| `THUNDERSTORE_TOKEN` | `.github/workflows/build.yml` | Thunderstore service-account token used only when publishing a stable release. |
+| `THUNDERSTORE_TOKEN` | `.github/workflows/main.yml` | Thunderstore service-account token used only when publishing a stable release. |
 
 ## Build
 
