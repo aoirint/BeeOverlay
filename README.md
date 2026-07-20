@@ -6,7 +6,7 @@
 A [Lethal Company][lethal-company-steam] diagnostic overlay mod that visualizes
 RedLocustBees spatial checks.
 
-The current analysis and implementation target Lethal Company v73.
+The current analysis and implementation target Lethal Company v81.
 
 ## Installation
 

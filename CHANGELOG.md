@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Unreleased
 
+### Changed
+
+- Updated the Lethal Company compatibility target and compile-time GameLibs
+  reference from v73 to v81 (Steam manifest ID `6423525044216269478`).
+
+### Notes
+
+- The v81 target is supported by managed-code and asset inspection. Runtime
+  validation of HUD behavior in a clean v81 game profile remains pending.
+
 ## v0.1.0 - 2026-07-18 UTC
 
 ### Added
