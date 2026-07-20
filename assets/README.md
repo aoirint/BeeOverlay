@@ -2,9 +2,11 @@
 
 BeeOverlay visualizes RedLocustBees spatial checks.
 
-## Compatibility
+## Targeted game build
 
-- Lethal Company v73 (Steam manifest ID `1749099131234587692`)
+- Lethal Company v81 (Steam manifest ID `6423525044216269478`). The target is
+  verified from the supplied managed-code and asset exports; in-game HUD
+  validation remains pending.
 
 ## What it does
 

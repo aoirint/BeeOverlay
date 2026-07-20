@@ -2,8 +2,10 @@
 
 ## Target
 
-- Game: Lethal Company v73
-- Steam manifest ID: `1749099131234587692`
+- Game: Lethal Company v81
+- Steam manifest ID: `6423525044216269478`
+- Evidence: managed `HUDManager` decompilation SHA-256
+  `5312279b0b2508ba859ae7be82dc34540c5c370df9e21df995aa22985d72ee11`.
 
 The `HUDManager` members below are base-game members. The Unity UI and
 renderer APIs are framework APIs used to create mod-owned visuals; verify them

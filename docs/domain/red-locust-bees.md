@@ -2,8 +2,12 @@
 
 ## Target
 
-- Game: Lethal Company v73
-- Steam manifest ID: `1749099131234587692`
+- Game: Lethal Company v81
+- Steam manifest ID: `6423525044216269478`
+- Evidence: managed `RedLocustBees` decompilation SHA-256
+  `48f51b49dbb88e57e65f82366e32acecf4c0e1622839748e7d92bd6a470b4c52`;
+  exported `RedLocustBees` prefab SHA-256
+  `786d048138bccf552b2851bc278b9e97679a444b983323bb483ef007bf625fac`.
 
 Use the members below as the version-specific Harmony or reflection targets.
 Reconfirm their declarations when changing the target game version.
@@ -102,6 +106,9 @@ returning false. A later remembered-hive probe must account for this update.
 
 `IsHivePlacedAndInLOS()` returns false for a held hive, a hive more than 9
 units from `eye.position`, or a blocked linecast using the same mask.
+
+The v81 `RedLocustBees` prefab serializes `defenseDistance` as `10`; use the
+live field for diagnostics because the value is serialized game data.
 
 ## Change checklist
 
