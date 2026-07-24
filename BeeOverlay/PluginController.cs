@@ -14,21 +14,17 @@ namespace BeeOverlay;
 internal sealed class PluginController
 {
     private readonly FrameHandler frameHandler;
-    private readonly ConfigEntry<bool> enabled;
+    private readonly BeeOverlayConfiguration configuration;
 
-    private PluginController(FrameHandler frameHandler, ConfigEntry<bool> enabled)
+    private PluginController(FrameHandler frameHandler, BeeOverlayConfiguration configuration)
     {
         this.frameHandler = frameHandler;
-        this.enabled = enabled;
+        this.configuration = configuration;
     }
 
     public static PluginController Create(ManualLogSource logger, ConfigFile config)
     {
-        ConfigEntry<bool> enabled = config.Bind(
-            "General",
-            "Enabled",
-            true,
-            "Set to false to disable BeeOverlay. Changes made through BepInEx configuration APIs apply on the next HUD update.");
+        BeeOverlayConfiguration configuration = BeeOverlayConfiguration.Bind(config);
         IOverlayObservationSource observationSource = new BeeObservationSource(logger);
         IOverlayPresenter presenter = new Overlay(logger);
         var frameHandler = new FrameHandler(
@@ -37,11 +33,11 @@ internal sealed class PluginController
             buildOverlayFrameUseCase: new BuildOverlayFrameUseCase()
         );
 
-        return new PluginController(frameHandler, enabled);
+        return new PluginController(frameHandler, configuration);
     }
 
     public void HandleFrame()
     {
-        frameHandler.HandleFrame(enabled.Value);
+        frameHandler.HandleFrame(configuration.Enabled, configuration.PresentationOptions);
     }
 }

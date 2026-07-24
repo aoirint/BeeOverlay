@@ -68,37 +68,64 @@ internal sealed partial class Overlay : IOverlayPresenter
         this.logger = logger;
     }
 
-    public bool TryPrepare()
+    public bool TryPrepare(bool hudEnabled)
     {
+        if (!hudEnabled)
+        {
+            HideHud();
+            return true;
+        }
+
         return TryEnsureHudRoot();
     }
 
-    public void Present(OverlayFrame frame)
+    public void Present(OverlayFrame frame, OverlayPresentationOptions options)
     {
         var seen = new HashSet<int>();
         var statusBuilder = new StringBuilder();
-        statusBuilder.Append($"Bee Overlay | bees={frame.Bees.Count}");
-        foreach (var bee in frame.Bees)
+        if (options.HudEnabled)
         {
-            DrawBee(bee, seen);
-            statusBuilder.AppendLine();
-            // HUD numbers are compact per-frame ordinals after sorting, while the view dictionary
-            // still uses the stable identity below. That keeps the overlay readable without giving
-            // up the identity Unity exposes for hiding old per-bee world objects.
-            statusBuilder.Append(GetBeeStatusLine(bee));
+            statusBuilder.Append($"Bee Overlay | bees={frame.Bees.Count}");
         }
 
-        foreach (var pair in views)
+        foreach (var bee in frame.Bees)
         {
-            if (!seen.Contains(pair.Key))
+            if (options.HasWorldGuides)
             {
-                pair.Value.SetVisible(false);
+                DrawBee(bee, seen, options);
+            }
+
+            if (options.HudEnabled)
+            {
+                statusBuilder.AppendLine();
+                // HUD numbers are compact per-frame ordinals after sorting, while the view dictionary
+                // still uses the stable identity below. That keeps the overlay readable without giving
+                // up the identity Unity exposes for hiding old per-bee world objects.
+                statusBuilder.Append(GetBeeStatusLine(bee));
             }
         }
 
-        // The status text is rebuilt from the current frame instead of cached so stale bee rows
-        // disappear immediately when a bee despawns or no longer has readable navigation data.
-        SetStatus(statusBuilder.ToString());
+        if (options.HasWorldGuides)
+        {
+            foreach (var pair in views)
+            {
+                if (!seen.Contains(pair.Key))
+                {
+                    pair.Value.SetVisible(false);
+                }
+            }
+        }
+        else
+        {
+            HideWorldGuides();
+        }
+
+        if (options.HudEnabled)
+        {
+            // The status text is rebuilt from the current frame instead of cached so stale bee rows
+            // disappear immediately when a bee despawns or no longer has readable navigation data.
+            SetStatus(statusBuilder.ToString());
+        }
     }
 
     private bool TryEnsureHudRoot()
@@ -111,6 +138,7 @@ internal sealed partial class Overlay : IOverlayPresenter
 
         if (hudRoot != null && attachedHudContainer == hudContainer.transform)
         {
+            hudRoot.gameObject.SetActive(true);
             return true;
         }
 
@@ -186,6 +214,20 @@ internal sealed partial class Overlay : IOverlayPresenter
     }
 
     public void HideAll()
+    {
+        HideHud();
+        HideWorldGuides();
+    }
+
+    private void HideHud()
+    {
+        if (hudRoot != null)
+        {
+            hudRoot.gameObject.SetActive(false);
+        }
+    }
+
+    private void HideWorldGuides()
     {
         foreach (var view in views.Values)
         {

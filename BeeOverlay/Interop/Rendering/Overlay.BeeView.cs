@@ -116,7 +116,8 @@ internal sealed partial class Overlay
             Vector3? localPlayer,
             bool canSeeLocalPlayer,
             HiveMissingProbe hiveMissingProbe,
-            HiveSightProbe hiveSightProbe
+            HiveSightProbe hiveSightProbe,
+            OverlayPresentationOptions options
         )
         {
             if (worldRoot == null)
@@ -124,26 +125,49 @@ internal sealed partial class Overlay
                 return;
             }
 
-            worldRoot.SetActive(true);
-            SetMarker(beeMarker, beeEye, 0.16f);
-            SetMarker(hiveMarker, hive, 0.18f);
+            worldRoot.SetActive(options.HasWorldGuides);
 
-            // This yellow sphere is the spatial version of the 16u player sight range used by the
-            // base game's CheckLineOfSightForPlayer call. It is centered on the bee eye because
-            // both the real player check and the hive pickup proxy start their visibility test
-            // from that point.
-            beeSightRangeSphere.Set(beeEye, OverlayRules.PlayerLineOfSightDistance, BeeColor);
+            if (options.BeeMarkerEnabled)
+            {
+                SetMarker(beeMarker, beeEye, 0.16f);
+            }
+            else
+            {
+                beeMarker.SetActive(false);
+            }
 
-            // RedLocustBees stores defenseDistance as an integer radius around the hive. A sphere
-            // makes the full three-dimensional trigger range visible before it is crossed.
-            defenseDistanceSphere.Set(hive, defenseDistance, HiveColor);
-            SetHiveMissingProbe(beeEye, hiveMissingProbe);
-            SetHiveSightProbe(beeEye, hiveSightProbe);
+            if (options.HiveMarkerEnabled)
+            {
+                SetMarker(hiveMarker, hive, 0.18f);
+            }
+            else
+            {
+                hiveMarker.SetActive(false);
+            }
 
-            // The player line follows the same "always draw, change color" convention as the
-            // hive line. It targets the local player's real camera/body position, while the color
-            // comes only from the game's CheckLineOfSightForPlayer result for that same player.
-            // This keeps blocked sight readable without inventing our own line-of-sight fallback.
+            if (options.BeeSightRangeSphereEnabled)
+            {
+                // This yellow sphere is the spatial version of the 16u player sight range used by
+                // the base game's CheckLineOfSightForPlayer call. It is centered on the bee eye
+                // because both the real player check and the hive pickup proxy start there.
+                beeSightRangeSphere.Set(beeEye, OverlayRules.PlayerLineOfSightDistance, BeeColor);
+            }
+            else
+            {
+                beeSightRangeSphere.SetVisible(false);
+            }
+
+            if (options.HiveDefenseSphereEnabled)
+            {
+                // RedLocustBees stores defenseDistance as an integer radius around the hive. A
+                // sphere makes the full three-dimensional trigger range visible before it is crossed.
+                defenseDistanceSphere.Set(hive, defenseDistance, HiveColor);
+            }
+            else
+            {
+                defenseDistanceSphere.SetVisible(false);
+            }
+
             if (localPlayer.HasValue)
             {
                 // This offset is rendering-only and applies only to the player end of the line.
@@ -153,14 +177,92 @@ internal sealed partial class Overlay
                 var playerRenderOffset = Vector3.up * VisiblePlayerSightLineRenderYOffset;
                 var displayedPlayer = localPlayer.Value + playerRenderOffset;
                 var lineColor = canSeeLocalPlayer ? PlayerColor : InactiveLineColor;
-                SetMarker(playerMarker, displayedPlayer, 0.16f);
-                visiblePlayerSightLine.gameObject.SetActive(true);
-                SetWorldLine(visiblePlayerSightLine, beeEye, displayedPlayer, lineColor);
+
+                if (options.PlayerMarkerEnabled)
+                {
+                    SetMarker(playerMarker, displayedPlayer, 0.16f);
+                }
+                else
+                {
+                    playerMarker.SetActive(false);
+                }
+
+                if (options.PlayerSightLineEnabled)
+                {
+                    SetWorldLine(visiblePlayerSightLine, beeEye, displayedPlayer, lineColor);
+                    visiblePlayerSightLine.gameObject.SetActive(true);
+                }
+                else
+                {
+                    visiblePlayerSightLine.gameObject.SetActive(false);
+                }
             }
             else
             {
-                visiblePlayerSightLine.gameObject.SetActive(false);
                 playerMarker.SetActive(false);
+                visiblePlayerSightLine.gameObject.SetActive(false);
+            }
+
+            var lastKnownHive =
+                ToUnityVector3(hiveMissingProbe.LastKnownHivePosition) + Vector3.up * WorldYOffset;
+            if (options.KnownHiveMarkerEnabled)
+            {
+                lastKnownHiveMarker.SetActive(true);
+                lastKnownHiveMarker.transform.position = lastKnownHive;
+                // Keep the remembered hive marker smaller than the primary state points so it
+                // reads as diagnostic context instead of a fourth competing object.
+                var markerScale = Mathf.Clamp(hiveMissingProbe.EyeToLastKnownHiveDistance * 0.03f, 0.14f, 0.32f);
+                lastKnownHiveMarker.transform.localScale = Vector3.one * markerScale;
+            }
+            else
+            {
+                lastKnownHiveMarker.SetActive(false);
+            }
+
+            if (options.KnownHiveNearSphereEnabled)
+            {
+                lastKnownHiveNearSphere.Set(
+                    lastKnownHive,
+                    OverlayRules.HiveMissingNearDistance,
+                    LastKnownHiveNearSphereColor);
+            }
+            else
+            {
+                lastKnownHiveNearSphere.SetVisible(false);
+            }
+
+            if (options.KnownHiveLineOfSightSphereEnabled)
+            {
+                lastKnownHiveLineOfSightSphere.Set(
+                    lastKnownHive,
+                    OverlayRules.HiveMissingLineOfSightDistance,
+                    LastKnownHiveLineOfSightSphereColor);
+            }
+            else
+            {
+                lastKnownHiveLineOfSightSphere.SetVisible(false);
+            }
+
+            if (options.KnownHiveProbeLineEnabled)
+            {
+                var probeLineColor = hiveMissingProbe.CanEvaluateMissing
+                    ? LastKnownHiveColor
+                    : InactiveLineColor;
+                SetWorldLine(beeEyeToLastKnownHiveLine, beeEye, lastKnownHive, probeLineColor);
+                beeEyeToLastKnownHiveLine.gameObject.SetActive(true);
+            }
+            else
+            {
+                beeEyeToLastKnownHiveLine.gameObject.SetActive(false);
+            }
+
+            if (options.HivePickupSightLineEnabled)
+            {
+                SetHiveSightProbe(beeEye, hiveSightProbe);
+            }
+            else
+            {
+                beeEyeToHiveLine.gameObject.SetActive(false);
             }
         }
 
@@ -173,39 +275,6 @@ internal sealed partial class Overlay
             var lineColor = probe.CanSeePickupProxy ? PickupProxyColor : InactiveLineColor;
             SetWorldLine(beeEyeToHiveLine, beeEye, hiveTarget, lineColor);
             beeEyeToHiveLine.gameObject.SetActive(true);
-        }
-
-        private void SetHiveMissingProbe(Vector3 beeEye, HiveMissingProbe probe)
-        {
-            var lastKnownHive =
-                ToUnityVector3(probe.LastKnownHivePosition) + Vector3.up * WorldYOffset;
-            lastKnownHiveMarker.SetActive(true);
-            lastKnownHiveMarker.transform.position = lastKnownHive;
-
-            // Both spheres use the last-known-hive blue family, but not the exact same shade: the
-            // 4u close-range trigger is darker and more urgent, while the 8u line-of-sight gate is
-            // lighter so it reads as the outer context instead of competing with the inner ring.
-            lastKnownHiveNearSphere.Set(
-                lastKnownHive,
-                OverlayRules.HiveMissingNearDistance,
-                LastKnownHiveNearSphereColor
-            );
-            lastKnownHiveLineOfSightSphere.Set(
-                lastKnownHive,
-                OverlayRules.HiveMissingLineOfSightDistance,
-                LastKnownHiveLineOfSightSphereColor
-            );
-
-            var probeLineColor = probe.CanEvaluateMissing
-                ? LastKnownHiveColor
-                : InactiveLineColor;
-            SetWorldLine(beeEyeToLastKnownHiveLine, beeEye, lastKnownHive, probeLineColor);
-            beeEyeToLastKnownHiveLine.gameObject.SetActive(true);
-
-            // Keep the remembered hive marker slightly smaller than the three primary state points
-            // so it reads as diagnostic context instead of a fourth object competing with hive.
-            var markerScale = Mathf.Clamp(probe.EyeToLastKnownHiveDistance * 0.03f, 0.14f, 0.32f);
-            lastKnownHiveMarker.transform.localScale = Vector3.one * markerScale;
         }
 
         public void SetVisible(bool visible)

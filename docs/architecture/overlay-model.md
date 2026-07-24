@@ -32,12 +32,20 @@ Add Core state only when a future feature has an explicit cross-frame rule.
 
 ## Enablement
 
-`General.Enabled` defaults to `true`. `PluginController` reads its current
-BepInEx value for every HUD callback and passes that plain Boolean into Core.
-When it is `false`, `FrameHandler` hides all mod-owned HUD and world guides and
-does not capture game state or build a frame. This makes a configuration-API
-change effective on the next HUD update while keeping BepInEx types outside
-Core. Direct edits to the generated configuration file are not watched.
+`General.Enabled` defaults to `true` and is the global switch. `General.HudEnabled`
+selects HUD text. The world-guide settings independently select every marker,
+Sight line, and Sphere: bee, hive, remembered-hive, and player markers;
+bee-to-player, bee-to-remembered-hive, and bee-to-hive pickup-proxy lines; and
+the bee sight-range, hive defense-range, remembered-hive near, and
+remembered-hive line-of-sight spheres. Every setting defaults to `true`.
+`PluginController` reads the live BepInEx values for every HUD callback and
+passes plain values into Core. When the global switch is `false`, or all selected
+presentation elements are `false`, the frame handler hides all mod-owned
+presentation and does not capture game state or build a frame. Otherwise, the
+selected elements update from the same derived frame. This makes a
+configuration-API change effective on the next HUD update while keeping BepInEx
+types outside Core. Direct edits to the generated configuration file are not
+watched.
 
 The game meanings of bee state, sight, and hive tests are defined in
 [../domain/red-locust-bees.md](../domain/red-locust-bees.md). The HUD update
