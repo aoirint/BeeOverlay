@@ -3,11 +3,19 @@
 A [Lethal Company][lethal-company-steam] diagnostic overlay mod that visualizes
 RedLocustBees spatial checks.
 
-The current analysis and implementation target Lethal Company v81.
+## Compatibility
+
+- Lethal Company v81 (2026-04-17 UTC, Manifest ID:
+  `6423525044216269478`)
+    - Analysis evidence
+        - The target is verified from managed-code and asset exports. In-game
+          HUD validation remains pending.
+    - Package dependency
+        - [BepInExPack][bepinexpack-package] v5.4.2305 (2026-03-17 UTC)
 
 ## Installation
 
-1. Install BepInEx 5 for Lethal Company.
+1. Install [BepInExPack][bepinexpack-package] for Lethal Company.
 2. Build the release assembly or obtain `com.aoirint.BeeOverlay.dll`.
 3. Copy the DLL into the game's `BepInEx/plugins/` directory.
 4. Launch Lethal Company. The overlay is created automatically when the game
@@ -259,6 +267,7 @@ code. This disclosure is made in compliance with Thunderstore and community
 policies.
 
 [actionlint-repo]: https://github.com/rhysd/actionlint
+[bepinexpack-package]: https://thunderstore.io/c/lethal-company/p/BepInEx/BepInExPack/
 [docker-install]: https://docs.docker.com/get-started/get-docker/
 [dotnet-sdk-download]: https://dotnet.microsoft.com/en-us/download/dotnet/10.0
 [github-actions-docs]: https://docs.github.com/en/actions
