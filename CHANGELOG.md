@@ -10,6 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Unreleased
 
+### Added
+
+- Added the `General.Enabled` BepInEx setting, which hides BeeOverlay's HUD
+  and world guides without changing game behavior.
+
 ## v0.2.0-alpha.1 - 2026-07-20 UTC
 
 ### Changed

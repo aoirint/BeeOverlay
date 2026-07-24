@@ -21,6 +21,18 @@ RedLocustBees spatial checks.
 4. Launch Lethal Company. The overlay is created automatically when the game
    HUD is available.
 
+## Configuration
+
+BepInEx creates `BepInEx/config/com.aoirint.BeeOverlay.cfg` after the first
+launch.
+
+| Setting | Default | Behavior |
+| --- | --- | --- |
+| `General.Enabled` | `true` | Shows the BeeOverlay HUD and world guides. Set it to `false` to hide the overlay without changing game behavior. |
+
+Changes made through a BepInEx configuration UI apply on the next HUD update.
+BeeOverlay does not watch direct edits to the generated configuration file.
+
 ## Development
 
 Install [.NET SDK 10.0][dotnet-sdk-download] or later.

@@ -23,8 +23,16 @@ internal sealed class FrameHandler
         this.buildOverlayFrameUseCase = buildOverlayFrameUseCase;
     }
 
-    public void HandleFrame()
+    public void HandleFrame(bool enabled)
     {
+        if (!enabled)
+        {
+            // Hiding the complete owned presentation makes disabling immediate even when the HUD
+            // survives a scene transition. No game state is sampled while the diagnostic is off.
+            presenter.HideAll();
+            return;
+        }
+
         // Treat the overlay as disposable scene UI. If the vanilla HUD is not ready, hiding world
         // probes is safer than leaving old markers in the scene with no matching status text.
         if (!presenter.TryPrepare())

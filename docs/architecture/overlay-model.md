@@ -4,7 +4,8 @@
 
 `Plugin.Awake()` constructs `PluginController` before installing Harmony
 patches. `PluginController` is the composition root: it connects the Core frame
-handler to the game observation source and Unity presenter. The
+handler to the game observation source and Unity presenter, and binds the
+`General.Enabled` BepInEx setting. The
 `HUDManager.Update` postfix delegates one update to that controller and guards
 the game callback from observation, presentation, and logging failures.
 
@@ -28,6 +29,15 @@ The frame is transient rather than stored across updates. BeeOverlay does not
 currently compare frames, smooth values, or retain diagnostic history, so a
 mutable latest-frame store would imply a lifecycle the feature does not need.
 Add Core state only when a future feature has an explicit cross-frame rule.
+
+## Enablement
+
+`General.Enabled` defaults to `true`. `PluginController` reads its current
+BepInEx value for every HUD callback and passes that plain Boolean into Core.
+When it is `false`, `FrameHandler` hides all mod-owned HUD and world guides and
+does not capture game state or build a frame. This makes a configuration-API
+change effective on the next HUD update while keeping BepInEx types outside
+Core. Direct edits to the generated configuration file are not watched.
 
 The game meanings of bee state, sight, and hive tests are defined in
 [../domain/red-locust-bees.md](../domain/red-locust-bees.md). The HUD update
