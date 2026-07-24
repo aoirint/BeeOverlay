@@ -1,3 +1,4 @@
+using BeeOverlay.Core.Models;
 using BeeOverlay.Core.Ports;
 using BeeOverlay.Core.UseCases;
 
@@ -23,11 +24,19 @@ internal sealed class FrameHandler
         this.buildOverlayFrameUseCase = buildOverlayFrameUseCase;
     }
 
-    public void HandleFrame()
+    public void HandleFrame(bool enabled, OverlayPresentationOptions options)
     {
+        if (!enabled || !options.HasVisibleElement)
+        {
+            // Hiding the complete owned presentation makes disabling immediate even when the HUD
+            // survives a scene transition. No game state is sampled while the diagnostic is off.
+            presenter.HideAll();
+            return;
+        }
+
         // Treat the overlay as disposable scene UI. If the vanilla HUD is not ready, hiding world
         // probes is safer than leaving old markers in the scene with no matching status text.
-        if (!presenter.TryPrepare())
+        if (!presenter.TryPrepare(options.HudEnabled))
         {
             presenter.HideAll();
             presenter.LogWaitingForHud();
@@ -36,6 +45,6 @@ internal sealed class FrameHandler
 
         var observation = observationSource.Capture();
         var frame = buildOverlayFrameUseCase.Execute(observation);
-        presenter.Present(frame);
+        presenter.Present(frame, options);
     }
 }

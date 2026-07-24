@@ -24,7 +24,7 @@ public sealed class Plugin : BaseUnityPlugin
         // Keep the loader entry point small. The controller composition root wires Core to game
         // observation and Unity presentation before the first Harmony callback can run.
         Log = Logger;
-        controller = PluginController.Create(Logger);
+        controller = PluginController.Create(Logger, Config);
         harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
         harmony.PatchAll(typeof(Plugin).Assembly);
         Logger.LogInfo($"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION} loaded.");

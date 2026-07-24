@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Unreleased
 
+### Added
+
+- Added `General.Enabled` as BeeOverlay's global BepInEx switch, plus
+  `General.HudEnabled` and detailed, independently switchable world-guide
+  settings for individual presentation elements.
+
 ## v0.2.0-alpha.1 - 2026-07-20 UTC
 
 ### Changed

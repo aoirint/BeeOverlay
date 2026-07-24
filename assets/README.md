@@ -24,6 +24,30 @@ BeeOverlay visualizes RedLocustBees spatial checks.
 
 Install BeeOverlay on the client that should see its diagnostic overlay.
 
+## Configuration
+
+BepInEx creates `BepInEx/config/com.aoirint.BeeOverlay.cfg` after the first
+launch.
+
+| Setting | Default | Behavior |
+| --- | --- | --- |
+| `General.Enabled` | `true` | Global switch for BeeOverlay. Set it to `false` to hide every overlay element without changing game behavior. |
+| `General.HudEnabled` | `true` | Shows the HUD status text when the global switch is enabled. |
+| `General.BeeMarkerEnabled` | `true` | Shows bee markers. |
+| `General.HiveMarkerEnabled` | `true` | Shows hive markers. |
+| `General.KnownHiveMarkerEnabled` | `true` | Shows remembered-hive markers. |
+| `General.PlayerMarkerEnabled` | `true` | Shows local-player markers. |
+| `General.PlayerSightLineEnabled` | `true` | Shows bee-to-player sight lines. |
+| `General.BeeSightRangeSphereEnabled` | `true` | Shows bee 16-unit sight-range spheres. |
+| `General.HiveDefenseSphereEnabled` | `true` | Shows hive defense-range spheres. |
+| `General.KnownHiveNearSphereEnabled` | `true` | Shows remembered-hive 4-unit spheres. |
+| `General.KnownHiveLineOfSightSphereEnabled` | `true` | Shows remembered-hive 8-unit line-of-sight spheres. |
+| `General.KnownHiveProbeLineEnabled` | `true` | Shows bee-to-remembered-hive probe lines. |
+| `General.HivePickupSightLineEnabled` | `true` | Shows bee-to-hive pickup-proxy sight lines. |
+
+Changes made through a BepInEx configuration UI apply on the next HUD update.
+BeeOverlay does not watch direct edits to the generated configuration file.
+
 ## Documentation
 
 For implementation details, see the

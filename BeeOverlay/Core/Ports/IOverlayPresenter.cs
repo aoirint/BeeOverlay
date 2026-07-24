@@ -7,9 +7,9 @@ namespace BeeOverlay.Core.Ports;
 /// </summary>
 internal interface IOverlayPresenter
 {
-    bool TryPrepare();
+    bool TryPrepare(bool hudEnabled);
 
-    void Present(OverlayFrame frame);
+    void Present(OverlayFrame frame, OverlayPresentationOptions options);
 
     void HideAll();
 

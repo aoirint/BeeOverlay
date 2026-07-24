@@ -11,7 +11,10 @@ namespace BeeOverlay.Interop;
 
 internal sealed partial class Overlay
 {
-    private void DrawBee(BeeDiagnostic bee, HashSet<int> seen)
+    private void DrawBee(
+        BeeDiagnostic bee,
+        HashSet<int> seen,
+        OverlayPresentationOptions options)
     {
         var observation = bee.Observation;
         var hive = bee.Hive;
@@ -33,7 +36,8 @@ internal sealed partial class Overlay
                 : (Vector3?)null,
             observation.CanSeeLocalPlayer,
             hive.Missing,
-            hive.Sight
+            hive.Sight,
+            options
         );
         seen.Add(observation.Identity);
     }
