@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Unreleased
 
+## v0.2.0 - 2026-07-25 UTC
+
 ### Added
 
 - Added `General.Enabled` to disable all BeeOverlay functionality.
@@ -23,10 +25,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   requests on a delayed, bounded-frequency schedule instead of polling during
   frame updates.
 
+### Changed
+
+- Updated the Lethal Company compatibility target and compile-time GameLibs
+  reference from v73 to v81 (Steam manifest ID `6423525044216269478`).
+
 ### Notes
 
 - Compatibility: Lethal Company v81 (2026-04-17 UTC, Manifest ID:
   `6423525044216269478`).
+- This stable release supersedes v0.2.0-alpha.1. Thunderstore publication is
+  enabled for this stable version.
 
 ## v0.2.0-alpha.1 - 2026-07-20 UTC
 
