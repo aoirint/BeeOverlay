@@ -21,6 +21,13 @@ RedLocustBees spatial checks.
 4. Launch Lethal Company. The overlay is created automatically when the game
    HUD is available.
 
+Lobby hosts must install BeeOverlay. This prevents non-host players from using
+BeeOverlay's diagnostic features in a lobby without the host's knowledge.
+
+Non-host players only need to install BeeOverlay when they want to use its
+diagnostic overlay. Their overlay remains disabled unless the lobby host has
+also installed BeeOverlay.
+
 ## Configuration
 
 BepInEx creates `BepInEx/config/com.aoirint.BeeOverlay.cfg` after the first
