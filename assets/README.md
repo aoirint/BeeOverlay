@@ -19,9 +19,9 @@ BeeOverlay visualizes RedLocustBees spatial checks.
 </details>
 
 <details>
-<summary>Blocked hive-to-player spatial check</summary>
+<summary>Blocked bee-to-hive and bee-to-remembered-hive Sight checks</summary>
 
-![BeeOverlay showing a blocked hive-to-player spatial check](https://raw.githubusercontent.com/aoirint/BeeOverlay/main/docs/screenshots/beeoverlay_usage_002.webp)
+![BeeOverlay showing blocked bee-to-hive and bee-to-remembered-hive Sight checks](https://raw.githubusercontent.com/aoirint/BeeOverlay/main/docs/screenshots/beeoverlay_usage_002.webp)
 
 </details>
 
