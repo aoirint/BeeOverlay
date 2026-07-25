@@ -14,16 +14,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Added a rebindable **Select Next Bee** InputUtils action, bound to `B` by
-  default.
-
-### Changed
-
-- Limited world markers and spatial guides to one selected bee. BeeOverlay now
-  starts with no selection, cycles through the sorted HUD rows and back to no
-  selection, and shows diagnostics only while a bee is selected.
-- Display a game-styled HUD Tip when target selection is requested with no bees
-  available, or when a selected bee is removed and selection returns to empty.
+- Added bee selection.
+    - Added a rebindable **Select Next Bee** InputUtils action, bound to `B`
+      by default.
+    - Limits world markers and spatial guides to one selected bee. BeeOverlay
+      starts with no selection, cycles through the sorted HUD rows and back to
+      no selection, and shows diagnostics only while a bee is selected.
+    - Displays a game-styled HUD Tip when target selection is requested with no
+      bees available, or when a selected bee is removed and selection returns
+      to empty.
 
 ### Notes
 
