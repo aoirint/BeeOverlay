@@ -106,11 +106,6 @@ launch.
 Changes made through a BepInEx configuration UI apply on the next HUD update.
 BeeOverlay does not watch direct edits to the generated configuration file.
 
-## Documentation
-
-For implementation details, see the
-[repository documentation](https://github.com/aoirint/BeeOverlay/tree/main/docs).
-
 ## AI Disclosure
 
 Some parts of this project were developed with AI tools based on large language
