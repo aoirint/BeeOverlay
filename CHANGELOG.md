@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Unreleased
 
+## v0.3.0-alpha.1 - 2026-07-25 UTC
+
 ### Added
 
 - Added a rebindable **Select Next Bee** InputUtils action, bound to `B` by
@@ -28,6 +30,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Runtime dependency: LethalCompany InputUtils v0.7.13 is required for the
   rebindable target-selection action. Thunderstore installs receive it through
   the package manifest; manual installations must provide it separately.
+- This prerelease is published to GitHub only. Thunderstore publication remains
+  limited to stable releases.
 
 ## v0.2.0 - 2026-07-25 UTC
 
