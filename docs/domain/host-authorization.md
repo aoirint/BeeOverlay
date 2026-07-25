@@ -7,6 +7,11 @@ client-to-host presence handshake. It does not define BeeOverlay's enablement
 policy; see
 [the overlay model](../architecture/overlay-model.md) for that decision.
 
+## Target
+
+Lethal Company v81, using the compile-only `LethalCompany.GameLibs.Steam`
+v81.0.5 reference pinned by this project.
+
 ## Required integration shape
 
 The project's compile-only `LethalCompany.GameLibs.Steam` reference exposes
