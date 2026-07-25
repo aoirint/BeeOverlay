@@ -95,8 +95,10 @@ runs:
         if [ "${RELEASE_MODE}" = "edge" ]; then
           # Edge artifacts need globally unique NuGet-compatible prerelease
           # identifiers so repeated main-branch builds do not collide with
-          # published packages or fail restore validation.
-          DATE_STRING=$(date -u "+%Y%m%d%H%M%S")
+          # published packages or fail restore validation. Prefix both numeric
+          # fields so a timestamp and a short SHA beginning with zero remain
+          # alphanumeric prerelease identifiers.
+          DATE_STRING=$(date -u "+d%Y%m%d%H%M%S")
           SHA_SHORT="${GITHUB_SHA:0:7}"
           APP_VERSION="${CSPROJ_VERSION}-edge.${DATE_STRING}.g${SHA_SHORT}"
         else
