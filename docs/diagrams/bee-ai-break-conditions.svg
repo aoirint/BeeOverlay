@@ -33,7 +33,7 @@
   <text x="85" y="165" class="subheading">1. Hive defense</text>
   <text x="85" y="195" class="body">Keep the bee from defending the hive.</text>
 
-  <text x="75" y="290" class="small">&gt;16u: no sight needed</text>
+  <text x="75" y="260" class="small">&gt;16u: no sight needed</text>
   <circle cx="115" cy="335" r="55" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="12 10"/>
   <circle cx="115" cy="335" r="22" fill="#40FF59" stroke="#168A2A" stroke-width="4"/>
   <text x="115" y="335" class="marker">H</text>
