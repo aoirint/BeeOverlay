@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Unreleased
 
+### Fixed
+
+- Reset the selected bee when leaving or disconnecting from a lobby.
+
 ## v0.3.0 - 2026-07-25 UTC
 
 ### Added
