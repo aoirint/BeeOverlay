@@ -40,8 +40,8 @@
   <circle cx="500" cy="335" r="22" fill="#FF261A" stroke="#9F1A12" stroke-width="4"/>
   <text x="500" y="335" class="marker">P</text>
 
-  <text x="190" y="485" class="label">B: Circuit Bee</text>
-  <text x="405" y="485" class="label">H: hive; P: player</text>
+  <text x="190" y="455" class="label">B: Circuit Bee</text>
+  <text x="405" y="455" class="label">H: hive; P: player</text>
 
   <text x="85" y="510" class="body">Hive defense needs both:</text>
   <text x="105" y="542" class="body">• Player seen within 16 units of the bee.</text>
@@ -66,10 +66,10 @@
 
   <circle cx="1015" cy="335" r="22" fill="#0D52FF" stroke="#07399A" stroke-width="4"/>
   <text x="1015" y="335" class="marker-light">K</text>
-  <text x="925" y="485" class="label">K: known-hive position</text>
+  <text x="925" y="455" class="label">K: known-hive position</text>
   <circle cx="1185" cy="335" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
   <text x="1185" y="335" class="marker">B</text>
-  <text x="1175" y="485" class="label">B: Circuit Bee</text>
+  <text x="1175" y="455" class="label">B: Circuit Bee</text>
 
   <text x="800" y="510" class="body">Known-hive distance:</text>
   <text x="820" y="542" class="body">• Less than 4 units: do not hold the hive.</text>
