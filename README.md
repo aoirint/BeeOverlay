@@ -47,10 +47,12 @@ condition is met:
   units away with a clear probe line. A held hive is recognized as missing once
   the probe reaches it.
 
-Bee AI Break prevents the missing-hive condition while the hive is moved away.
+Bee AI Break keeps both conditions false while the hive is moved away.
 
-To prevent that condition while moving the hive:
+To do that while moving the hive:
 
+- Keep the player carrying the hive outside the bee's 16-unit sight range or
+  block the bee-to-player sight line.
 - Keep the bee at least 4 units from its known-hive position.
 - When the bee is less than 8 units from that position, block the probe line
   with solid cover.
