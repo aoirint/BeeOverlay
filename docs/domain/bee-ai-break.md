@@ -18,9 +18,9 @@ Bee AI Break is the community name for a glitch in which players move a hive
 away from Circuit Bees without the bees recognizing that it is missing, which
 can make hive collection safer.
 
-This keeps the bees in state 0. State 0 does not enter defensive state 1
-merely because a player is near the bees: the bees must also see a player
-inside the hive's defense radius.
+When the glitch is active, the bees remain in state 0. State 0 does not enter
+defensive state 1 merely because a player is near the bees: the bees must also
+see a player inside the hive's defense radius.
 
 The relevant base-game predicate is `RedLocustBees.IsHiveMissing()`. While it
 returns `false`, the bee remains in state 0 unless another state-0 condition
