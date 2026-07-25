@@ -38,10 +38,10 @@ does not unload the plugin.
 authorizes non-host players to use BeeOverlay. `Overlay.Enabled` controls local
 presentation independently from `General.Enabled`. `Overlay.HudEnabled` selects
 HUD text. The remaining `Overlay.*` world-guide settings independently select every marker,
-Sight line, and Sphere: bee, hive, remembered-hive, and player markers;
-bee-to-player, bee-to-remembered-hive, and bee-to-hive pickup-proxy lines; and
-the bee sight-range, hive defense-range, remembered-hive near, and
-remembered-hive line-of-sight spheres. Every setting defaults to `true`.
+Sight line, and Sphere: bee, hive, known-hive, and player markers;
+bee-to-player, bee-to-known-hive, and bee-to-hive pickup-proxy lines; and the
+bee sight-range, hive defense-range, known-hive near, and known-hive
+line-of-sight spheres. Every setting defaults to `true`.
 `PluginController` reads the live BepInEx values for every HUD callback and
 passes plain values into Core. When the global or overlay switch is `false`, or
 all selected presentation elements are `false`, the frame handler hides all mod-owned
@@ -126,7 +126,7 @@ make those two presentations disagree within one update.
 | `bee-player` | Bee-eye to local-player observation. | Reports the base-game player sight result and player-body distance. |
 | `hive-player` | Local-player distance from the current hive. | Reports whether the body position is inside `defenseDistance`. |
 | `bee-hive` | Pickup-position proxy. | It is not a player-collider visibility result. |
-| `bee-knownHive` | Remembered-hive spatial and synchronization probe. | It is not the complete `IsHiveMissing()` result. |
+| `bee-knownHive` | Known-hive spatial and synchronization probe. | It is not the complete `IsHiveMissing()` result. |
 
 The overlay deliberately does not visualize `hive.isHeld`. Its purpose is to
 make spatial conditions inspectable, not to restate every game-side branch.
@@ -134,7 +134,7 @@ make spatial conditions inspectable, not to restate every game-side branch.
 ## Presentation decisions
 
 Entity colors identify the subject first: bee is yellow, hive is green,
-remembered hive is blue, player is red, and the pickup proxy is white. Gray
+known hive is blue, player is red, and the pickup proxy is white. Gray
 indicates blocked or inactive guides. The HUD and world guides use the same
 colors so a row can be matched to its geometry without a second legend.
 

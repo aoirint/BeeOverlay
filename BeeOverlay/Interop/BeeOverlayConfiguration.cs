@@ -86,14 +86,14 @@ internal sealed class BeeOverlayConfiguration
         var hudEnabled = BindOverlay(config, "HudEnabled", "Set to false to hide BeeOverlay's HUD text while keeping enabled world guides available.");
         var beeMarkerEnabled = BindOverlay(config, "BeeMarkerEnabled", "Set to false to hide bee markers.");
         var hiveMarkerEnabled = BindOverlay(config, "HiveMarkerEnabled", "Set to false to hide hive markers.");
-        var knownHiveMarkerEnabled = BindOverlay(config, "KnownHiveMarkerEnabled", "Set to false to hide remembered-hive markers.");
+        var knownHiveMarkerEnabled = BindOverlay(config, "KnownHiveMarkerEnabled", "Set to false to hide known-hive markers.");
         var playerMarkerEnabled = BindOverlay(config, "PlayerMarkerEnabled", "Set to false to hide local-player markers.");
         var playerSightLineEnabled = BindOverlay(config, "PlayerSightLineEnabled", "Set to false to hide bee-to-player sight lines.");
         var beeSightRangeSphereEnabled = BindOverlay(config, "BeeSightRangeSphereEnabled", "Set to false to hide bee 16-unit sight-range spheres.");
         var hiveDefenseSphereEnabled = BindOverlay(config, "HiveDefenseSphereEnabled", "Set to false to hide hive defense-range spheres.");
-        var knownHiveNearSphereEnabled = BindOverlay(config, "KnownHiveNearSphereEnabled", "Set to false to hide remembered-hive 4-unit spheres.");
-        var knownHiveLineOfSightSphereEnabled = BindOverlay(config, "KnownHiveLineOfSightSphereEnabled", "Set to false to hide remembered-hive 8-unit line-of-sight spheres.");
-        var knownHiveProbeLineEnabled = BindOverlay(config, "KnownHiveProbeLineEnabled", "Set to false to hide bee-to-remembered-hive probe lines.");
+        var knownHiveNearSphereEnabled = BindOverlay(config, "KnownHiveNearSphereEnabled", "Set to false to hide known-hive 4-unit spheres.");
+        var knownHiveLineOfSightSphereEnabled = BindOverlay(config, "KnownHiveLineOfSightSphereEnabled", "Set to false to hide known-hive 8-unit line-of-sight spheres.");
+        var knownHiveProbeLineEnabled = BindOverlay(config, "KnownHiveProbeLineEnabled", "Set to false to hide bee-to-known-hive probe lines.");
         var hivePickupSightLineEnabled = BindOverlay(config, "HivePickupSightLineEnabled", "Set to false to hide bee-to-hive pickup-proxy sight lines.");
 
         return new BeeOverlayConfiguration(

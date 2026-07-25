@@ -13,16 +13,16 @@ RedLocustBees spatial checks.
 ## Screenshots
 
 <details>
-<summary>Bee, hive, player, and remembered-hive spatial checks</summary>
+<summary>Bee, hive, player, and known-hive spatial checks</summary>
 
-![BeeOverlay visualizing bee, hive, player, and remembered-hive spatial checks](docs/screenshots/beeoverlay_usage_001.webp)
+![BeeOverlay visualizing bee, hive, player, and known-hive spatial checks](docs/screenshots/beeoverlay_usage_001.webp)
 
 </details>
 
 <details>
-<summary>Blocked bee-to-hive and bee-to-remembered-hive Sight checks</summary>
+<summary>Blocked bee-to-hive and bee-to-known-hive Sight checks</summary>
 
-![BeeOverlay showing blocked bee-to-hive and bee-to-remembered-hive Sight checks](docs/screenshots/beeoverlay_usage_002.webp)
+![BeeOverlay showing blocked bee-to-hive and bee-to-known-hive Sight checks](docs/screenshots/beeoverlay_usage_002.webp)
 
 </details>
 
@@ -54,14 +54,14 @@ launch.
 | `Overlay.HudEnabled` | `true` | Shows the HUD status text. |
 | `Overlay.BeeMarkerEnabled` | `true` | Shows bee markers. |
 | `Overlay.HiveMarkerEnabled` | `true` | Shows hive markers. |
-| `Overlay.KnownHiveMarkerEnabled` | `true` | Shows remembered-hive markers. |
+| `Overlay.KnownHiveMarkerEnabled` | `true` | Shows known-hive markers. |
 | `Overlay.PlayerMarkerEnabled` | `true` | Shows local-player markers. |
 | `Overlay.PlayerSightLineEnabled` | `true` | Shows bee-to-player sight lines. |
 | `Overlay.BeeSightRangeSphereEnabled` | `true` | Shows bee 16-unit sight-range spheres. |
 | `Overlay.HiveDefenseSphereEnabled` | `true` | Shows hive defense-range spheres. |
-| `Overlay.KnownHiveNearSphereEnabled` | `true` | Shows remembered-hive 4-unit spheres. |
-| `Overlay.KnownHiveLineOfSightSphereEnabled` | `true` | Shows remembered-hive 8-unit line-of-sight spheres. |
-| `Overlay.KnownHiveProbeLineEnabled` | `true` | Shows bee-to-remembered-hive probe lines. |
+| `Overlay.KnownHiveNearSphereEnabled` | `true` | Shows known-hive 4-unit spheres. |
+| `Overlay.KnownHiveLineOfSightSphereEnabled` | `true` | Shows known-hive 8-unit line-of-sight spheres. |
+| `Overlay.KnownHiveProbeLineEnabled` | `true` | Shows bee-to-known-hive probe lines. |
 | `Overlay.HivePickupSightLineEnabled` | `true` | Shows bee-to-hive pickup-proxy sight lines. |
 
 Changes made through a BepInEx configuration UI apply on the next HUD update.

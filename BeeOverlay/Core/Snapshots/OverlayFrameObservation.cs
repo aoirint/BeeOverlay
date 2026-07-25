@@ -94,7 +94,7 @@ internal sealed class HiveObservation
 }
 
 /// <summary>
-/// Remembered-hive values and direct observations used by the missing-hive probe.
+/// Known-hive values and direct observations used by the missing-hive probe.
 /// </summary>
 internal sealed class LastKnownHiveObservation
 {
