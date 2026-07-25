@@ -91,7 +91,7 @@ launch.
 | --- | --- | --- |
 | `General.Enabled` | `true` | Set to `false` to disable all BeeOverlay functionality. |
 | `General.AllowGuestEnabled` | `true` | When hosting, allows non-host players to use BeeOverlay. |
-| `Overlay.Enabled` | `true` | Shows BeeOverlay elements when `General.Enabled` is `true`. |
+| `Overlay.Enabled` | `true` | Shows BeeOverlay elements. |
 | `Overlay.HudEnabled` | `true` | Shows the HUD status text. |
 | `Overlay.BeeMarkerEnabled` | `true` | Shows bee markers. |
 | `Overlay.HiveMarkerEnabled` | `true` | Shows hive markers. |
