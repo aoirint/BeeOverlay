@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Added
+
+- Added controls for enabling BeeOverlay, allowing guest use, and independently
+  choosing its HUD and world-guide elements.
+
 ### Changed
 
 - Lobby hosts must install BeeOverlay before non-host players can use its
