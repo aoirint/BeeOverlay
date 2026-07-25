@@ -102,24 +102,30 @@ that identity. The presenter uses it as the `BeeView` dictionary key, while
 the HUD uses one-based ordinals after sorting so that rows remain readable
 without making display ordinals into persistent identities.
 
-A bee without a readable hive remains in the Core frame and has a status row
-but no spatial guides. A view not seen during the current update is hidden,
-preventing guides from a despawned bee from remaining in the scene.
+A bee without a readable hive remains in the Core frame and, when selected, has
+a status row but no spatial guides. A view not seen during the current update
+is hidden, preventing guides from a despawned bee from remaining in the scene.
 
 ## World-guide selection
 
-The HUD presents every sorted bee, while world markers and spatial guides
-present at most one selected bee. This keeps the complete diagnostic summary
-available without multiplying scene geometry when BeeOverlay is used beside
-other practice tools.
+The HUD presents diagnostic details and world markers for at most one selected
+bee. The HUD summary remains visible while no bee is selected, but it does not
+list every bee; this keeps the HUD aligned with the one set of scene guides
+shown beside other practice tools.
 
 Selection starts empty. The InputUtils **Select Next Bee** action, bound to `B`
 by default, advances through the current sorted frame and then returns to no
-selection. The selected HUD row is prefixed with `>`, such as `> bee:1`.
-`WorldGuideSelection` retains the stable `thisEnemyIndex` rather than the
-display ordinal, so inserting another bee does not silently retarget existing
-guides. If the selected identity is absent from a later frame, selection
-returns to empty instead of choosing another bee.
+selection. The selected status line has the same format as the v0.2.0
+development-build screenshots. `WorldGuideSelection` retains the stable
+`thisEnemyIndex` rather than the display ordinal, so inserting another bee does
+not silently retarget existing guides.
+
+When the action is pressed while the frame has no bees, Core keeps selection
+empty and emits a `No bee found to select.` HUD Tip. If the retained identity
+is absent from a later frame, Core returns to empty instead of choosing another
+bee and emits a `Selected bee was removed.` HUD Tip. Core selects those fixed
+messages; Interop is responsible for calling `HUDManager.DisplayTip`, so Core
+continues to have no game or Unity dependency.
 
 The external action-registration and dependency contract is documented in
 [InputUtils integration](../domain/input-utils.md). Interop owns the

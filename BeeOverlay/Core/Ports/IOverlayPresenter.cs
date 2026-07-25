@@ -1,4 +1,5 @@
 using BeeOverlay.Core.Models;
+using BeeOverlay.Core.Presentation;
 
 namespace BeeOverlay.Core.Ports;
 
@@ -14,6 +15,8 @@ internal interface IOverlayPresenter
         OverlayPresentationOptions options,
         int? selectedBeeIdentity
     );
+
+    void DisplayTip(HudTipMessage message);
 
     void HideAll();
 

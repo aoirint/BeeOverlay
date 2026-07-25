@@ -15,8 +15,8 @@ RedLocustBees spatial checks for practicing the Bee AI Break glitch.
 ## Screenshots
 
 These screenshots were captured with a development build of v0.2.0.
-Current target-selection builds show the same one-bee guide layout after
-selecting `bee:1`, with its HUD row prefixed by `>`.
+Current target-selection builds show the same one-bee HUD and guide layout
+after selecting `bee:1`.
 
 <details>
 <summary>Overview: Bee, hive, player, and known-hive spatial checks</summary>
@@ -93,11 +93,15 @@ also installed BeeOverlay.
 
 ## Controls
 
-The HUD lists every `RedLocustBees` instance, but BeeOverlay starts with no
-world-guide target selected. Press **Select Next Bee** (`B` by default) to
-select `bee:1`, then `bee:2`, and so on. Pressing it after the last bee returns
-to no selection. The selected HUD row starts with `>`, for example `> bee:1`,
-and only that bee's world markers and spatial guides are shown.
+BeeOverlay starts with no world-guide target selected. The HUD summary remains
+visible, but it shows diagnostic details only for the selected bee. Press
+**Select Next Bee** (`B` by default) to select `bee:1`, then `bee:2`, and so
+on. Pressing it after the last bee returns to no selection.
+
+If no bees are available when the action is pressed, BeeOverlay displays a HUD
+tip and keeps no selection. If the selected bee is removed, BeeOverlay clears
+the selection and displays a HUD tip. Only the selected bee's world markers
+and spatial guides are shown.
 
 The binding can be changed through InputUtils in the in-game keybind menu.
 
