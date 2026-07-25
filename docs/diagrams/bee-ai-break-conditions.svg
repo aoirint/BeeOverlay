@@ -74,7 +74,7 @@
   <text x="1185" y="335" class="marker">B</text>
   <text x="1175" y="455" class="label">B: Circuit Bee</text>
 
-  <text x="800" y="510" class="body">Known-hive distance:</text>
+  <text x="800" y="510" class="body">Missing-hive conditions:</text>
   <text x="820" y="542" class="body">• Less than 4 units: do not hold the hive.</text>
   <text x="820" y="572" class="body">• 4 to less than 8: cover the probe.</text>
   <text x="820" y="602" class="body">• 8 or more: no held-hive probe.</text>
