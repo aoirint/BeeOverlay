@@ -17,6 +17,14 @@ BeeOverlay visualizes RedLocustBees spatial checks.
 - Shows relevant sight, distance, and line-of-sight conditions without changing
   game behavior.
 
+## In-game use
+
+BeeOverlay in active RedLocustBees encounters:
+
+![BeeOverlay visualizing bee, hive, player, and remembered-hive spatial checks](https://raw.githubusercontent.com/aoirint/BeeOverlay/main/docs/screenshots/beeoverlay_usage_001.webp)
+
+![BeeOverlay showing a blocked hive-to-player spatial check](https://raw.githubusercontent.com/aoirint/BeeOverlay/main/docs/screenshots/beeoverlay_usage_002.webp)
+
 ## Who needs to install
 
 Lobby hosts must install BeeOverlay. This prevents non-host players from using

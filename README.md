@@ -7,9 +7,9 @@ RedLocustBees spatial checks.
 
 BeeOverlay in active RedLocustBees encounters:
 
-![BeeOverlay visualizing bee, hive, player, and remembered-hive spatial checks](assets/screenshots/beeoverlay_usage_001.webp)
+![BeeOverlay visualizing bee, hive, player, and remembered-hive spatial checks](docs/screenshots/beeoverlay_usage_001.webp)
 
-![BeeOverlay showing a blocked hive-to-player spatial check](assets/screenshots/beeoverlay_usage_002.webp)
+![BeeOverlay showing a blocked hive-to-player spatial check](docs/screenshots/beeoverlay_usage_002.webp)
 
 ## Compatibility
 
