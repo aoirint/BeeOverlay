@@ -89,17 +89,12 @@ Non-host players only need to install BeeOverlay when they want to use its
 diagnostic overlay. Their overlay remains disabled unless the lobby host has
 also installed BeeOverlay.
 
-## Controls
+## Usage
 
-BeeOverlay starts with no world-guide target selected and keeps its HUD hidden.
+BeeOverlay starts with no bee selected, so it shows nothing.
+
 Press **Select Next Bee** (`B` by default) to select `bee:1`, then `bee:2`,
-and so on. Pressing it after the last bee returns to no selection and hides the
-HUD again.
-
-If no bees are available when the action is pressed, BeeOverlay displays a HUD
-tip and keeps no selection. If the selected bee is removed, BeeOverlay clears
-the selection and displays a HUD tip. Only the selected bee's world markers
-and spatial guides are shown.
+and so on. Pressing it after the last bee returns to no selection.
 
 The binding can be changed through InputUtils in the in-game keybind menu.
 
