@@ -3,20 +3,28 @@
 A [Lethal Company][lethal-company-steam] diagnostic overlay mod that visualizes
 RedLocustBees spatial checks.
 
-## In-game use
-
-BeeOverlay in active RedLocustBees encounters:
-
-![BeeOverlay visualizing bee, hive, player, and remembered-hive spatial checks](docs/screenshots/beeoverlay_usage_001.webp)
-
-![BeeOverlay showing a blocked hive-to-player spatial check](docs/screenshots/beeoverlay_usage_002.webp)
-
 ## Compatibility
 
 - Lethal Company v81 (2026-04-17 UTC, Manifest ID:
   `6423525044216269478`)
     - Test environment
         - [BepInExPack][bepinexpack-package] v5.4.2305 (2026-03-17 UTC)
+
+## Screenshots
+
+<details>
+<summary>Bee, hive, player, and remembered-hive spatial checks</summary>
+
+![BeeOverlay visualizing bee, hive, player, and remembered-hive spatial checks](docs/screenshots/beeoverlay_usage_001.webp)
+
+</details>
+
+<details>
+<summary>Blocked hive-to-player spatial check</summary>
+
+![BeeOverlay showing a blocked hive-to-player spatial check](docs/screenshots/beeoverlay_usage_002.webp)
+
+</details>
 
 ## Installation
 

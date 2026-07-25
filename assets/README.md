@@ -9,6 +9,22 @@ BeeOverlay visualizes RedLocustBees spatial checks.
     - Test environment
         - [BepInExPack][bepinexpack-package] v5.4.2305 (2026-03-17 UTC)
 
+## Screenshots
+
+<details>
+<summary>Bee, hive, player, and remembered-hive spatial checks</summary>
+
+![BeeOverlay visualizing bee, hive, player, and remembered-hive spatial checks](https://raw.githubusercontent.com/aoirint/BeeOverlay/main/docs/screenshots/beeoverlay_usage_001.webp)
+
+</details>
+
+<details>
+<summary>Blocked hive-to-player spatial check</summary>
+
+![BeeOverlay showing a blocked hive-to-player spatial check](https://raw.githubusercontent.com/aoirint/BeeOverlay/main/docs/screenshots/beeoverlay_usage_002.webp)
+
+</details>
+
 ## What it does
 
 - Displays a HUD summary for each `RedLocustBees` instance.
@@ -16,14 +32,6 @@ BeeOverlay visualizes RedLocustBees spatial checks.
   guides.
 - Shows relevant sight, distance, and line-of-sight conditions without changing
   game behavior.
-
-## In-game use
-
-BeeOverlay in active RedLocustBees encounters:
-
-![BeeOverlay visualizing bee, hive, player, and remembered-hive spatial checks](https://raw.githubusercontent.com/aoirint/BeeOverlay/main/docs/screenshots/beeoverlay_usage_001.webp)
-
-![BeeOverlay showing a blocked hive-to-player spatial check](https://raw.githubusercontent.com/aoirint/BeeOverlay/main/docs/screenshots/beeoverlay_usage_002.webp)
 
 ## Who needs to install
 
