@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Lobby hosts must install BeeOverlay before non-host players can use its
+  diagnostic overlay. This keeps diagnostic features from being used in a lobby
+  without the host's knowledge.
+
 ## v0.1.0 - 2026-07-18 UTC
 
 ### Added
