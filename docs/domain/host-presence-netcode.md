@@ -14,10 +14,11 @@ The compile-only `LethalCompany.GameLibs.Steam` v81.0.5 reference exposes
 `ClientRpcParams` from `Unity.Netcode`.
 
 RPC methods must be declared on a `NetworkBehaviour`. A component attached to
-the game's HUD object can therefore receive a client request on the server and
-send a targeted client response using the request's sender client ID. The
-server RPC must permit a non-owning client when the client is only asking the
-host to identify its installed mod.
+the game's HUD object can therefore schedule one delayed client request after
+its network spawn, receive that request on the server, and send a targeted
+client response using the request's sender client ID. The server RPC must
+permit a non-owning client when the client is only asking the host to identify
+its installed mod.
 
 `NetworkManager.Singleton.IsClient` identifies an active client connection and
 `IsHost` identifies the listen-server host. `NetworkBehaviour.OnNetworkDespawn`

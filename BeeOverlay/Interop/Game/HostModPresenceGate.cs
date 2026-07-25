@@ -1,67 +1,56 @@
 #nullable enable
 
 extern alias LethalCompany;
-extern alias UnityEngine;
-
-using System;
 using LethalCompany;
 using LethalCompany::Unity.Netcode;
-using UnityEngine::UnityEngine;
 
 namespace BeeOverlay.Interop.Game;
 
 /// <summary>
-/// Allows a non-host client to present the overlay only after the host answers
-/// a BeeOverlay presence request.
+/// Tracks the one-time, delayed host-presence request for a lobby connection.
 /// </summary>
 internal sealed class HostModPresenceGate
 {
-    private const float RequestIntervalSeconds = 2f;
+    private const float RequestDelaySeconds = 3f;
 
     private HostModPresenceBehaviour? behaviour;
-    private HUDManager? hudManager;
-    private NetworkManager? confirmedNetwork;
-    private float nextRequestTime;
+
+    public bool IsOverlayAllowed { get; private set; } = true;
 
     public void Attach(HUDManager hud)
     {
-        if (ReferenceEquals(hud, hudManager))
-        {
-            return;
-        }
-
-        hudManager = hud;
         behaviour = hud.GetComponent<HostModPresenceBehaviour>()
             ?? hud.gameObject.AddComponent<HostModPresenceBehaviour>();
-        Reset();
+        BeginHostPresenceCheck(behaviour);
     }
 
-    public bool IsHostPresent()
+    public void BeginHostPresenceCheck(HostModPresenceBehaviour bridge)
     {
+        behaviour = bridge;
         NetworkManager? network = NetworkManager.Singleton;
         if (network is null || !network.IsClient)
         {
-            Reset();
-            return true;
+            IsOverlayAllowed = true;
+            return;
         }
 
         if (network.IsHost)
         {
-            return true;
+            IsOverlayAllowed = true;
+            return;
         }
 
-        if (ReferenceEquals(network, confirmedNetwork))
+        IsOverlayAllowed = false;
+        bridge.ScheduleHostPresenceRequest(RequestDelaySeconds);
+    }
+
+    public void RequestHostPresence()
+    {
+        NetworkManager? network = NetworkManager.Singleton;
+        if (network is not null && network.IsClient && !network.IsHost)
         {
-            return true;
+            behaviour?.RequestHostPresenceServerRpc();
         }
-
-        if (behaviour is not null && Time.unscaledTime >= nextRequestTime)
-        {
-            nextRequestTime = Time.unscaledTime + RequestIntervalSeconds;
-            behaviour.RequestHostPresenceServerRpc();
-        }
-
-        return false;
     }
 
     public void ConfirmHostPresence()
@@ -69,13 +58,12 @@ internal sealed class HostModPresenceGate
         NetworkManager? network = NetworkManager.Singleton;
         if (network is not null && network.IsClient && !network.IsHost)
         {
-            confirmedNetwork = network;
+            IsOverlayAllowed = true;
         }
     }
 
     public void Reset()
     {
-        confirmedNetwork = null;
-        nextRequestTime = 0f;
+        IsOverlayAllowed = true;
     }
 }

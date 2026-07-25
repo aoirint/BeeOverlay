@@ -55,12 +55,17 @@ the host answers BeeOverlay's presence request. A missing answer, including a
 host that has not installed BeeOverlay, therefore leaves the overlay hidden.
 
 `HudUpdatePatch` attaches the Interop-only `HostModPresenceBehaviour` to the
-HUD object. It sends a throttled server RPC while the client remains
-unconfirmed. A BeeOverlay host answers only the requesting client with a client
-RPC, and `HostModPresenceGate` records that answer for the active network
-connection. The bridge clears the confirmation when its network object
-despawns. Core receives only the resulting enablement Boolean and continues to
-have no Unity or Netcode dependency.
+HUD object. When the local network client spawns that bridge, it waits three
+seconds and sends exactly one server RPC. This deliberately avoids both the
+immediate lobby-entry period, when the overlay has no planet-side use, and the
+lever-triggered landing and dungeon-generation work. The HUD update reads only
+the cached Boolean; it does not poll or retry the network request every frame.
+
+A BeeOverlay host answers only the requesting client with a client RPC, and
+`HostModPresenceGate` records that answer for the active network connection.
+The bridge clears the confirmation when its network object despawns. Core
+receives only the resulting enablement Boolean and continues to have no Unity
+or Netcode dependency.
 
 This is a presence check, not an exact-version negotiation. Its external
 Netcode assumptions and evidence are documented in

@@ -55,6 +55,16 @@ internal sealed class PluginController
         hostModPresenceGate.ConfirmHostPresence();
     }
 
+    public void BeginHostModPresenceCheck(HostModPresenceBehaviour bridge)
+    {
+        hostModPresenceGate.BeginHostPresenceCheck(bridge);
+    }
+
+    public void RequestHostModPresence()
+    {
+        hostModPresenceGate.RequestHostPresence();
+    }
+
     public void ResetHostModPresence()
     {
         hostModPresenceGate.Reset();
@@ -63,7 +73,7 @@ internal sealed class PluginController
     public void HandleFrame()
     {
         frameHandler.HandleFrame(
-            configuration.Enabled && hostModPresenceGate.IsHostPresent(),
+            configuration.Enabled && hostModPresenceGate.IsOverlayAllowed,
             configuration.PresentationOptions
         );
     }
