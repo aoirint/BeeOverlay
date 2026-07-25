@@ -12,8 +12,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Added `General.Enabled` as BeeOverlay's global BepInEx switch, plus
-  `General.HudEnabled` and detailed, independently switchable world-guide
+- Added `General.Enabled` to control global overlay operation without unloading
+  BeeOverlay.
+- Added `General.GuestEnabled`, which lets a host explicitly allow non-host
+  players to use BeeOverlay. It defaults to `true`.
+- Added `Overlay.Enabled` as the local presentation switch, plus
+  `Overlay.HudEnabled` and detailed, independently switchable world-guide
   settings for individual presentation elements.
 - Added a host-presence handshake that keeps a non-host client's overlay hidden
   unless the lobby host responds from BeeOverlay. The client sends at most three

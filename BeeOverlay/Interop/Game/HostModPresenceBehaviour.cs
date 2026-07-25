@@ -43,7 +43,7 @@ internal sealed class HostModPresenceBehaviour : NetworkBehaviour
             return;
         }
 
-        ConfirmHostPresenceClientRpc(new ClientRpcParams
+        ConfirmHostPresenceClientRpc(Plugin.Controller.GuestOverlayEnabled, new ClientRpcParams
         {
             Send = new ClientRpcSendParams
             {
@@ -53,9 +53,11 @@ internal sealed class HostModPresenceBehaviour : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void ConfirmHostPresenceClientRpc(ClientRpcParams parameters = default)
+    public void ConfirmHostPresenceClientRpc(
+        bool guestOverlayAllowed,
+        ClientRpcParams parameters = default)
     {
-        Plugin.Controller.ConfirmHostModPresence();
+        Plugin.Controller.ConfirmHostModPresence(guestOverlayAllowed);
     }
 
     public override void OnNetworkDespawn()

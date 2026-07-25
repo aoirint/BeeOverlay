@@ -32,15 +32,19 @@ Add Core state only when a future feature has an explicit cross-frame rule.
 
 ## Enablement
 
-`General.Enabled` defaults to `true` and is the global switch. `General.HudEnabled`
-selects HUD text. The world-guide settings independently select every marker,
+`General.Enabled` defaults to `true` and controls global overlay operation; it
+does not unload the plugin.
+`General.GuestEnabled` defaults to `true`; when the local player hosts, it
+authorizes non-host players to use BeeOverlay. `Overlay.Enabled` controls local
+presentation independently from `General.Enabled`. `Overlay.HudEnabled` selects
+HUD text. The remaining `Overlay.*` world-guide settings independently select every marker,
 Sight line, and Sphere: bee, hive, remembered-hive, and player markers;
 bee-to-player, bee-to-remembered-hive, and bee-to-hive pickup-proxy lines; and
 the bee sight-range, hive defense-range, remembered-hive near, and
 remembered-hive line-of-sight spheres. Every setting defaults to `true`.
 `PluginController` reads the live BepInEx values for every HUD callback and
-passes plain values into Core. When the global switch is `false`, or all selected
-presentation elements are `false`, the frame handler hides all mod-owned
+passes plain values into Core. When the global or overlay switch is `false`, or
+all selected presentation elements are `false`, the frame handler hides all mod-owned
 presentation and does not capture game state or build a frame. Otherwise, the
 selected elements update from the same derived frame. This makes a
 configuration-API change effective on the next HUD update while keeping BepInEx
@@ -63,15 +67,24 @@ schedule to the lever-triggered landing and dungeon-generation work. The HUD
 update reads only the cached Boolean; it does not poll or retry the network
 request every frame.
 
-A BeeOverlay host answers only the requesting client with a client RPC, and
-`HostModPresenceGate` records that answer for the active network connection.
+A BeeOverlay host answers only the requesting client with a client RPC that
+includes its current `General.GuestEnabled` authorization. `HostModPresenceGate`
+records that answer for the active network connection.
 The bridge clears the confirmation when its network object despawns. Core
 receives only the resulting enablement Boolean and continues to have no Unity
 or Netcode dependency.
 
+BeeOverlay chooses the targeted custom-RPC option from
+[the host authorization domain knowledge](../domain/host-authorization.md).
+It gives the host an explicit `General.GuestEnabled` decision without a general
+mod-list protocol, which the pinned GameLibs reference does not provide. A
+client-only setting is rejected because it would let a guest enable diagnostic
+features without host authorization. This decision treats the host's installed
+configuration as the consent signal that prevents that abuse.
+
 This is a presence check, not an exact-version negotiation. Its external
 Netcode assumptions and evidence are documented in
-[../domain/host-presence-netcode.md](../domain/host-presence-netcode.md).
+[../domain/host-authorization.md](../domain/host-authorization.md).
 
 The game meanings of bee state, sight, and hive tests are defined in
 [../domain/red-locust-bees.md](../domain/red-locust-bees.md). The HUD update

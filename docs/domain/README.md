@@ -10,5 +10,5 @@ design decisions.
 - [Diagnostic visualization](diagnostic-visualization.md) identifies the
   HUD lifecycle and the Unity UI and world-rendering APIs used to implement
   diagnostic visuals.
-- [Host-presence Netcode bridge](host-presence-netcode.md) records the v81
-  Netcode RPC and lifecycle constraints used to establish a host response.
+- [Host authorization](host-authorization.md) records the host-consent need,
+  technical options, and Netcode constraints for an authorization path.
