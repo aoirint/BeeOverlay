@@ -11,6 +11,8 @@
 
 ### Changed
 
+- Clarified the v81 compatibility target, test environment, and current
+  validation status.
 - Lobby hosts must install BeeOverlay before non-host players can use its
   diagnostic overlay. This keeps diagnostic features from being used in a lobby
   without the host's knowledge.
