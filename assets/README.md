@@ -36,15 +36,11 @@ When the glitch is active, the bees stay calm. They do not become defensive
 merely because a player is nearby; they must also see that player inside the
 hive's defense radius.
 
-To practice the glitch:
+While moving the hive, keep the bee-to-known-hive probe closed:
 
-1. Pick up the hive and move it away from the Circuit Bees.
-2. Keep the bee-to-known-hive probe closed while moving the hive.
-    - Keep the bee at least 4 units from its known-hive position.
-    - When the bee is less than 8 units from that position, block the probe
-      line with solid cover.
-3. Do not let the bee reach its known-hive position or gain a clear probe line
-   before the hive is safely away.
+- Keep the bee at least 4 units from its known-hive position.
+- When the bee is less than 8 units from that position, block the probe line
+  with solid cover.
 
 BeeOverlay shows the relevant ranges, marker, and probe line without changing
 game behavior. See the
