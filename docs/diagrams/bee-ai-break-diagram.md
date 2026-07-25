@@ -1,9 +1,10 @@
 # Bee AI Break Diagram Authoring
 
 `bee-ai-break-conditions.svg` is the canonical source for the Bee AI Break
-conditions diagram embedded in the root and package READMEs. This
-guide answers how to update that SVG without turning it into a separate source
-of game-mechanics truth.
+conditions diagram. `bee-ai-break-conditions.webp` is its Thunderstore-facing
+derivative. The root README embeds the SVG; the package README embeds the
+WebP. This guide answers how to update those assets without turning either
+into a separate source of game-mechanics truth.
 
 ## Sources and update triggers
 
@@ -44,6 +45,28 @@ that documented result.
   readable when it overlaps a line. The labeled distances are the mechanics;
   circle and capsule proportions are intentionally schematic for readability.
 
+## Thunderstore WebP derivative
+
+Thunderstore renders the package README as HTML Markdown, so use
+`bee-ai-break-conditions.webp` there instead of the SVG source.
+
+Generate the WebP only after the user-facing diagram is settled for a pull
+request that updates the package README or diagram content. Do not regenerate
+it for every intermediate layout adjustment, documentation-only edit, or
+review iteration: each committed binary revision remains in Git history.
+
+When generation is warranted:
+
+1. Render the SVG to a 2× PNG with the Edge headless procedure used by
+   [Icon authoring](icon-authoring.md).
+2. Resize that PNG with high-quality bicubic interpolation to the SVG's
+   intrinsic 1500×670 dimensions, then encode it as WebP.
+3. Replace `bee-ai-break-conditions.webp`, inspect it at native size, and
+   confirm it represents the final SVG revision.
+
+Keep the temporary PNG outside the repository. The WebP is the only committed
+derivative, and only when the timing rule above is met.
+
 ## Editing procedure
 
 1. Read [Bee AI Break](../domain/bee-ai-break.md) and inspect the current
@@ -53,7 +76,7 @@ that documented result.
    range, arrow, cover, and label changes together when one case moves.
 3. Preserve the two README embeds unless the asset path changes:
    - `README.md` uses the repository-relative SVG.
-   - `assets/README.md` uses the `main`-branch raw GitHub SVG URL.
+   - `assets/README.md` uses the `main`-branch raw GitHub WebP URL.
 4. Parse the SVG and check whitespace before committing:
 
    ```powershell
@@ -75,4 +98,5 @@ that documented result.
       conventions above.
 - [ ] The SVG parses and `git diff --check` passes.
 - [ ] A rendered review confirms clear labels and balanced card layout.
-- [ ] Both README embeds still resolve to the canonical SVG.
+- [ ] The root README resolves the SVG and the package README resolves the
+      final WebP derivative.
