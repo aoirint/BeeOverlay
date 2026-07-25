@@ -60,8 +60,8 @@ To do that while moving the hive:
   with solid cover.
 
 BeeOverlay shows the relevant ranges, marker, and probe line without changing
-game behavior. See [Bee AI Break](docs/domain/bee-ai-break.md) for the full
-conditions and limitations.
+game behavior. See [Bee AI Break](docs/domain/bee-ai-break.md) for technical
+details.
 
 ## Installation
 

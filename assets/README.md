@@ -61,7 +61,7 @@ To do that while moving the hive:
 BeeOverlay shows the relevant ranges, marker, and probe line without changing
 game behavior. See the
 [Bee AI Break documentation](https://github.com/aoirint/BeeOverlay/blob/main/docs/domain/bee-ai-break.md)
-for the full conditions and limitations.
+for technical details.
 
 ## What it does
 
