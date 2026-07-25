@@ -52,19 +52,20 @@
   <text x="650" y="165" class="subheading">2. Missing hive</text>
   <text x="650" y="195" class="body">Keep the known-hive probe from reaching its position.</text>
 
-  <text x="650" y="230" class="small">Solid blue: 4-unit near range</text>
-  <text x="650" y="255" class="small">Dashed blue: 8-unit probe range</text>
-  <circle cx="770" cy="350" r="50" fill="none" stroke="#268CFF" stroke-width="4"/>
-  <circle cx="770" cy="350" r="105" fill="none" stroke="#4099FF" stroke-width="4" stroke-dasharray="12 10"/>
-  <circle cx="770" cy="350" r="22" fill="#0D52FF" stroke="#07399A" stroke-width="4"/>
-  <text x="770" y="350" class="marker-light">K</text>
-  <text x="700" y="480" class="label">Known hive (K)</text>
+  <circle cx="835" cy="390" r="62" fill="none" stroke="#268CFF" stroke-width="4"/>
+  <circle cx="835" cy="390" r="125" fill="none" stroke="#4099FF" stroke-width="4" stroke-dasharray="12 10"/>
+  <circle cx="835" cy="390" r="22" fill="#0D52FF" stroke="#07399A" stroke-width="4"/>
+  <text x="835" y="390" class="marker-light">K</text>
+  <text x="755" y="425" class="label">Known-hive position</text>
+  <text x="767" y="451" class="small">where the hive was</text>
 
-  <circle cx="865" cy="350" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
-  <text x="865" y="350" class="marker">B</text>
-  <text x="835" y="480" class="label">Circuit Bee</text>
-  <path d="M 843 350 H 833" fill="none" stroke="#2E2E2E" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#arrow)"/>
-  <rect x="805" y="321" width="28" height="58" rx="5" fill="#2E2E2E"/>
+  <circle cx="955" cy="390" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
+  <text x="955" y="390" class="marker">B</text>
+  <text x="905" y="465" class="label">Circuit Bee</text>
+  <path d="M 933 390 H 890" fill="none" stroke="#2E2E2E" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#arrow)"/>
+  <rect x="865" y="361" width="28" height="58" rx="5" fill="#2E2E2E"/>
+  <text x="872" y="345" class="small">solid cover</text>
+  <text x="905" y="370" class="small">blocked probe</text>
 
   <text x="650" y="510" class="body">Known-hive distance:</text>
   <text x="670" y="542" class="body">• Less than 4 units: do not hold the hive.</text>
