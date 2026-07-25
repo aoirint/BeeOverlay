@@ -5,6 +5,9 @@
     <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
     </marker>
+    <marker id="sight-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#FF261A"/>
+    </marker>
     <style>
       .heading { font: 700 30px sans-serif; fill: #0f172a; }
       .subheading { font: 700 20px sans-serif; fill: #0f172a; }
@@ -26,7 +29,7 @@
 
   <rect x="180" y="300" width="370" height="170" rx="85" fill="none" stroke="#FFD91A" stroke-width="4" stroke-dasharray="12 10"/>
   <circle cx="430" cy="385" r="80" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="12 10"/>
-  <path d="M 282 385 H 340" fill="none" stroke="#2E2E2E" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M 282 385 H 340" fill="none" stroke="#FF261A" stroke-width="4" marker-end="url(#sight-arrow)"/>
   <rect x="350" y="356" width="30" height="58" rx="5" fill="#2E2E2E"/>
 
   <circle cx="260" cy="385" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
