@@ -58,7 +58,8 @@ Before carrying the hive away:
   position.
 - When the bee is 4 to less than 8 units from that position, block the probe
   line with solid cover.
-- At 8 units or more, the hive can be carried without triggering this probe.
+- At 8 units or more, the missing-hive probe does not run. The bee must still
+  not see the player carrying the hive.
 
 BeeOverlay shows the relevant ranges, marker, and probe line without changing
 game behavior. See [Bee AI Break](docs/domain/bee-ai-break.md) for technical
