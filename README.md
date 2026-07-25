@@ -49,6 +49,12 @@ condition is met:
 
 Bee AI Break prevents the missing-hive condition while the hive is moved away.
 
+To prevent that condition while moving the hive:
+
+- Keep the bee at least 4 units from its known-hive position.
+- When the bee is less than 8 units from that position, block the probe line
+  with solid cover.
+
 BeeOverlay shows the relevant ranges, marker, and probe line without changing
 game behavior. See [Bee AI Break](docs/domain/bee-ai-break.md) for the full
 conditions and limitations.
