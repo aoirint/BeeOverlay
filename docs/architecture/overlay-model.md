@@ -76,7 +76,7 @@ or Netcode dependency.
 BeeOverlay chooses the targeted custom-RPC option from
 [the host authorization domain knowledge](../domain/host-authorization.md).
 It gives the host an explicit `General.GuestEnabled` decision without a general
-mod-list protocol, which the v81 GameLibs reference does not provide. A
+mod-list protocol, which the pinned GameLibs reference does not provide. A
 client-only setting is rejected because it would let a guest enable diagnostic
 features without host authorization. This decision treats the host's installed
 configuration as the consent signal that prevents that abuse.

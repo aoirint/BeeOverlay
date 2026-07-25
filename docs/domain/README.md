@@ -11,4 +11,4 @@ design decisions.
   HUD lifecycle and the Unity UI and world-rendering APIs used to implement
   diagnostic visuals.
 - [Host authorization](host-authorization.md) records the host-consent need,
-  technical options, and v81 Netcode constraints for an authorization path.
+  technical options, and Netcode constraints for an authorization path.

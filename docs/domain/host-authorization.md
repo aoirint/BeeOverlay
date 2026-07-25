@@ -2,14 +2,14 @@
 
 ## Scope
 
-This document records the Unity Netcode integration constraints for Lethal
-Company v81 used by a client-to-host presence handshake. It does not define
-BeeOverlay's enablement policy; see
+This document records the Unity Netcode integration constraints used by a
+client-to-host presence handshake. It does not define BeeOverlay's enablement
+policy; see
 [the overlay model](../architecture/overlay-model.md) for that decision.
 
 ## Required integration shape
 
-The compile-only `LethalCompany.GameLibs.Steam` v81.0.5 reference exposes
+The project's compile-only `LethalCompany.GameLibs.Steam` reference exposes
 `NetworkBehaviour`, `ServerRpc`, `ClientRpc`, `ServerRpcParams`, and
 `ClientRpcParams` from `Unity.Netcode`.
 
@@ -43,7 +43,7 @@ An integration can provide host authorization in several ways:
   requesting client. It requires compatible `NetworkBehaviour` code on both
   peers, but adds no general discovery protocol.
 - A shared mod-list or version-negotiation protocol can establish installed
-  packages and compatibility more broadly. The v81 GameLibs reference does not
+  packages and compatibility more broadly. The pinned GameLibs reference does not
   expose such a general protocol, so an integration would need to supply it.
 - A client-only setting needs no network integration, but cannot establish or
   enforce host authorization.
@@ -53,12 +53,12 @@ about which one to use belongs to the architecture documentation.
 
 ## Evidence and limits
 
-The members above are verified by the v81.0.5 compile-time GameLibs reference.
+The members above are verified by the project's compile-time GameLibs reference.
 The dynamic-HUD bridge follows the same `NetworkBehaviour` surrogate pattern as
 CruiserJumpPractice; its [client feature support issue][cruiser-client-support]
 explains why a custom RPC is necessary when a client must ask the host for a
 mod-specific result.
-Runtime verification in a clean v81 host/client session remains pending.
+Runtime verification in a clean host/client session remains pending.
 
 This pattern only establishes that the responding host loaded compatible
 BeeOverlay RPC code. It is not a general mod-list API and it does not prove an
