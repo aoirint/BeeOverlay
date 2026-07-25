@@ -21,10 +21,12 @@ RedLocustBees spatial checks.
 4. Launch Lethal Company. The overlay is created automatically when the game
    HUD is available.
 
-When joining someone else's lobby, install BeeOverlay on both the host and the
-client that should display diagnostics. A non-host client stays disabled until
-the host responds to BeeOverlay's presence check; an unmodded host therefore
-leaves that client's overlay hidden.
+Lobby hosts must install BeeOverlay. This prevents non-host players from using
+BeeOverlay's diagnostic features in a lobby without the host's knowledge.
+
+Non-host players only need to install BeeOverlay when they want to use its
+diagnostic overlay. Their overlay remains disabled unless the lobby host has
+also installed BeeOverlay.
 
 ## Configuration
 
