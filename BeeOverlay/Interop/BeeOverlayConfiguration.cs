@@ -80,7 +80,7 @@ internal sealed class BeeOverlayConfiguration
 
     public static BeeOverlayConfiguration Bind(ConfigFile config)
     {
-        var enabled = BindGeneral(config, "Enabled", "Set to false to turn off BeeOverlay output without unloading the plugin. Changes made through BepInEx configuration APIs apply on the next HUD update.");
+        var enabled = BindGeneral(config, "Enabled", "Set to false to disable all BeeOverlay functionality. Changes made through BepInEx configuration APIs apply on the next HUD update.");
         var guestEnabled = BindGeneral(config, "GuestEnabled", "Set to false to disallow non-host players from using BeeOverlay when this player hosts the lobby.");
         var overlayEnabled = BindOverlay(config, "Enabled", "Set to false to hide every BeeOverlay element while keeping general functionality enabled.");
         var hudEnabled = BindOverlay(config, "HudEnabled", "Set to false to hide BeeOverlay's HUD text while keeping enabled world guides available.");
