@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.3.1 - 2026-07-25 UTC
+
+### Fixed
+
+- BeeOverlay now displays a HUD Tip when the host does not permit target
+  selection.
+- BeeOverlay resets the selected bee when leaving or disconnecting from a
+  lobby.
+
 ## v0.3.0 - 2026-07-25 UTC
 
 ### Added

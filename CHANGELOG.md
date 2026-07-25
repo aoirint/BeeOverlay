@@ -10,8 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Unreleased
 
+## v0.3.1 - 2026-07-25 UTC
+
 ### Fixed
 
+- Display a game-styled HUD Tip when target selection is not permitted by the
+  host.
 - Reset the selected bee when leaving or disconnecting from a lobby.
 
 ## v0.3.0 - 2026-07-25 UTC
