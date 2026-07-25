@@ -5,6 +5,8 @@ BeeOverlay is a diagnostic overlay for the state-0 spatial conditions of
 [../domain/red-locust-bees.md](../domain/red-locust-bees.md); reusable rendering
 knowledge is documented in
 [../domain/diagnostic-visualization.md](../domain/diagnostic-visualization.md).
+The host-presence RPC constraints are documented in
+[../domain/host-presence-netcode.md](../domain/host-presence-netcode.md).
 
 - [Overlay model](overlay-model.md) defines the diagnostic subjects, display
   meanings, and deliberate proxy boundaries.

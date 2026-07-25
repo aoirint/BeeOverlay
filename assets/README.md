@@ -22,7 +22,10 @@ BeeOverlay visualizes RedLocustBees spatial checks.
 
 ## Who needs to install
 
-Install BeeOverlay on the client that should see its diagnostic overlay.
+Install BeeOverlay on the lobby host and on every non-host client that should
+see its diagnostic overlay. A non-host client waits for the host's BeeOverlay
+presence response and keeps the overlay disabled if the host does not have the
+mod installed.
 
 ## Configuration
 

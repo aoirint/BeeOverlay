@@ -47,6 +47,25 @@ configuration-API change effective on the next HUD update while keeping BepInEx
 types outside Core. Direct edits to the generated configuration file are not
 watched.
 
+## Host presence
+
+The host always presents its own overlay. A non-host client is fail-closed: it
+does not capture observations or present mod-owned HUD or world guides until
+the host answers BeeOverlay's presence request. A missing answer, including a
+host that has not installed BeeOverlay, therefore leaves the overlay hidden.
+
+`HudUpdatePatch` attaches the Interop-only `HostModPresenceBehaviour` to the
+HUD object. It sends a throttled server RPC while the client remains
+unconfirmed. A BeeOverlay host answers only the requesting client with a client
+RPC, and `HostModPresenceGate` records that answer for the active network
+connection. The bridge clears the confirmation when its network object
+despawns. Core receives only the resulting enablement Boolean and continues to
+have no Unity or Netcode dependency.
+
+This is a presence check, not an exact-version negotiation. Its external
+Netcode assumptions and evidence are documented in
+[../domain/host-presence-netcode.md](../domain/host-presence-netcode.md).
+
 The game meanings of bee state, sight, and hive tests are defined in
 [../domain/red-locust-bees.md](../domain/red-locust-bees.md). The HUD update
 and world-rendering integration are defined in
