@@ -26,7 +26,7 @@
 
   <rect x="180" y="300" width="370" height="170" rx="85" fill="none" stroke="#FFD91A" stroke-width="4" stroke-dasharray="12 10"/>
   <circle cx="430" cy="385" r="80" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="12 10"/>
-  <path d="M 282 365 L 307 385 L 282 405 z" fill="#2E2E2E"/>
+  <path d="M 282 385 H 340" fill="none" stroke="#2E2E2E" stroke-width="4" marker-end="url(#arrow)"/>
   <rect x="350" y="356" width="30" height="58" rx="5" fill="#2E2E2E"/>
 
   <circle cx="260" cy="385" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
