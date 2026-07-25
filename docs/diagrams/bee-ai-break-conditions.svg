@@ -39,7 +39,7 @@
   <text x="405" y="485" class="label">H: hive; P: player</text>
 
   <text x="85" y="510" class="body">Hive defense needs both:</text>
-  <text x="105" y="542" class="body">• Player seen within 16 units.</text>
+  <text x="105" y="542" class="body">• Player seen within 16 units of the bee.</text>
   <text x="105" y="572" class="body">• Player within 10 units of the hive.</text>
   <text x="105" y="602" class="body">• Keep either predicate false.</text>
 

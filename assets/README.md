@@ -40,7 +40,7 @@ While a Circuit Bee is near its hive, it leaves its calm behavior when either
 condition is met:
 
 - **Hive defense.**
-    - The bee sees a player within 16 units.
+    - The bee sees a player within 16 units of the bee.
     - The player is within 10 units of the hive.
 - **Missing hive.**
     - The bee-to-known-hive probe reaches the known-hive position:
