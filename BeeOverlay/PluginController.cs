@@ -55,7 +55,7 @@ internal sealed class PluginController
         hostModPresenceGate.ConfirmHostPresence(guestOverlayAllowed);
     }
 
-    public bool GuestOverlayEnabled => configuration.Enabled && configuration.GuestEnabled;
+    public bool GuestOverlayEnabled => configuration.Enabled && configuration.AllowGuestEnabled;
 
     public void BeginHostModPresenceCheck(HostModPresenceBehaviour bridge)
     {

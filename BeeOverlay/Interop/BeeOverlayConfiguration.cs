@@ -9,7 +9,7 @@ namespace BeeOverlay.Interop;
 internal sealed class BeeOverlayConfiguration
 {
     private readonly ConfigEntry<bool> enabled;
-    private readonly ConfigEntry<bool> guestEnabled;
+    private readonly ConfigEntry<bool> allowGuestEnabled;
     private readonly ConfigEntry<bool> overlayEnabled;
     private readonly ConfigEntry<bool> hudEnabled;
     private readonly ConfigEntry<bool> beeMarkerEnabled;
@@ -26,7 +26,7 @@ internal sealed class BeeOverlayConfiguration
 
     private BeeOverlayConfiguration(
         ConfigEntry<bool> enabled,
-        ConfigEntry<bool> guestEnabled,
+        ConfigEntry<bool> allowGuestEnabled,
         ConfigEntry<bool> overlayEnabled,
         ConfigEntry<bool> hudEnabled,
         ConfigEntry<bool> beeMarkerEnabled,
@@ -42,7 +42,7 @@ internal sealed class BeeOverlayConfiguration
         ConfigEntry<bool> hivePickupSightLineEnabled)
     {
         this.enabled = enabled;
-        this.guestEnabled = guestEnabled;
+        this.allowGuestEnabled = allowGuestEnabled;
         this.overlayEnabled = overlayEnabled;
         this.hudEnabled = hudEnabled;
         this.beeMarkerEnabled = beeMarkerEnabled;
@@ -60,7 +60,7 @@ internal sealed class BeeOverlayConfiguration
 
     public bool Enabled => enabled.Value;
 
-    public bool GuestEnabled => guestEnabled.Value;
+    public bool AllowGuestEnabled => allowGuestEnabled.Value;
 
     public bool OverlayEnabled => overlayEnabled.Value;
 
@@ -81,7 +81,7 @@ internal sealed class BeeOverlayConfiguration
     public static BeeOverlayConfiguration Bind(ConfigFile config)
     {
         var enabled = BindGeneral(config, "Enabled", "Set to false to disable all BeeOverlay functionality.");
-        var guestEnabled = BindGeneral(config, "GuestEnabled", "Set to false to disallow non-host players from using BeeOverlay when this player hosts the lobby.");
+        var allowGuestEnabled = BindGeneral(config, "AllowGuestEnabled", "Set to false to disallow non-host players from using BeeOverlay when this player hosts the lobby.");
         var overlayEnabled = BindOverlay(config, "Enabled", "Set to false to hide every BeeOverlay element while keeping general functionality enabled.");
         var hudEnabled = BindOverlay(config, "HudEnabled", "Set to false to hide BeeOverlay's HUD text while keeping enabled world guides available.");
         var beeMarkerEnabled = BindOverlay(config, "BeeMarkerEnabled", "Set to false to hide bee markers.");
@@ -98,7 +98,7 @@ internal sealed class BeeOverlayConfiguration
 
         return new BeeOverlayConfiguration(
             enabled,
-            guestEnabled,
+            allowGuestEnabled,
             overlayEnabled,
             hudEnabled,
             beeMarkerEnabled,
