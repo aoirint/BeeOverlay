@@ -12,7 +12,7 @@
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#0D52FF"/>
     </marker>
     <marker id="inactive-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2E2E2E"/>
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2E2E2E" fill-opacity="0.58"/>
     </marker>
     <style>
       .heading { font: 700 30px sans-serif; fill: #0f172a; }
@@ -68,7 +68,7 @@
   <text x="920" y="335" class="marker">B</text>
   <rect x="975" y="250" width="370" height="170" rx="85" fill="none" stroke="#4099FF" stroke-width="4" stroke-dasharray="12 10"/>
   <circle cx="1095" cy="335" r="70" fill="none" stroke="#268CFF" stroke-width="4"/>
-  <path d="M 942 335 H 1073" fill="none" stroke="#2E2E2E" stroke-width="4" stroke-dasharray="10 7" marker-end="url(#inactive-arrow)"/>
+  <path d="M 942 335 H 1073" fill="none" stroke="#2E2E2E" stroke-opacity="0.58" stroke-width="4" stroke-dasharray="10 7" marker-end="url(#inactive-arrow)"/>
   <text x="1105" y="290" class="small">solid cover</text>
   <path d="M 1243 335 H 1165" fill="none" stroke="#0D52FF" stroke-width="4" stroke-dasharray="10 7" marker-end="url(#probe-arrow)"/>
   <rect x="1125" y="306" width="30" height="58" rx="5" fill="#2E2E2E"/>
@@ -78,6 +78,7 @@
   <text x="1005" y="455" class="label">K: known-hive position</text>
   <circle cx="1265" cy="335" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
   <text x="1265" y="335" class="marker">B</text>
+  <text x="1170" y="290" class="small">4u–&lt;8u: cover needed</text>
   <text x="1255" y="455" class="label">B: Circuit Bee</text>
 
   <text x="800" y="510" class="body">Known-hive distance:</text>
