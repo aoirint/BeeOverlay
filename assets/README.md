@@ -9,8 +9,14 @@ Break glitch.
   `6423525044216269478`)
     - Test environment
         - [BepInExPack][bepinexpack-package] v5.4.2305 (2026-03-17 UTC)
+        - [LethalCompany InputUtils][input-utils-package] v0.7.13
+          (2026-03-31 UTC)
 
 ## Screenshots
+
+These screenshots were captured with a development build of v0.2.0.
+Current target-selection builds show the same one-bee guide layout after
+selecting `bee:1`, with its HUD row prefixed by `>`.
 
 <details>
 <summary>Overview: Bee, hive, player, and known-hive spatial checks</summary>
@@ -73,8 +79,8 @@ for technical details.
 ## What it does
 
 - Displays a HUD summary for each `RedLocustBees` instance.
-- Draws the bee, hive, known-hive position, and local-player spatial
-  guides.
+- Draws the bee, hive, known-hive position, and local-player spatial guides
+  for one selected bee.
 - Shows relevant sight, distance, and line-of-sight conditions without changing
   game behavior.
 
@@ -86,6 +92,16 @@ BeeOverlay's diagnostic features in a lobby without the host's knowledge.
 Non-host players only need to install BeeOverlay when they want to use its
 diagnostic overlay. Their overlay remains disabled unless the lobby host has
 also installed BeeOverlay.
+
+## Controls
+
+The HUD lists every `RedLocustBees` instance, but BeeOverlay starts with no
+world-guide target selected. Press **Select Next Bee** (`B` by default) to
+select `bee:1`, then `bee:2`, and so on. Pressing it after the last bee returns
+to no selection. The selected HUD row starts with `>`, for example `> bee:1`,
+and only that bee's world markers and spatial guides are shown.
+
+The binding can be changed through InputUtils in the in-game keybind menu.
 
 ## Configuration
 
@@ -121,3 +137,4 @@ code. This disclosure is made in compliance with Thunderstore and community
 policies.
 
 [bepinexpack-package]: https://thunderstore.io/c/lethal-company/p/BepInEx/BepInExPack/
+[input-utils-package]: https://thunderstore.io/c/lethal-company/p/Rune580/LethalCompany_InputUtils/

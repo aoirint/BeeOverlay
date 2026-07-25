@@ -9,7 +9,11 @@ internal interface IOverlayPresenter
 {
     bool TryPrepare(bool hudEnabled);
 
-    void Present(OverlayFrame frame, OverlayPresentationOptions options);
+    void Present(
+        OverlayFrame frame,
+        OverlayPresentationOptions options,
+        int? selectedBeeIdentity
+    );
 
     void HideAll();
 

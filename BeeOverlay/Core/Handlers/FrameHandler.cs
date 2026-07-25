@@ -1,5 +1,6 @@
 using BeeOverlay.Core.Models;
 using BeeOverlay.Core.Ports;
+using BeeOverlay.Core.State;
 using BeeOverlay.Core.UseCases;
 
 namespace BeeOverlay.Core.Handlers;
@@ -9,19 +10,25 @@ namespace BeeOverlay.Core.Handlers;
 /// </summary>
 internal sealed class FrameHandler
 {
+    private readonly IOverlayInput overlayInput;
     private readonly IOverlayObservationSource observationSource;
     private readonly IOverlayPresenter presenter;
     private readonly BuildOverlayFrameUseCase buildOverlayFrameUseCase;
+    private readonly WorldGuideSelection worldGuideSelection;
 
     public FrameHandler(
+        IOverlayInput overlayInput,
         IOverlayObservationSource observationSource,
         IOverlayPresenter presenter,
-        BuildOverlayFrameUseCase buildOverlayFrameUseCase
+        BuildOverlayFrameUseCase buildOverlayFrameUseCase,
+        WorldGuideSelection worldGuideSelection
     )
     {
+        this.overlayInput = overlayInput;
         this.observationSource = observationSource;
         this.presenter = presenter;
         this.buildOverlayFrameUseCase = buildOverlayFrameUseCase;
+        this.worldGuideSelection = worldGuideSelection;
     }
 
     public void HandleFrame(bool enabled, OverlayPresentationOptions options)
@@ -45,6 +52,10 @@ internal sealed class FrameHandler
 
         var observation = observationSource.Capture();
         var frame = buildOverlayFrameUseCase.Execute(observation);
-        presenter.Present(frame, options);
+        var selectedBeeIdentity = worldGuideSelection.Update(
+            frame,
+            overlayInput.CycleWorldGuideTargetTriggered
+        );
+        presenter.Present(frame, options, selectedBeeIdentity);
     }
 }

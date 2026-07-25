@@ -79,7 +79,11 @@ internal sealed partial class Overlay : IOverlayPresenter
         return TryEnsureHudRoot();
     }
 
-    public void Present(OverlayFrame frame, OverlayPresentationOptions options)
+    public void Present(
+        OverlayFrame frame,
+        OverlayPresentationOptions options,
+        int? selectedBeeIdentity
+    )
     {
         var seen = new HashSet<int>();
         var statusBuilder = new StringBuilder();
@@ -90,7 +94,8 @@ internal sealed partial class Overlay : IOverlayPresenter
 
         foreach (var bee in frame.Bees)
         {
-            if (options.HasWorldGuides)
+            var isSelected = bee.Observation.Identity == selectedBeeIdentity;
+            if (options.HasWorldGuides && isSelected)
             {
                 DrawBee(bee, seen, options);
             }
@@ -101,7 +106,7 @@ internal sealed partial class Overlay : IOverlayPresenter
                 // HUD numbers are compact per-frame ordinals after sorting, while the view dictionary
                 // still uses the stable identity below. That keeps the overlay readable without giving
                 // up the identity Unity exposes for hiding old per-bee world objects.
-                statusBuilder.Append(GetBeeStatusLine(bee));
+                statusBuilder.Append(GetBeeStatusLine(bee, isSelected));
             }
         }
 
