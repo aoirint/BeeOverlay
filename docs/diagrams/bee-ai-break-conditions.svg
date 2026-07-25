@@ -32,7 +32,7 @@
 
   <rect x="180" y="250" width="370" height="170" rx="85" fill="none" stroke="#FFD91A" stroke-width="4" stroke-dasharray="12 10"/>
   <circle cx="430" cy="335" r="70" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="12 10"/>
-  <path d="M 282 335 H 360" fill="none" stroke="#FF261A" stroke-width="4" marker-end="url(#sight-arrow)"/>
+  <path d="M 282 335 H 360" fill="none" stroke="#FF261A" stroke-width="4" stroke-dasharray="10 7" marker-end="url(#sight-arrow)"/>
   <rect x="370" y="306" width="30" height="58" rx="5" fill="#2E2E2E"/>
   <text x="350" y="290" class="small">solid cover</text>
 
@@ -64,7 +64,7 @@
   <rect x="895" y="250" width="370" height="170" rx="85" fill="none" stroke="#4099FF" stroke-width="4" stroke-dasharray="12 10"/>
   <circle cx="1015" cy="335" r="70" fill="none" stroke="#268CFF" stroke-width="4"/>
   <text x="1025" y="290" class="small">solid cover</text>
-  <path d="M 1163 335 H 1085" fill="none" stroke="#0D52FF" stroke-width="4" marker-end="url(#probe-arrow)"/>
+  <path d="M 1163 335 H 1085" fill="none" stroke="#0D52FF" stroke-width="4" stroke-dasharray="10 7" marker-end="url(#probe-arrow)"/>
   <rect x="1045" y="306" width="30" height="58" rx="5" fill="#2E2E2E"/>
 
   <circle cx="1015" cy="335" r="22" fill="#0D52FF" stroke="#07399A" stroke-width="4"/>
