@@ -50,7 +50,7 @@ condition is met:
 
 Bee AI Break keeps both conditions false while the hive is moved away.
 
-To keep Bee AI Break active while carrying the hive away:
+Before carrying the hive away:
 
 - Keep the player carrying the hive outside the bee's 16-unit sight range or
   block the bee-to-player sight line.
