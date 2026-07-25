@@ -9,8 +9,12 @@ policy; see
 
 ## Target
 
-Lethal Company v81, using the compile-only `LethalCompany.GameLibs.Steam`
-v81.0.5 reference pinned by this project.
+- Game: Lethal Company v81
+- Steam manifest ID: `6423525044216269478`
+- Evidence: compile-only `LethalCompany.GameLibs.Steam` v81.0.5 reference
+  pinned by this project.
+
+Reconfirm the Netcode member declarations when changing the target game version.
 
 ## Required integration shape
 
