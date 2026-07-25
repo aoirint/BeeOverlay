@@ -29,9 +29,9 @@ glitch.
 
 ## Bee AI Break glitch
 
-Bee AI Break is the community name for a glitch that separates a Circuit Bee
-from its hive, preventing it from recognizing that its hive is missing and
-making hive collection safer.
+Bee AI Break is the community name for a glitch that lets players separate a
+Circuit Bee from its hive without the bee recognizing that its hive is missing,
+so that hive collection is safer.
 
 For practice, keep the bee-to-known-hive probe closed:
 
