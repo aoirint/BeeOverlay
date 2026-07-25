@@ -20,7 +20,7 @@ Reconfirm their declarations when changing the target game version.
 | --- | --- | --- |
 | Hive reference | `public GrabbableObject hive` | Read the current hive and its `transform.position`; its held state is `hive.isHeld`. |
 | Defence radius | `public int defenseDistance` | The player-to-hive radius used when entering and leaving defensive pursuit. |
-| Remembered hive position | `public Vector3 lastKnownHivePosition` | The position against which missing-hive checks are made. |
+| Known-hive position | `public Vector3 lastKnownHivePosition` | The position against which missing-hive checks are made. |
 | Position-sync flag | `private bool syncedLastKnownHivePosition` | Gate for `IsHiveMissing()`; access with non-public instance binding if required. |
 | AI update | `public override void DoAIInterval()` | State-machine update containing the transitions below. |
 | Missing-hive test | `private bool IsHiveMissing()` | Use `AccessTools.Method(typeof(RedLocustBees), "IsHiveMissing")` for a private-method patch. |
@@ -102,7 +102,7 @@ gate it returns true when the hive is held, or when its position is more than
 
 When that gated evaluation finds the hive present, it refreshes
 `lastKnownHivePosition` to `hive.transform.position + Vector3.up * 0.5f` before
-returning false. A later remembered-hive probe must account for this update.
+returning false. A later known-hive probe must account for this update.
 
 `IsHivePlacedAndInLOS()` returns false for a held hive, a hive more than 9
 units from `eye.position`, or a blocked linecast using the same mask.

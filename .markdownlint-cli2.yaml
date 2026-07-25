@@ -38,6 +38,13 @@ config:
   MD024:
     siblings_only: true
 
+  # README screenshots use native disclosure controls so large images stay
+  # optional in GitHub and package-host renderers.
+  MD033:
+    allowed_elements:
+      - details
+      - summary
+
   # PR-template guidance needs to appear before the first visible heading, so
   # do not require the first line to be an H1.
   MD041: false

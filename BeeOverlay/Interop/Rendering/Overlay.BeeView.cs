@@ -209,7 +209,7 @@ internal sealed partial class Overlay
             {
                 lastKnownHiveMarker.SetActive(true);
                 lastKnownHiveMarker.transform.position = lastKnownHive;
-                // Keep the remembered hive marker smaller than the primary state points so it
+                // Keep the known-hive marker smaller than the primary state points so it
                 // reads as diagnostic context instead of a fourth competing object.
                 var markerScale = Mathf.Clamp(hiveMissingProbe.EyeToLastKnownHiveDistance * 0.03f, 0.14f, 0.32f);
                 lastKnownHiveMarker.transform.localScale = Vector3.one * markerScale;
