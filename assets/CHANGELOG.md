@@ -6,7 +6,7 @@
 
 - Added `General.Enabled` to turn off overlay output without unloading
   BeeOverlay.
-- Added `General.GuestEnabled` to let lobby hosts allow or disallow guest use.
+- Added `General.AllowGuestEnabled` to let lobby hosts allow or disallow guest use.
 - Added `Overlay.Enabled` and controls for independently choosing BeeOverlay's
   HUD and world-guide elements.
 
@@ -15,7 +15,7 @@
 - Lobby hosts must install BeeOverlay before non-host players can use its
   diagnostic overlay. This keeps diagnostic features from being used in a lobby
   without the host's knowledge.
-- Hosts can disable guest use with `General.GuestEnabled`.
+- Hosts can disable guest use with `General.AllowGuestEnabled`.
 
 ## v0.1.0 - 2026-07-18 UTC
 

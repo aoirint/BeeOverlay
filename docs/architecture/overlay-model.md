@@ -34,7 +34,7 @@ Add Core state only when a future feature has an explicit cross-frame rule.
 
 `General.Enabled` defaults to `true` and controls global overlay operation; it
 does not unload the plugin.
-`General.GuestEnabled` defaults to `true`; when the local player hosts, it
+`General.AllowGuestEnabled` defaults to `true`; when the local player hosts, it
 authorizes non-host players to use BeeOverlay. `Overlay.Enabled` controls local
 presentation independently from `General.Enabled`. `Overlay.HudEnabled` selects
 HUD text. The remaining `Overlay.*` world-guide settings independently select every marker,
@@ -68,7 +68,7 @@ update reads only the cached Boolean; it does not poll or retry the network
 request every frame.
 
 A BeeOverlay host answers only the requesting client with a client RPC that
-includes its current `General.GuestEnabled` authorization. `HostModPresenceGate`
+includes its current `General.AllowGuestEnabled` authorization. `HostModPresenceGate`
 records that answer for the active network connection.
 The bridge clears the confirmation when its network object despawns. Core
 receives only the resulting enablement Boolean and continues to have no Unity
@@ -76,7 +76,7 @@ or Netcode dependency.
 
 BeeOverlay chooses the targeted custom-RPC option from
 [the host authorization domain knowledge](../domain/host-authorization.md).
-It gives the host an explicit `General.GuestEnabled` decision without a general
+It gives the host an explicit `General.AllowGuestEnabled` decision without a general
 mod-list protocol, which the pinned GameLibs reference does not provide. A
 client-only setting is rejected because it would let a guest enable diagnostic
 features without host authorization. This decision treats the host's installed
