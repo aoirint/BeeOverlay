@@ -60,18 +60,21 @@
   <text x="800" y="165" class="subheading">2. Missing hive</text>
   <text x="800" y="195" class="body">Keep the known-hive probe from reaching its position.</text>
 
-  <rect x="895" y="250" width="370" height="170" rx="85" fill="none" stroke="#4099FF" stroke-width="4" stroke-dasharray="12 10"/>
-  <circle cx="1015" cy="335" r="70" fill="none" stroke="#268CFF" stroke-width="4"/>
-  <text x="1025" y="290" class="small">solid cover</text>
-  <path d="M 1163 335 H 1085" fill="none" stroke="#0D52FF" stroke-width="4" stroke-dasharray="10 7" marker-end="url(#probe-arrow)"/>
-  <rect x="1045" y="306" width="30" height="58" rx="5" fill="#2E2E2E"/>
+  <text x="790" y="290" class="small">≥8u: no cover needed</text>
+  <circle cx="860" cy="335" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
+  <text x="860" y="335" class="marker">B</text>
+  <rect x="975" y="250" width="370" height="170" rx="85" fill="none" stroke="#4099FF" stroke-width="4" stroke-dasharray="12 10"/>
+  <circle cx="1095" cy="335" r="70" fill="none" stroke="#268CFF" stroke-width="4"/>
+  <text x="1105" y="290" class="small">solid cover</text>
+  <path d="M 1243 335 H 1165" fill="none" stroke="#0D52FF" stroke-width="4" stroke-dasharray="10 7" marker-end="url(#probe-arrow)"/>
+  <rect x="1125" y="306" width="30" height="58" rx="5" fill="#2E2E2E"/>
 
-  <circle cx="1015" cy="335" r="22" fill="#0D52FF" stroke="#07399A" stroke-width="4"/>
-  <text x="1015" y="335" class="marker-light">K</text>
-  <text x="925" y="455" class="label">K: known-hive position</text>
-  <circle cx="1185" cy="335" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
-  <text x="1185" y="335" class="marker">B</text>
-  <text x="1175" y="455" class="label">B: Circuit Bee</text>
+  <circle cx="1095" cy="335" r="22" fill="#0D52FF" stroke="#07399A" stroke-width="4"/>
+  <text x="1095" y="335" class="marker-light">K</text>
+  <text x="1005" y="455" class="label">K: known-hive position</text>
+  <circle cx="1265" cy="335" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
+  <text x="1265" y="335" class="marker">B</text>
+  <text x="1255" y="455" class="label">B: Circuit Bee</text>
 
   <text x="800" y="510" class="body">Known-hive distance:</text>
   <text x="820" y="542" class="body">• Less than 4 units: do not hold the hive.</text>
