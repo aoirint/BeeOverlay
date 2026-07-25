@@ -5,19 +5,9 @@
 - Game: Lethal Company v81
 - Steam manifest ID: `6423525044216269478`
 
-## Evidence
-
-- Managed `RedLocustBees` decompilation SHA-256:
-  `48f51b49dbb88e57e65f82366e32acecf4c0e1622839748e7d92bd6a470b4c52`.
-- Exported `RedLocustBees` prefab SHA-256:
-  `786d048138bccf552b2851bc278b9e97679a444b983323bb483ef007bf625fac`.
-- Inspected members: `RedLocustBees.DoAIInterval()`,
-  `RedLocustBees.IsHiveMissing()`, and
-  `RedLocustBees.IsHivePlacedAndInLOS()`.
-
-The transition order and thresholds below are direct static findings from
-those artifacts. They do not establish a runtime observation of a complete Bee
-AI Break sequence.
+The transition order and thresholds below are direct static findings from the
+target build. They do not establish a runtime observation of a complete Bee AI
+Break sequence.
 
 ## Overview
 
