@@ -22,7 +22,7 @@
 
   <rect x="55" y="125" width="675" height="500" rx="20" fill="#eff6ff" stroke="#93c5fd" stroke-width="3"/>
   <text x="85" y="165" class="subheading">1. Hive defense</text>
-  <text x="85" y="195" class="body">Keep the bee from defending the live hive.</text>
+  <text x="85" y="195" class="body">Keep the bee from defending the hive.</text>
 
   <circle cx="375" cy="385" r="115" fill="none" stroke="#FFD91A" stroke-width="4" stroke-dasharray="12 10"/>
   <circle cx="375" cy="385" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
@@ -42,7 +42,7 @@
 
   <text x="85" y="510" class="body">Hive defense needs both:</text>
   <text x="105" y="542" class="body">• Player seen within 16 units.</text>
-  <text x="105" y="572" class="body">• Player within 10 units of the live hive.</text>
+  <text x="105" y="572" class="body">• Player within 10 units of the hive.</text>
   <text x="105" y="602" class="body">• Keep either predicate false.</text>
 
   <text x="550" y="510" class="label">Ranges</text>
