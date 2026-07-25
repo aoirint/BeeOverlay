@@ -35,7 +35,7 @@ launch.
 
 | Setting | Default | Behavior |
 | --- | --- | --- |
-| `General.Enabled` | `true` | Turns off overlay output without unloading BeeOverlay. |
+| `General.Enabled` | `true` | Set to `false` to disable all BeeOverlay functionality. |
 | `General.GuestEnabled` | `true` | When hosting, allows non-host players to use BeeOverlay. |
 | `Overlay.Enabled` | `true` | Shows BeeOverlay elements when `General.Enabled` is `true`. |
 | `Overlay.HudEnabled` | `true` | Shows the HUD status text. |
