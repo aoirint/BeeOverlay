@@ -23,6 +23,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   requests on a delayed, bounded-frequency schedule instead of polling during
   frame updates.
 
+### Changed
+
+- Clarified the documented compatibility target, required package, and current
+  validation scope for the upcoming release.
+
 ## v0.2.0-alpha.1 - 2026-07-20 UTC
 
 ### Changed
