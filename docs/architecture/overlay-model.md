@@ -57,12 +57,11 @@ host that has not installed BeeOverlay, therefore leaves the overlay hidden.
 `HudUpdatePatch` attaches the Interop-only `HostModPresenceBehaviour` to the
 HUD object. When the local network client spawns that bridge, it waits three
 seconds, then retries at five-second intervals until it receives a response or
-has sent three requests. It skips every send while `StartOfRound.inShipPhase`
-is `true`, which avoids both the immediate Orbit period, when the overlay has
-no planet-side use, and the lever-triggered landing and dungeon-generation
-work. A skipped ship-phase interval does not consume one of the three request
-attempts. The HUD update reads only the cached Boolean; it does not poll or
-retry the network request every frame.
+has sent three requests. The initial delay avoids the immediate lobby-entry
+period, when the overlay has no planet-side use, without coupling the retry
+schedule to the lever-triggered landing and dungeon-generation work. The HUD
+update reads only the cached Boolean; it does not poll or retry the network
+request every frame.
 
 A BeeOverlay host answers only the requesting client with a client RPC, and
 `HostModPresenceGate` records that answer for the active network connection.

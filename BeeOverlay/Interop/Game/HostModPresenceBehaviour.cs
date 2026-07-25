@@ -87,8 +87,6 @@ internal sealed class HostModPresenceBehaviour : NetworkBehaviour
                 case HostPresenceRequestResult.Sent:
                     requestAttempts++;
                     break;
-                case HostPresenceRequestResult.Deferred:
-                    break;
             }
         }
 

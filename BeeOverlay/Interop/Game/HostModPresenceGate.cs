@@ -9,7 +9,6 @@ namespace BeeOverlay.Interop.Game;
 internal enum HostPresenceRequestResult
 {
     Stop,
-    Deferred,
     Sent,
 }
 
@@ -62,12 +61,6 @@ internal sealed class HostModPresenceGate
         if (network is null || !network.IsClient || network.IsHost)
         {
             return HostPresenceRequestResult.Stop;
-        }
-
-        StartOfRound? startOfRound = StartOfRound.Instance;
-        if (startOfRound is null || startOfRound.inShipPhase)
-        {
-            return HostPresenceRequestResult.Deferred;
         }
 
         if (behaviour is null)
