@@ -47,7 +47,6 @@ condition is met:
     - The bee-to-known-hive probe reaches the known-hive position:
         - The bee is less than 4 units away.
         - The bee is less than 8 units away with a clear probe line.
-    - A held hive is recognized as missing once the probe reaches it.
 
 Bee AI Break keeps both conditions false while the hive is moved away.
 
