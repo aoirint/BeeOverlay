@@ -6,10 +6,7 @@ BeeOverlay visualizes RedLocustBees spatial checks.
 
 - Lethal Company v81 (2026-04-17 UTC, Manifest ID:
   `6423525044216269478`)
-    - Analysis evidence
-        - The target is verified from the supplied managed-code and asset
-          exports. In-game HUD validation remains pending.
-    - Package dependency
+    - Test environment
         - [BepInExPack][bepinexpack-package] v5.4.2305 (2026-03-17 UTC)
 
 ## What it does

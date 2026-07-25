@@ -16,6 +16,11 @@
   without the host's knowledge.
 - Hosts can disable guest use with `General.AllowGuestEnabled`.
 
+### Notes
+
+- Compatibility: Lethal Company v81 (2026-04-17 UTC, Manifest ID:
+  `6423525044216269478`).
+
 ## v0.1.0 - 2026-07-18 UTC
 
 ### Added
@@ -29,7 +34,10 @@
 
 ### Notes
 
-- Compatibility: Lethal Company v73 (Steam manifest ID
-  `1749099131234587692`).
+- Compatibility:
+    - Compatible with Lethal Company v73 (2025-10-04 UTC, Manifest ID:
+      `1749099131234587692`).
+        - Backfilled as reference compatibility information while preparing the
+          v0.2.0 release.
 - Install BeeOverlay only on the client where you want to see the diagnostic
   overlay; it does not change game behavior.

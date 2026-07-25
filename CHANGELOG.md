@@ -23,6 +23,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   requests on a delayed, bounded-frequency schedule instead of polling during
   frame updates.
 
+### Notes
+
+- Compatibility: Lethal Company v81 (2026-04-17 UTC, Manifest ID:
+  `6423525044216269478`).
+
 ## v0.2.0-alpha.1 - 2026-07-20 UTC
 
 ### Changed
@@ -32,8 +37,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Notes
 
-- The v81 target is supported by managed-code and asset inspection. Runtime
-  validation of HUD behavior in a clean v81 game profile remains pending.
+- Compatibility: Lethal Company v81 (2026-04-17 UTC, Manifest ID:
+  `6423525044216269478`).
 - This prerelease is published to GitHub only. Thunderstore publication remains
   limited to stable releases.
 
@@ -53,8 +58,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Notes
 
-- Compatibility: Lethal Company v73 (Steam manifest ID
-  `1749099131234587692`).
+- Compatibility:
+    - Compatible with Lethal Company v73 (2025-10-04 UTC, Manifest ID:
+      `1749099131234587692`).
+        - Backfilled as reference compatibility information while preparing the
+          v0.2.0 release.
 - This stable release supersedes the v0.1.0-alpha.1 through v0.1.0-alpha.3
   prereleases. Thunderstore publishing is enabled for this stable version.
 
