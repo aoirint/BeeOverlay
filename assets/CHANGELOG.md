@@ -39,9 +39,14 @@ validation in a clean v81 profile remains pending.
 
 ### Notes
 
-- Compatibility: Lethal Company v73 (Steam manifest ID
-  `1749099131234587692`).
 - Install BeeOverlay only on the client where you want to see the diagnostic
   overlay; it does not change game behavior.
+
+### Compatibility
+
+- Compatible with Lethal Company v73 (2025-10-04 UTC, Manifest ID:
+  `1749099131234587692`).
+    - Backfilled as reference compatibility information while preparing the
+      v0.2.0 release.
 
 [bepinexpack-package]: https://thunderstore.io/c/lethal-company/p/BepInEx/BepInExPack/
