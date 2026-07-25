@@ -11,6 +11,13 @@
   `48f51b49dbb88e57e65f82366e32acecf4c0e1622839748e7d92bd6a470b4c52`.
 - Exported `RedLocustBees` prefab SHA-256:
   `786d048138bccf552b2851bc278b9e97679a444b983323bb483ef007bf625fac`.
+- Inspected members: `RedLocustBees.DoAIInterval()`,
+  `RedLocustBees.IsHiveMissing()`, and
+  `RedLocustBees.IsHivePlacedAndInLOS()`.
+
+The transition order and thresholds below are direct static findings from
+those artifacts. They do not establish a runtime observation of a complete Bee
+AI Break sequence.
 
 ## Overview
 
@@ -30,6 +37,9 @@ This is a timing- and position-dependent behavior, not a guarantee that the
 bee is harmless. State 0 still sends the bee toward its known-hive position,
 and it can enter state 1 when it sees a player within the hive defense radius.
 
+See [RedLocustBees implementation analysis](red-locust-bees.md) for the
+broader class surface and state-machine context.
+
 ## Terms
 
 - **Hive:** the current physical `RedLocustBees.hive` object.
@@ -39,6 +49,22 @@ and it can enter state 1 when it sees a player within the hive defense radius.
 - **Probe:** the distance and line-of-sight gate from the bee's `eye` to the
   known-hive position. The missing-hive predicate only evaluates the hive
   after this gate passes.
+
+## State transition conditions
+
+While in state 0, a bee evaluates the missing-hive condition before the
+player-sight condition. Either condition can move it out of state 0.
+
+### Hive defense
+
+The bee enters defensive state 1 only when all of the following are true:
+
+- The missing-hive predicate returned `false` for the same update.
+- `CheckLineOfSightForPlayer(360f, 16, 1)` returns a player.
+- That player's body is inside the hive's current `defenseDistance` radius.
+
+The v81 prefab serializes `defenseDistance` as 10. The live field remains the
+authoritative value because it is serialized game data.
 
 ## Missing-hive probe
 
@@ -69,15 +95,25 @@ the bee's eye, and has a clear linecast from that eye. When the predicate does
 not find the hive missing, it updates the known-hive position to the hive's
 position plus 0.5 units upward.
 
-## State-0 consequences
+## Maintaining Bee AI Break
 
-State 0 checks the missing-hive predicate before its player-sight check. If
-the predicate returns `true`, the bee enters state 2. Otherwise, it can enter
-state 1 when it sees a player within 16 units and that player's body is inside
-the hive's defense radius. The v81 prefab sets that radius to 10 units.
+Keeping the bee in state 0 requires both transition conditions to remain
+false:
+
+- **Hive defense:** no player must satisfy both the 16-unit sight check and
+  the hive-defense-radius check. When a player carries the hive, this normally
+  means keeping that player outside the bee's sight range or blocking the
+  bee-to-player sight line.
+- **Missing hive:** the bee-to-known-hive probe must not pass. Keep the bee at
+  least 4 units from the known-hive position; when it is less than 8 units
+  away, the linecast to that position must be blocked.
+
+The two conditions are evaluated independently. Preventing the missing-hive
+probe alone does not prevent defensive state 1.
 
 For practice, BeeOverlay's bee-to-known-hive probe line and its 4- and 8-unit
 guides show the gate that must remain closed. Its bee-to-hive sight line and
 known-hive marker show the separate current- and remembered-position checks.
-The overlay observes these conditions; it does not change the bee's state or
-the linecasts.
+The bee-to-player sight line and 16-unit sphere show the defensive sight
+condition. The overlay observes these conditions; it does not change the bee's
+state or the linecasts.
