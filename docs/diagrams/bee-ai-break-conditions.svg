@@ -37,7 +37,7 @@
   <circle cx="155" cy="335" r="22" fill="#40FF59" stroke="#168A2A" stroke-width="4"/>
   <text x="155" y="335" class="marker">H</text>
   <circle cx="205" cy="335" r="22" fill="#FF261A" stroke="#9F1A12" stroke-width="4"/>
-  <text x="205" y="335" class="marker">P</text>
+  <text x="205" y="335" class="marker-light">P</text>
   <text x="75" y="290" class="small">&gt;16u: no cover needed</text>
   <rect x="260" y="250" width="370" height="170" rx="85" fill="none" stroke="#FFD91A" stroke-width="4" stroke-dasharray="12 10"/>
   <circle cx="510" cy="335" r="70" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="12 10"/>
@@ -51,7 +51,7 @@
   <circle cx="510" cy="335" r="22" fill="#40FF59" stroke="#168A2A" stroke-width="4"/>
   <text x="510" y="335" class="marker">H</text>
   <circle cx="580" cy="335" r="22" fill="#FF261A" stroke="#9F1A12" stroke-width="4"/>
-  <text x="580" y="335" class="marker">P</text>
+  <text x="580" y="335" class="marker-light">P</text>
   <text x="540" y="290" class="small">≤16u from B: cover needed</text>
 
   <text x="270" y="455" class="label">B: Circuit Bee</text>
