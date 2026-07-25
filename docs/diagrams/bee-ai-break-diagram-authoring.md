@@ -1,7 +1,7 @@
 # Bee AI Break Diagram Authoring
 
-`bee-ai-break-conditions.svg` is the canonical source for the Bee AI Break
-conditions diagram. `bee-ai-break-conditions.webp` is its Thunderstore-facing
+`bee-ai-break-diagram.svg` is the canonical source for the Bee AI Break
+conditions diagram. `bee-ai-break-diagram.webp` is its Thunderstore-facing
 derivative. The root README embeds the SVG; the package README embeds the
 WebP. This guide answers how to update those assets without turning either
 into a separate source of game-mechanics truth.
@@ -48,7 +48,7 @@ that documented result.
 ## Thunderstore WebP derivative
 
 Thunderstore renders the package README as HTML Markdown, so use
-`bee-ai-break-conditions.webp` there instead of the SVG source.
+`bee-ai-break-diagram.webp` there instead of the SVG source.
 
 Generate the WebP only after the user-facing diagram is settled for a pull
 request that updates the package README or diagram content. Do not regenerate
@@ -61,7 +61,7 @@ When generation is warranted:
    [Icon authoring](icon-authoring.md).
 2. Resize that PNG with high-quality bicubic interpolation to the SVG's
    intrinsic 1500×670 dimensions, then encode it as WebP.
-3. Replace `bee-ai-break-conditions.webp`, inspect it at native size, and
+3. Replace `bee-ai-break-diagram.webp`, inspect it at native size, and
    confirm it represents the final SVG revision.
 
 Keep the temporary PNG outside the repository. The WebP is the only committed
@@ -72,7 +72,7 @@ derivative, and only when the timing rule above is met.
 1. Read [Bee AI Break](../domain/bee-ai-break.md) and inspect the current
    overlay colors and line behavior before changing a mechanic, color, or
    label.
-2. Edit `docs/diagrams/bee-ai-break-conditions.svg` directly. Keep marker,
+2. Edit `docs/diagrams/bee-ai-break-diagram.svg` directly. Keep marker,
    range, arrow, cover, and label changes together when one case moves.
 3. Preserve the two README embeds unless the asset path changes:
    - `README.md` uses the repository-relative SVG.
@@ -80,7 +80,7 @@ derivative, and only when the timing rule above is met.
 4. Parse the SVG and check whitespace before committing:
 
    ```powershell
-   [xml](Get-Content docs/diagrams/bee-ai-break-conditions.svg -Raw) | Out-Null
+   [xml](Get-Content docs/diagrams/bee-ai-break-diagram.svg -Raw) | Out-Null
    git diff --check
    ```
 

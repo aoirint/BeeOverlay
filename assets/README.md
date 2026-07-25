@@ -68,7 +68,7 @@ game behavior. See the
 [Bee AI Break documentation](https://github.com/aoirint/BeeOverlay/blob/main/docs/domain/bee-ai-break.md)
 for technical details.
 
-![Diagram of the hive-defense and missing-hive conditions for Bee AI Break](https://raw.githubusercontent.com/aoirint/BeeOverlay/main/docs/diagrams/bee-ai-break-conditions.webp)
+![Diagram of the hive-defense and missing-hive conditions for Bee AI Break](https://raw.githubusercontent.com/aoirint/BeeOverlay/main/docs/diagrams/bee-ai-break-diagram.webp)
 
 ## What it does
 
