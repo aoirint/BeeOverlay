@@ -42,7 +42,7 @@ condition is met:
 
 - **Hive defense.**
     - The bee sees a player within 16 units.
-    - That player's body is inside the hive's defense radius.
+    - The player is within 10 units of the hive.
 - **Missing hive.**
     - The bee-to-known-hive probe reaches the known-hive position:
         - The bee is less than 4 units away.
