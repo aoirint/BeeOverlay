@@ -9,8 +9,14 @@ RedLocustBees spatial checks for practicing the Bee AI Break glitch.
   `6423525044216269478`)
     - Test environment
         - [BepInExPack][bepinexpack-package] v5.4.2305 (2026-03-17 UTC)
+        - [LethalCompany InputUtils][input-utils-package] v0.7.13
+          (2026-03-31 UTC)
 
 ## Screenshots
+
+These screenshots were captured with v0.2.0. Current target-selection builds
+show the same one-bee guide layout after selecting `bee:1`, with its HUD row
+prefixed by `>`.
 
 <details>
 <summary>Overview: Bee, hive, player, and known-hive spatial checks</summary>
@@ -71,7 +77,8 @@ details.
 
 ## Installation
 
-1. Install [BepInExPack][bepinexpack-package] for Lethal Company.
+1. Install [BepInExPack][bepinexpack-package] and
+   [LethalCompany InputUtils][input-utils-package] for Lethal Company.
 2. Build the release assembly or obtain `com.aoirint.BeeOverlay.dll`.
 3. Copy the DLL into the game's `BepInEx/plugins/` directory.
 4. Launch Lethal Company. The overlay is created automatically when the game
@@ -83,6 +90,16 @@ BeeOverlay's diagnostic features in a lobby without the host's knowledge.
 Non-host players only need to install BeeOverlay when they want to use its
 diagnostic overlay. Their overlay remains disabled unless the lobby host has
 also installed BeeOverlay.
+
+## Controls
+
+The HUD lists every `RedLocustBees` instance, but BeeOverlay starts with no
+world-guide target selected. Press **Select Next Bee** (`B` by default) to
+select `bee:1`, then `bee:2`, and so on. Pressing it after the last bee returns
+to no selection. The selected HUD row starts with `>`, for example `> bee:1`,
+and only that bee's world markers and spatial guides are shown.
+
+The binding can be changed through InputUtils in the in-game keybind menu.
 
 ## Configuration
 
@@ -357,6 +374,7 @@ policies.
 
 [actionlint-repo]: https://github.com/rhysd/actionlint
 [bepinexpack-package]: https://thunderstore.io/c/lethal-company/p/BepInEx/BepInExPack/
+[input-utils-package]: https://thunderstore.io/c/lethal-company/p/Rune580/LethalCompany_InputUtils/
 [docker-install]: https://docs.docker.com/get-started/get-docker/
 [dotnet-sdk-download]: https://dotnet.microsoft.com/en-us/download/dotnet/10.0
 [github-actions-docs]: https://docs.github.com/en/actions

@@ -4,6 +4,7 @@
   "website_url": "https://github.com/aoirint/BeeOverlay",
   "description": "[v81] Visualizes RedLocustBees spatial checks for practicing the Bee AI Break glitch.",
   "dependencies": [
-    "BepInEx-BepInExPack-5.4.2305"
+    "BepInEx-BepInExPack-5.4.2305",
+    "Rune580-LethalCompany_InputUtils-0.7.13"
   ]
 }

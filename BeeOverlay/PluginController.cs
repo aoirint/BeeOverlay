@@ -2,9 +2,11 @@ extern alias LethalCompany;
 
 using BeeOverlay.Core.Handlers;
 using BeeOverlay.Core.Ports;
+using BeeOverlay.Core.State;
 using BeeOverlay.Core.UseCases;
 using BeeOverlay.Interop;
 using BeeOverlay.Interop.Game;
+using BeeOverlay.Interop.InputUtils;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using LethalCompany;
@@ -34,12 +36,16 @@ internal sealed class PluginController
     public static PluginController Create(ManualLogSource logger, ConfigFile config)
     {
         BeeOverlayConfiguration configuration = BeeOverlayConfiguration.Bind(config);
+        var inputActions = new InputUtilsActions();
+        IOverlayInput overlayInput = new InputUtilsOverlayInput(inputActions);
         IOverlayObservationSource observationSource = new BeeObservationSource(logger);
         IOverlayPresenter presenter = new Overlay(logger);
         var frameHandler = new FrameHandler(
+            overlayInput: overlayInput,
             observationSource: observationSource,
             presenter: presenter,
-            buildOverlayFrameUseCase: new BuildOverlayFrameUseCase()
+            buildOverlayFrameUseCase: new BuildOverlayFrameUseCase(),
+            worldGuideSelection: new WorldGuideSelection()
         );
 
         return new PluginController(frameHandler, configuration, new HostModPresenceGate());

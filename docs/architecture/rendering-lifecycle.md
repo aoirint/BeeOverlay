@@ -39,9 +39,9 @@ the root's actual parent; then replace the current procedure with that lifecycle
 ## Per-frame update and cleanup
 
 `Overlay.Present()` rebuilds the complete status text from the current sorted
-Core frame. It then hides every view whose key was not observed during that
-update. The status text is a single rich-text block rather than one UI object
-per row, so a despawned bee cannot leave a stale row behind.
+Core frame. It applies world-guide values only to the selected identity and
+hides every other view. The status text is a single rich-text block rather than
+one UI object per row, so a despawned bee cannot leave a stale row behind.
 
 `BeeObservationSource` captures the local player and each bee once per update.
 Core derives distances and probe conditions from that observation, and

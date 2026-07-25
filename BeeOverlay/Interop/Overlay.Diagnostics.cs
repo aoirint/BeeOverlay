@@ -42,13 +42,14 @@ internal sealed partial class Overlay
         seen.Add(observation.Identity);
     }
 
-    private static string GetBeeStatusLine(BeeDiagnostic bee)
+    private static string GetBeeStatusLine(BeeDiagnostic bee, bool isSelected)
     {
         var observation = bee.Observation;
         var hive = bee.Hive;
+        var selectionPrefix = isSelected ? "> " : "  ";
         if (hive == null)
         {
-            return $"{Tag($"bee:{bee.DisplayNumber}", BeeColor)}  hive n/a";
+            return $"{selectionPrefix}{Tag($"bee:{bee.DisplayNumber}", BeeColor)}  hive n/a";
         }
 
         var hiveSightProbe = hive.Sight;
@@ -58,7 +59,7 @@ internal sealed partial class Overlay
         // player needs quick distances and current game visibility booleans, not another copy of
         // the C# branch structure. The colored terms map to the same entity colors as the 3D
         // dots/lines so the player can glance between HUD and world probes.
-        return string.Join(
+        return selectionPrefix + string.Join(
             "  ",
             Tag($"bee:{bee.DisplayNumber}", BeeColor),
             Tag(

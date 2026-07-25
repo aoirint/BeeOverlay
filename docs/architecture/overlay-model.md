@@ -26,9 +26,10 @@ resulting immutable `OverlayFrame`; neither the HUD path nor `BeeView` reads
 game state.
 
 The frame is transient rather than stored across updates. BeeOverlay does not
-currently compare frames, smooth values, or retain diagnostic history, so a
-mutable latest-frame store would imply a lifecycle the feature does not need.
-Add Core state only when a future feature has an explicit cross-frame rule.
+compare frames, smooth values, or retain diagnostic history. The only retained
+Core presentation state is the selected world-guide identity, which exists
+because target cycling is an explicit cross-frame rule; the observation and
+derived frame remain transient.
 
 ## Enablement
 
@@ -104,6 +105,26 @@ without making display ordinals into persistent identities.
 A bee without a readable hive remains in the Core frame and has a status row
 but no spatial guides. A view not seen during the current update is hidden,
 preventing guides from a despawned bee from remaining in the scene.
+
+## World-guide selection
+
+The HUD presents every sorted bee, while world markers and spatial guides
+present at most one selected bee. This keeps the complete diagnostic summary
+available without multiplying scene geometry when BeeOverlay is used beside
+other practice tools.
+
+Selection starts empty. The InputUtils **Select Next Bee** action, bound to `B`
+by default, advances through the current sorted frame and then returns to no
+selection. The selected HUD row is prefixed with `>`, such as `> bee:1`.
+`WorldGuideSelection` retains the stable `thisEnemyIndex` rather than the
+display ordinal, so inserting another bee does not silently retarget existing
+guides. If the selected identity is absent from a later frame, selection
+returns to empty instead of choosing another bee.
+
+The external action-registration and dependency contract is documented in
+[InputUtils integration](../domain/input-utils.md). Interop owns the
+`LcInputActions` subclass and converts its nullable one-frame trigger into the
+Core `IOverlayInput` port. Core owns selection order and lifetime.
 
 ## Frame model
 

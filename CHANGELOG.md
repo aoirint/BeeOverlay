@@ -10,6 +10,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Unreleased
 
+### Added
+
+- Added a rebindable **Select Next Bee** InputUtils action, bound to `B` by
+  default.
+
+### Changed
+
+- Limited world markers and spatial guides to one selected bee. BeeOverlay now
+  starts with no selection, cycles through the sorted HUD rows and back to no
+  selection, and prefixes the selected HUD row with `>`.
+
+### Notes
+
+- Runtime dependency: LethalCompany InputUtils v0.7.13 is required for the
+  rebindable target-selection action. Thunderstore installs receive it through
+  the package manifest; manual installations must provide it separately.
+
 ## v0.2.0 - 2026-07-25 UTC
 
 ### Added
