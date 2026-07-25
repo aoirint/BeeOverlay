@@ -20,10 +20,6 @@
 
 - Compatibility: Lethal Company v81 (2026-04-17 UTC, Manifest ID:
   `6423525044216269478`).
-    - Test environment: [BepInExPack][bepinexpack-package] v5.4.2305
-      (2026-03-17 UTC).
-    - The target is supported by managed-code and asset inspection. In-game HUD
-      validation in a clean v81 profile remains pending.
 
 ## v0.1.0 - 2026-07-18 UTC
 
@@ -45,5 +41,3 @@
           v0.2.0 release.
 - Install BeeOverlay only on the client where you want to see the diagnostic
   overlay; it does not change game behavior.
-
-[bepinexpack-package]: https://thunderstore.io/c/lethal-company/p/BepInEx/BepInExPack/
