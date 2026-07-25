@@ -52,10 +52,15 @@ internal sealed class FrameHandler
 
         var observation = observationSource.Capture();
         var frame = buildOverlayFrameUseCase.Execute(observation);
-        var selectedBeeIdentity = worldGuideSelection.Update(
+        var selection = worldGuideSelection.Update(
             frame,
             overlayInput.CycleWorldGuideTargetTriggered
         );
-        presenter.Present(frame, options, selectedBeeIdentity);
+        if (selection.TipMessage != null)
+        {
+            presenter.DisplayTip(selection.TipMessage);
+        }
+
+        presenter.Present(frame, options, selection.SelectedBeeIdentity);
     }
 }

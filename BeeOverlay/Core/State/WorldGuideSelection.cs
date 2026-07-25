@@ -1,6 +1,7 @@
 #nullable enable
 
 using BeeOverlay.Core.Models;
+using BeeOverlay.Core.Presentation;
 
 namespace BeeOverlay.Core.State;
 
@@ -11,17 +12,29 @@ internal sealed class WorldGuideSelection
 {
     private int? selectedBeeIdentity;
 
-    public int? Update(OverlayFrame frame, bool cycleTriggered)
+    public WorldGuideSelectionResult Update(OverlayFrame frame, bool cycleTriggered)
     {
         var selectedIndex = FindSelectedIndex(frame);
         if (selectedBeeIdentity.HasValue && selectedIndex < 0)
         {
             selectedBeeIdentity = null;
+            return new WorldGuideSelectionResult(
+                selectedBeeIdentity,
+                HudTipMessage.SelectedBeeRemoved
+            );
         }
 
-        if (!cycleTriggered || frame.Bees.Count == 0)
+        if (!cycleTriggered)
         {
-            return selectedBeeIdentity;
+            return new WorldGuideSelectionResult(selectedBeeIdentity, tipMessage: null);
+        }
+
+        if (frame.Bees.Count == 0)
+        {
+            return new WorldGuideSelectionResult(
+                selectedBeeIdentity,
+                HudTipMessage.SelectNoBee
+            );
         }
 
         if (!selectedBeeIdentity.HasValue)
@@ -37,7 +50,7 @@ internal sealed class WorldGuideSelection
             selectedBeeIdentity = null;
         }
 
-        return selectedBeeIdentity;
+        return new WorldGuideSelectionResult(selectedBeeIdentity, tipMessage: null);
     }
 
     private int FindSelectedIndex(OverlayFrame frame)

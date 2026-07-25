@@ -3,10 +3,12 @@
 extern alias LethalCompany;
 extern alias UnityEngine;
 
+using System;
 using System.Collections.Generic;
 using System.Text;
 using BeeOverlay.Core.Models;
 using BeeOverlay.Core.Ports;
+using BeeOverlay.Core.Presentation;
 using BepInEx.Logging;
 using LethalCompany;
 using UnityEngine::UnityEngine;
@@ -87,7 +89,8 @@ internal sealed partial class Overlay : IOverlayPresenter
     {
         var seen = new HashSet<int>();
         var statusBuilder = new StringBuilder();
-        if (options.HudEnabled)
+        var showHud = options.HudEnabled && selectedBeeIdentity.HasValue;
+        if (showHud)
         {
             statusBuilder.Append($"Bee Overlay | bees={frame.Bees.Count}");
         }
@@ -100,13 +103,13 @@ internal sealed partial class Overlay : IOverlayPresenter
                 DrawBee(bee, seen, options);
             }
 
-            if (options.HudEnabled)
+            if (showHud && isSelected)
             {
                 statusBuilder.AppendLine();
                 // HUD numbers are compact per-frame ordinals after sorting, while the view dictionary
                 // still uses the stable identity below. That keeps the overlay readable without giving
                 // up the identity Unity exposes for hiding old per-bee world objects.
-                statusBuilder.Append(GetBeeStatusLine(bee, isSelected));
+                statusBuilder.Append(GetBeeStatusLine(bee));
             }
         }
 
@@ -125,11 +128,48 @@ internal sealed partial class Overlay : IOverlayPresenter
             HideWorldGuides();
         }
 
-        if (options.HudEnabled)
+        if (showHud)
         {
             // The status text is rebuilt from the current frame instead of cached so stale bee rows
             // disappear immediately when a bee despawns or no longer has readable navigation data.
             SetStatus(statusBuilder.ToString());
+        }
+        else
+        {
+            HideHud();
+        }
+    }
+
+    public void DisplayTip(HudTipMessage message)
+    {
+        try
+        {
+            var hudManager = HUDManager.Instance;
+            if (hudManager == null)
+            {
+                LogTipFailure(message.Token, "HUDManager is unavailable.");
+                return;
+            }
+
+            hudManager.DisplayTip(message.HeaderText, message.BodyText);
+        }
+        catch (Exception error)
+        {
+            LogTipFailure(message.Token, error.ToString());
+        }
+    }
+
+    private void LogTipFailure(string token, string detail)
+    {
+        try
+        {
+            // A failed diagnostic notification must not escape the HUD callback or prevent the
+            // selected-frame presentation that follows it.
+            logger.LogWarning($"Failed to display HUD tip '{token}': {detail}");
+        }
+        catch
+        {
+            // Logging cannot safely report its own failure at the HUD callback boundary.
         }
     }
 
