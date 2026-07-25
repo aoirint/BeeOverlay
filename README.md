@@ -13,7 +13,7 @@ RedLocustBees spatial checks.
 ## Screenshots
 
 <details>
-<summary>Bee, hive, player, and known-hive spatial checks</summary>
+<summary>Overview: Bee, hive, player, and known-hive spatial checks</summary>
 
 ![BeeOverlay visualizing bee, hive, player, and known-hive spatial checks](docs/screenshots/beeoverlay_usage_001.webp)
 
