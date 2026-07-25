@@ -7,8 +7,7 @@
 - Lobby hosts must install BeeOverlay before non-host players can use its
   diagnostic overlay. This keeps diagnostic features from being used in a lobby
   without the host's knowledge.
-- Hosts can disable guest use with `General.GuestEnabled`. Overlay visibility
-  settings now use the `Overlay` category.
+- Hosts can disable guest use with `General.GuestEnabled`.
 
 ## v0.1.0 - 2026-07-18 UTC
 
