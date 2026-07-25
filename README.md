@@ -49,10 +49,8 @@ condition is met:
         - The bee is less than 8 units away with a clear probe line.
 
 For Bee AI Break to work, both conditions must remain false while the hive is
-carried away.
-
-NavMesh boundaries, together with terrain that blocks sight lines, can
-sometimes create these conditions.
+carried away. NavMesh boundaries, together with terrain that blocks sight
+lines, can sometimes create these conditions.
 
 While carrying the hive away:
 
