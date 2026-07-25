@@ -20,7 +20,7 @@ RedLocustBees spatial checks.
 </details>
 
 <details>
-<summary>Blocked bee-to-hive and bee-to-known-hive Sight checks</summary>
+<summary>Use case: Blocked bee-to-hive and bee-to-known-hive Sight checks</summary>
 
 ![BeeOverlay showing blocked bee-to-hive and bee-to-known-hive Sight checks](docs/screenshots/beeoverlay_usage_002.webp)
 
