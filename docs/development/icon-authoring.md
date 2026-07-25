@@ -1,5 +1,7 @@
 # Icon Authoring
 
+This guide covers the editable package-icon source and its generated asset.
+
 `assets/icon.svg` is the editable source for the package icon.
 `assets/icon.png` is the 256×256 Thunderstore asset generated from that SVG.
 Do not edit the PNG by hand.

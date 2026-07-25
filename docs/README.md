@@ -7,6 +7,9 @@
   design choices.
 - `architecture/` contains this mod's models, workflows, responsibilities,
   and design decisions. It links to the domain knowledge it relies on.
+- `development/` contains repeatable procedures for authored development
+  artifacts. It links to the domain and architecture documents that own the
+  facts behind those artifacts.
 - Keep a domain document focused on one game or technical concern. Add a new
   domain document when an architecture document needs knowledge not already
   covered there.
@@ -14,11 +17,10 @@
   base-game member declarations or behaviour analysis into it; link to the
   relevant domain document instead.
 
-## Focused procedure
+## Development guides
 
-- [Icon authoring](icon-authoring.md) describes the package icon source and
-  regeneration workflow. It remains a standalone document because it is the
-  only operational procedure in this repository.
+See [development/README.md](development/README.md) for the Bee AI Break
+diagram and package-icon authoring procedures.
 
 Start with [architecture/README.md](architecture/README.md) for BeeOverlay's
 design, and [domain/README.md](domain/README.md) for supporting knowledge.
