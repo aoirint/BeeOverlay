@@ -2,6 +2,7 @@
 
 A [Lethal Company][lethal-company-steam] diagnostic overlay mod that visualizes
 RedLocustBees spatial checks.
+It is intended for Bee AI Break practice and research.
 
 ## Compatibility
 
