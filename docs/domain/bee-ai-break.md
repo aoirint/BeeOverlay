@@ -5,10 +5,6 @@
 - Game: Lethal Company v81
 - Steam manifest ID: `6423525044216269478`
 
-The transition order and thresholds below are direct static findings from the
-target build. They do not establish a runtime observation of a complete Bee AI
-Break sequence.
-
 ## Overview
 
 Bee AI Break is the community name for a glitch in which players move a hive
