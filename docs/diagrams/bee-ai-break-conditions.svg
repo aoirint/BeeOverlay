@@ -29,8 +29,8 @@
 
   <rect x="180" y="250" width="370" height="170" rx="85" fill="none" stroke="#FFD91A" stroke-width="4" stroke-dasharray="12 10"/>
   <circle cx="430" cy="335" r="70" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="12 10"/>
-  <path d="M 282 335 H 340" fill="none" stroke="#FF261A" stroke-width="4" marker-end="url(#sight-arrow)"/>
-  <rect x="350" y="306" width="30" height="58" rx="5" fill="#2E2E2E"/>
+  <path d="M 282 335 H 360" fill="none" stroke="#FF261A" stroke-width="4" marker-end="url(#sight-arrow)"/>
+  <rect x="370" y="306" width="30" height="58" rx="5" fill="#2E2E2E"/>
   <text x="330" y="290" class="small">solid cover</text>
 
   <circle cx="260" cy="335" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
