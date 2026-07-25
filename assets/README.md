@@ -30,9 +30,10 @@ researching the Bee AI Break glitch.
 
 Bee AI Break is the community name for a glitch in which players move a hive
 away from Circuit Bees without the bees recognizing that it is missing. This
-keeps the bees in state 0, where being near the bees alone does not trigger
-their defensive state: they must also see a player inside the hive's defense
-radius. The resulting separation can make hive collection safer.
+keeps the bees calm. They do not become defensive merely because a player is
+nearby; they must also see that player inside the hive's defense radius.
+
+The resulting separation can make hive collection safer.
 
 For practice, keep the bee-to-known-hive probe closed:
 
