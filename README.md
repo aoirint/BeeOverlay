@@ -56,8 +56,8 @@ While carrying the hive away:
   block the bee-to-player sight line.
 - Do not hold the hive while the bee is less than 4 units from its known-hive
   position.
-- When the bee is 4 to less than 8 units from that position, block the probe
-  line with solid cover.
+- When the bee is 4 to less than 8 units from its known-hive position, block
+  the probe line with solid cover.
 - When the bee is 8 units or more from its known-hive position, it does not
   notice that a held hive is missing, but the 16-unit sight condition must
   still remain false.
