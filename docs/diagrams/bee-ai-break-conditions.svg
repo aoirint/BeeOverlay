@@ -24,20 +24,19 @@
   <text x="85" y="165" class="subheading">1. Hive defense</text>
   <text x="85" y="195" class="body">Keep the bee from defending the hive.</text>
 
-  <circle cx="375" cy="385" r="115" fill="none" stroke="#FFD91A" stroke-width="4" stroke-dasharray="12 10"/>
-  <circle cx="455" cy="385" r="78" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="12 10"/>
+  <rect x="180" y="300" width="370" height="170" rx="85" fill="none" stroke="#FFD91A" stroke-width="4" stroke-dasharray="12 10"/>
+  <circle cx="430" cy="385" r="80" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="12 10"/>
+  <path d="M 350 365 L 375 385 L 350 405 z" fill="#2E2E2E"/>
 
-  <path d="M 405 365 L 430 385 L 405 405 z" fill="#2E2E2E"/>
+  <circle cx="260" cy="385" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
+  <text x="260" y="385" class="marker">B</text>
+  <circle cx="430" cy="385" r="22" fill="#40FF59" stroke="#168A2A" stroke-width="4"/>
+  <text x="430" y="385" class="marker">H</text>
+  <circle cx="500" cy="385" r="22" fill="#FF261A" stroke="#9F1A12" stroke-width="4"/>
+  <text x="500" y="385" class="marker">P</text>
 
-  <circle cx="375" cy="385" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
-  <text x="375" y="385" class="marker">B</text>
-  <circle cx="455" cy="385" r="22" fill="#40FF59" stroke="#168A2A" stroke-width="4"/>
-  <text x="455" y="385" class="marker">H</text>
-  <circle cx="485" cy="385" r="22" fill="#FF261A" stroke="#9F1A12" stroke-width="4"/>
-  <text x="485" y="385" class="marker">P</text>
-
-  <text x="255" y="475" class="label">B: Circuit Bee</text>
-  <text x="420" y="475" class="label">H: hive; P: player</text>
+  <text x="190" y="485" class="label">B: Circuit Bee</text>
+  <text x="405" y="485" class="label">H: hive; P: player</text>
 
   <text x="85" y="510" class="body">Hive defense needs both:</text>
   <text x="105" y="542" class="body">• Player seen within 16 units.</text>
