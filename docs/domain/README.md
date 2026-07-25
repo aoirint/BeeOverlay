@@ -7,6 +7,8 @@ design decisions.
 - [RedLocustBees implementation analysis](red-locust-bees.md) records the
   base-game members, behaviour, and implementation choices relevant to bee
   analysis.
+- [Bee AI Break](bee-ai-break.md) records the base-game missing-hive probe and
+  state-0 conditions used by the community-named glitch.
 - [Diagnostic visualization](diagnostic-visualization.md) identifies the
   HUD lifecycle and the Unity UI and world-rendering APIs used to implement
   diagnostic visuals.
