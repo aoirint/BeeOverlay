@@ -1,7 +1,7 @@
 # Bee AI Break Diagram Authoring
 
-`../diagrams/bee-ai-break-conditions.svg` is the canonical source for the Bee
-AI Break conditions diagram embedded in the root and package READMEs. This
+`bee-ai-break-conditions.svg` is the canonical source for the Bee AI Break
+conditions diagram embedded in the root and package READMEs. This
 guide answers how to update that SVG without turning it into a separate source
 of game-mechanics truth.
 
