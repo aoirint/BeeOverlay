@@ -29,10 +29,14 @@ researching the Bee AI Break glitch.
 ## Bee AI Break glitch
 
 Bee AI Break keeps a Circuit Bee from recognizing that its hive is missing.
-For practice, keep the bee-to-known-hive probe closed: the bee must stay at
-least 4 units from its known-hive position and, before 8 units, the probe line
-must be blocked. BeeOverlay shows those ranges and lines without changing game
-behavior. See the
+
+For practice, keep the bee-to-known-hive probe closed:
+
+- Keep the bee at least 4 units from its known-hive position.
+- When the bee is less than 8 units from that position, block the probe line.
+
+BeeOverlay shows those ranges and lines without changing game behavior.
+See the
 [Bee AI Break documentation](https://github.com/aoirint/BeeOverlay/blob/main/docs/domain/bee-ai-break.md)
 for the full conditions and limitations.
 
