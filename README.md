@@ -48,7 +48,8 @@ condition is met:
         - The bee is less than 4 units away.
         - The bee is less than 8 units away with a clear probe line.
 
-Bee AI Break keeps both conditions false while the hive is moved away.
+For Bee AI Break to work, both conditions must remain false while the hive is
+carried away.
 
 While carrying the hive away:
 
