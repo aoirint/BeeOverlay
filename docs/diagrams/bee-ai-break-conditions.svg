@@ -31,6 +31,7 @@
   <circle cx="430" cy="385" r="80" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="12 10"/>
   <path d="M 282 385 H 340" fill="none" stroke="#FF261A" stroke-width="4" marker-end="url(#sight-arrow)"/>
   <rect x="350" y="356" width="30" height="58" rx="5" fill="#2E2E2E"/>
+  <text x="330" y="340" class="small">solid cover</text>
 
   <circle cx="260" cy="385" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
   <text x="260" y="385" class="marker">B</text>
