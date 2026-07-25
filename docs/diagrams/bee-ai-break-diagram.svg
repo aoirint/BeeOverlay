@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="670" viewBox="0 0 1500 670" role="img" aria-labelledby="title desc">
+  <title id="title">Bee AI Break conditions while carrying a hive away</title>
+  <desc id="desc">A Circuit Bee, its known-hive position, and a player carrying the hive. The diagram separates the hive-defense and missing-hive conditions that must remain false.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+    </marker>
+    <marker id="sight-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#FF261A"/>
+    </marker>
+    <marker id="probe-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0D52FF"/>
+    </marker>
+    <marker id="inactive-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2E2E2E" fill-opacity="0.58"/>
+    </marker>
+    <style>
+      .heading { font: 700 30px sans-serif; fill: #0f172a; }
+      .subheading { font: 700 20px sans-serif; fill: #0f172a; }
+      .body { font: 18px sans-serif; fill: #334155; }
+      .small { font: 16px sans-serif; fill: #475569; }
+      .label { font: 700 17px sans-serif; fill: #0f172a; }
+      .marker { font: 700 20px sans-serif; fill: #0f172a; text-anchor: middle; dominant-baseline: middle; }
+      .marker-light { font: 700 20px sans-serif; fill: #ffffff; text-anchor: middle; dominant-baseline: middle; }
+    </style>
+  </defs>
+
+  <rect width="1500" height="670" fill="#f8fafc"/>
+  <text x="60" y="58" class="heading">Bee AI Break: keep both conditions false while carrying the hive away</text>
+
+  <g transform="translate(0 -30)">
+  <rect x="55" y="125" width="675" height="500" rx="20" fill="#eff6ff" stroke="#93c5fd" stroke-width="3"/>
+  <text x="85" y="165" class="subheading">1. Hive defense</text>
+  <text x="85" y="195" class="body">Keep the bee from defending the hive.</text>
+
+  <circle cx="155" cy="335" r="70" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="12 10"/>
+  <circle cx="155" cy="335" r="22" fill="#40FF59" stroke="#168A2A" stroke-width="4"/>
+  <text x="155" y="335" class="marker">H</text>
+  <circle cx="205" cy="335" r="22" fill="#FF261A" stroke="#9F1A12" stroke-width="4"/>
+  <text x="205" y="335" class="marker-light">P</text>
+  <text x="75" y="290" class="small">&gt;16u: no cover needed</text>
+  <rect x="260" y="250" width="370" height="170" rx="85" fill="none" stroke="#FFD91A" stroke-width="4" stroke-dasharray="12 10"/>
+  <circle cx="510" cy="335" r="70" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="12 10"/>
+  <path d="M 318 335 H 227" fill="none" stroke="#2E2E2E" stroke-opacity="0.58" stroke-width="4" stroke-dasharray="10 7" marker-end="url(#inactive-arrow)"/>
+  <path d="M 362 335 H 440" fill="none" stroke="#FF261A" stroke-width="4" stroke-dasharray="10 7" marker-end="url(#sight-arrow)"/>
+  <rect x="450" y="306" width="30" height="58" rx="5" fill="#2E2E2E"/>
+  <text x="430" y="290" class="small">solid cover</text>
+
+  <circle cx="340" cy="335" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
+  <text x="340" y="335" class="marker">B</text>
+  <circle cx="510" cy="335" r="22" fill="#40FF59" stroke="#168A2A" stroke-width="4"/>
+  <text x="510" y="335" class="marker">H</text>
+  <circle cx="580" cy="335" r="22" fill="#FF261A" stroke="#9F1A12" stroke-width="4"/>
+  <text x="580" y="335" class="marker-light">P</text>
+  <text x="540" y="290" class="small">≤16u from B: cover needed</text>
+
+  <text x="270" y="455" class="label">B: Circuit Bee</text>
+  <text x="485" y="455" class="label">H: hive; P: player</text>
+
+  <text x="85" y="510" class="body">Player position:</text>
+  <text x="105" y="542" class="body">• Within 10u of hive and 16u of bee: block sight.</text>
+  <text x="105" y="572" class="body">• Outside either range: no hive defense.</text>
+
+  <text x="550" y="510" class="label">Ranges</text>
+  <path d="M 550 535 H 590" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="8 6"/>
+  <text x="600" y="541" class="small">10u defense</text>
+  <path d="M 550 570 H 590" fill="none" stroke="#FFD91A" stroke-width="4" stroke-dasharray="8 6"/>
+  <text x="600" y="576" class="small">16u sight</text>
+
+  <rect x="770" y="125" width="675" height="500" rx="20" fill="#fff7ed" stroke="#fdba74" stroke-width="3"/>
+  <text x="800" y="165" class="subheading">2. Missing hive</text>
+  <text x="800" y="195" class="body">Keep the known-hive probe from reaching its position.</text>
+
+  <circle cx="920" cy="335" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
+  <text x="920" y="335" class="marker">B</text>
+  <rect x="975" y="250" width="370" height="170" rx="85" fill="none" stroke="#4099FF" stroke-width="4" stroke-dasharray="12 10"/>
+  <circle cx="1095" cy="335" r="70" fill="none" stroke="#268CFF" stroke-width="4"/>
+  <path d="M 942 335 H 1073" fill="none" stroke="#2E2E2E" stroke-opacity="0.58" stroke-width="4" stroke-dasharray="10 7" marker-end="url(#inactive-arrow)"/>
+  <text x="1105" y="290" class="small">solid cover</text>
+  <path d="M 1243 335 H 1165" fill="none" stroke="#0D52FF" stroke-width="4" stroke-dasharray="10 7" marker-end="url(#probe-arrow)"/>
+  <rect x="1125" y="306" width="30" height="58" rx="5" fill="#2E2E2E"/>
+
+  <circle cx="1095" cy="335" r="22" fill="#0D52FF" stroke="#07399A" stroke-width="4"/>
+  <text x="1095" y="335" class="marker-light">K</text>
+  <text x="1005" y="455" class="label">K: known-hive position</text>
+  <circle cx="1265" cy="335" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
+  <text x="1265" y="335" class="marker">B</text>
+  <text x="850" y="290" class="small">≥8u: no cover needed</text>
+  <text x="1210" y="290" class="small">4u–&lt;8u: cover needed</text>
+  <text x="1255" y="455" class="label">B: Circuit Bee</text>
+
+  <text x="800" y="510" class="body">Known-hive distance:</text>
+  <text x="820" y="542" class="body">• Less than 4 units: do not hold the hive.</text>
+  <text x="820" y="572" class="body">• 4 to less than 8: cover the probe.</text>
+  <text x="820" y="602" class="body">• 8 or more: no held-hive probe.</text>
+
+  <text x="1270" y="510" class="label">Ranges</text>
+  <path d="M 1270 535 H 1310" fill="none" stroke="#268CFF" stroke-width="4"/>
+  <text x="1320" y="541" class="small">4u near</text>
+  <path d="M 1270 570 H 1310" fill="none" stroke="#4099FF" stroke-width="4" stroke-dasharray="8 6"/>
+  <text x="1320" y="576" class="small">8u probe</text>
+  </g>
+
+  <text x="60" y="636" class="small">Line and marker colors match those in BeeOverlay's visualization, while shapes are simplified for readability.</text>
+</svg>

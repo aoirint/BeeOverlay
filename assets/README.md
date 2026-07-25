@@ -40,7 +40,7 @@ While a Circuit Bee is near its hive, it leaves its calm behavior when either
 condition is met:
 
 - **Hive defense.**
-    - The bee sees a player within 16 units.
+    - The bee sees a player within 16 units of the bee.
     - The player is within 10 units of the hive.
 - **Missing hive.**
     - The bee-to-known-hive probe reaches the known-hive position:
@@ -67,6 +67,8 @@ BeeOverlay shows the relevant ranges, marker, and probe line without changing
 game behavior. See the
 [Bee AI Break documentation](https://github.com/aoirint/BeeOverlay/blob/main/docs/domain/bee-ai-break.md)
 for technical details.
+
+![Diagram of the hive-defense and missing-hive conditions for Bee AI Break](https://raw.githubusercontent.com/aoirint/BeeOverlay/main/docs/diagrams/bee-ai-break-diagram.webp)
 
 ## What it does
 

@@ -86,12 +86,13 @@ require a meaning-preserving manual edit.
       knowledge without BeeOverlay-specific product decisions.
     - `architecture/` contains BeeOverlay models, workflows, responsibilities,
       and design decisions; it links to the domain knowledge it uses.
-    - `icon-authoring.md` covers package-icon authoring and rendering.
+    - `diagrams/` contains maintained diagram and icon sources with their
+      authoring procedures.
 
 ## Icon Assets
 
-When changing `assets/icon.svg` or regenerating `assets/icon.png`, follow
-`docs/icon-authoring.md`.
+When changing `docs/diagrams/icon.svg` or regenerating `assets/icon.png`,
+follow `docs/diagrams/icon-authoring.md`.
 
 ## Local Prerelease Builds
 
