@@ -27,8 +27,8 @@
   <text x="85" y="165" class="subheading">1. Hive defense</text>
   <text x="85" y="195" class="body">Keep the bee from defending the hive.</text>
 
-  <rect x="180" y="300" width="370" height="170" rx="85" fill="none" stroke="#FFD91A" stroke-width="4" stroke-dasharray="12 10"/>
-  <circle cx="430" cy="385" r="80" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="12 10"/>
+  <rect x="180" y="280" width="370" height="170" rx="85" fill="none" stroke="#FFD91A" stroke-width="4" stroke-dasharray="12 10"/>
+  <circle cx="430" cy="385" r="70" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="12 10"/>
   <path d="M 282 385 H 340" fill="none" stroke="#FF261A" stroke-width="4" marker-end="url(#sight-arrow)"/>
   <rect x="350" y="356" width="30" height="58" rx="5" fill="#2E2E2E"/>
   <text x="330" y="340" class="small">solid cover</text>
@@ -58,9 +58,9 @@
   <text x="800" y="165" class="subheading">2. Missing hive</text>
   <text x="800" y="195" class="body">Keep the known-hive probe from reaching its position.</text>
 
-  <rect x="895" y="300" width="370" height="170" rx="85" fill="none" stroke="#4099FF" stroke-width="4" stroke-dasharray="12 10"/>
-  <circle cx="1015" cy="385" r="80" fill="none" stroke="#268CFF" stroke-width="4"/>
-  <text x="1080" y="280" class="small">solid cover</text>
+  <rect x="895" y="280" width="370" height="170" rx="85" fill="none" stroke="#4099FF" stroke-width="4" stroke-dasharray="12 10"/>
+  <circle cx="1015" cy="385" r="70" fill="none" stroke="#268CFF" stroke-width="4"/>
+  <text x="1080" y="260" class="small">solid cover</text>
   <path d="M 1163 385 H 1140" fill="none" stroke="#2E2E2E" stroke-width="4" marker-end="url(#arrow)"/>
   <rect x="1110" y="356" width="30" height="58" rx="5" fill="#2E2E2E"/>
 
