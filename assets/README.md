@@ -57,8 +57,9 @@ While carrying the hive away:
   position.
 - When the bee is 4 to less than 8 units from that position, block the probe
   line with solid cover.
-- At 8 units or more, the missing-hive probe does not run. The 16-unit sight
-  condition still applies.
+- When the bee is 8 units or more from its known-hive position, it does not
+  notice that a held hive is missing, but the 16-unit sight condition must
+  still remain false.
 
 BeeOverlay shows the relevant ranges, marker, and probe line without changing
 game behavior. See the
