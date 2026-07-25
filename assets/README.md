@@ -9,9 +9,6 @@ BeeOverlay visualizes RedLocustBees spatial checks.
     - Test environment
         - [BepInExPack][bepinexpack-package] v5.4.2305 (2026-03-17 UTC)
 
-The target is supported by managed-code and asset inspection. In-game HUD
-validation in a clean v81 profile remains pending.
-
 ## What it does
 
 - Displays a HUD summary for each `RedLocustBees` instance.

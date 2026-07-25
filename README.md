@@ -10,9 +10,6 @@ RedLocustBees spatial checks.
     - Test environment
         - [BepInExPack][bepinexpack-package] v5.4.2305 (2026-03-17 UTC)
 
-The target is supported by managed-code and asset inspection. In-game HUD
-validation in a clean v81 profile remains pending.
-
 ## Installation
 
 1. Install [BepInExPack][bepinexpack-package] for Lethal Company.
