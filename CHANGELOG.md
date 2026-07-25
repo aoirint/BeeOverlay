@@ -19,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Limited world markers and spatial guides to one selected bee. BeeOverlay now
   starts with no selection, cycles through the sorted HUD rows and back to no
-  selection, and shows diagnostics only for the selected bee without a prefix.
+  selection, and shows diagnostics only for the selected bee.
 - Display a game-styled HUD Tip when target selection is requested with no bees
   available, or when a selected bee is removed and selection returns to empty.
 
