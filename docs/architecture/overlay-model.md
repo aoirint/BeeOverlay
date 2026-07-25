@@ -32,15 +32,18 @@ Add Core state only when a future feature has an explicit cross-frame rule.
 
 ## Enablement
 
-`General.Enabled` defaults to `true` and is the global switch. `General.HudEnabled`
-selects HUD text. The world-guide settings independently select every marker,
+`General.Enabled` defaults to `true` and is the global switch.
+`General.GuestEnabled` defaults to `true`; when the local player hosts, it
+authorizes non-host players to use BeeOverlay. `Overlay.Enabled` controls local
+presentation independently from the global switch. `Overlay.HudEnabled` selects
+HUD text. The remaining `Overlay.*` world-guide settings independently select every marker,
 Sight line, and Sphere: bee, hive, remembered-hive, and player markers;
 bee-to-player, bee-to-remembered-hive, and bee-to-hive pickup-proxy lines; and
 the bee sight-range, hive defense-range, remembered-hive near, and
 remembered-hive line-of-sight spheres. Every setting defaults to `true`.
 `PluginController` reads the live BepInEx values for every HUD callback and
-passes plain values into Core. When the global switch is `false`, or all selected
-presentation elements are `false`, the frame handler hides all mod-owned
+passes plain values into Core. When the global or overlay switch is `false`, or
+all selected presentation elements are `false`, the frame handler hides all mod-owned
 presentation and does not capture game state or build a frame. Otherwise, the
 selected elements update from the same derived frame. This makes a
 configuration-API change effective on the next HUD update while keeping BepInEx
@@ -63,8 +66,9 @@ schedule to the lever-triggered landing and dungeon-generation work. The HUD
 update reads only the cached Boolean; it does not poll or retry the network
 request every frame.
 
-A BeeOverlay host answers only the requesting client with a client RPC, and
-`HostModPresenceGate` records that answer for the active network connection.
+A BeeOverlay host answers only the requesting client with a client RPC that
+includes its current `General.GuestEnabled` authorization. `HostModPresenceGate`
+records that answer for the active network connection.
 The bridge clears the confirmation when its network object despawns. Core
 receives only the resulting enablement Boolean and continues to have no Unity
 or Netcode dependency.

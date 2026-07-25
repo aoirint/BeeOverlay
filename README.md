@@ -35,19 +35,21 @@ launch.
 
 | Setting | Default | Behavior |
 | --- | --- | --- |
-| `General.Enabled` | `true` | Global switch for BeeOverlay. Set it to `false` to hide every overlay element without changing game behavior. |
-| `General.HudEnabled` | `true` | Shows the HUD status text when the global switch is enabled. |
-| `General.BeeMarkerEnabled` | `true` | Shows bee markers. |
-| `General.HiveMarkerEnabled` | `true` | Shows hive markers. |
-| `General.KnownHiveMarkerEnabled` | `true` | Shows remembered-hive markers. |
-| `General.PlayerMarkerEnabled` | `true` | Shows local-player markers. |
-| `General.PlayerSightLineEnabled` | `true` | Shows bee-to-player sight lines. |
-| `General.BeeSightRangeSphereEnabled` | `true` | Shows bee 16-unit sight-range spheres. |
-| `General.HiveDefenseSphereEnabled` | `true` | Shows hive defense-range spheres. |
-| `General.KnownHiveNearSphereEnabled` | `true` | Shows remembered-hive 4-unit spheres. |
-| `General.KnownHiveLineOfSightSphereEnabled` | `true` | Shows remembered-hive 8-unit line-of-sight spheres. |
-| `General.KnownHiveProbeLineEnabled` | `true` | Shows bee-to-remembered-hive probe lines. |
-| `General.HivePickupSightLineEnabled` | `true` | Shows bee-to-hive pickup-proxy sight lines. |
+| `General.Enabled` | `true` | Global switch for all BeeOverlay functionality. |
+| `General.GuestEnabled` | `true` | When hosting, allows non-host players to use BeeOverlay. |
+| `Overlay.Enabled` | `true` | Shows BeeOverlay elements when the global switch is enabled. |
+| `Overlay.HudEnabled` | `true` | Shows the HUD status text. |
+| `Overlay.BeeMarkerEnabled` | `true` | Shows bee markers. |
+| `Overlay.HiveMarkerEnabled` | `true` | Shows hive markers. |
+| `Overlay.KnownHiveMarkerEnabled` | `true` | Shows remembered-hive markers. |
+| `Overlay.PlayerMarkerEnabled` | `true` | Shows local-player markers. |
+| `Overlay.PlayerSightLineEnabled` | `true` | Shows bee-to-player sight lines. |
+| `Overlay.BeeSightRangeSphereEnabled` | `true` | Shows bee 16-unit sight-range spheres. |
+| `Overlay.HiveDefenseSphereEnabled` | `true` | Shows hive defense-range spheres. |
+| `Overlay.KnownHiveNearSphereEnabled` | `true` | Shows remembered-hive 4-unit spheres. |
+| `Overlay.KnownHiveLineOfSightSphereEnabled` | `true` | Shows remembered-hive 8-unit line-of-sight spheres. |
+| `Overlay.KnownHiveProbeLineEnabled` | `true` | Shows bee-to-remembered-hive probe lines. |
+| `Overlay.HivePickupSightLineEnabled` | `true` | Shows bee-to-hive pickup-proxy sight lines. |
 
 Changes made through a BepInEx configuration UI apply on the next HUD update.
 BeeOverlay does not watch direct edits to the generated configuration file.

@@ -20,6 +20,7 @@ internal sealed class HostModPresenceGate
     private const float RequestDelaySeconds = 3f;
 
     private HostModPresenceBehaviour? behaviour;
+    private bool hasHostResponded;
 
     public bool IsOverlayAllowed { get; private set; } = true;
 
@@ -47,12 +48,13 @@ internal sealed class HostModPresenceGate
         }
 
         IsOverlayAllowed = false;
+        hasHostResponded = false;
         bridge.ScheduleHostPresenceRequest(RequestDelaySeconds);
     }
 
     public HostPresenceRequestResult TryRequestHostPresence()
     {
-        if (IsOverlayAllowed)
+        if (hasHostResponded || IsOverlayAllowed)
         {
             return HostPresenceRequestResult.Stop;
         }
@@ -72,17 +74,19 @@ internal sealed class HostModPresenceGate
         return HostPresenceRequestResult.Sent;
     }
 
-    public void ConfirmHostPresence()
+    public void ConfirmHostPresence(bool guestOverlayAllowed)
     {
         NetworkManager? network = NetworkManager.Singleton;
         if (network is not null && network.IsClient && !network.IsHost)
         {
-            IsOverlayAllowed = true;
+            hasHostResponded = true;
+            IsOverlayAllowed = guestOverlayAllowed;
         }
     }
 
     public void Reset()
     {
         IsOverlayAllowed = true;
+        hasHostResponded = false;
     }
 }

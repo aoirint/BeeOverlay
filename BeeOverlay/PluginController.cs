@@ -50,10 +50,12 @@ internal sealed class PluginController
         hostModPresenceGate.Attach(hudManager);
     }
 
-    public void ConfirmHostModPresence()
+    public void ConfirmHostModPresence(bool guestOverlayAllowed)
     {
-        hostModPresenceGate.ConfirmHostPresence();
+        hostModPresenceGate.ConfirmHostPresence(guestOverlayAllowed);
     }
+
+    public bool GuestOverlayEnabled => configuration.Enabled && configuration.GuestEnabled;
 
     public void BeginHostModPresenceCheck(HostModPresenceBehaviour bridge)
     {
@@ -73,7 +75,9 @@ internal sealed class PluginController
     public void HandleFrame()
     {
         frameHandler.HandleFrame(
-            configuration.Enabled && hostModPresenceGate.IsOverlayAllowed,
+            configuration.Enabled &&
+            configuration.OverlayEnabled &&
+            hostModPresenceGate.IsOverlayAllowed,
             configuration.PresentationOptions
         );
     }
