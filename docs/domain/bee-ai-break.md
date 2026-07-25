@@ -14,9 +14,9 @@
 
 ## Overview
 
-Bee AI Break is the community name for a glitch that lets players separate a
-Circuit Bee from its hive without the bee recognizing that its hive is missing,
-so that hive collection is safer. The relevant base-game predicate is
+Bee AI Break is the community name for a glitch that lets players separate
+Circuit Bees from their hive without the bees recognizing that their hive is
+missing, so that hive collection is safer. The relevant base-game predicate is
 `RedLocustBees.IsHiveMissing()`. While it returns `false`, the bee remains in
 state 0 unless another state-0 condition moves it to defensive state 1.
 
