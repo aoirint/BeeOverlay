@@ -46,10 +46,9 @@
   <text x="190" y="455" class="label">B: Circuit Bee</text>
   <text x="405" y="455" class="label">H: hive; P: player</text>
 
-  <text x="85" y="510" class="body">Hive-defense conditions:</text>
-  <text x="105" y="542" class="body">• Player within 10 units of the hive.</text>
-  <text x="105" y="572" class="body">• Player seen within 16 units of the bee.</text>
-  <text x="105" y="602" class="body">• Keep either predicate false.</text>
+  <text x="85" y="510" class="body">Player position:</text>
+  <text x="105" y="542" class="body">• Within 10u of hive and 16u of bee: block sight.</text>
+  <text x="105" y="572" class="body">• Outside either range: no hive defense.</text>
 
   <text x="550" y="510" class="label">Ranges</text>
   <path d="M 550 535 H 590" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="8 6"/>
@@ -74,10 +73,10 @@
   <text x="1185" y="335" class="marker">B</text>
   <text x="1175" y="455" class="label">B: Circuit Bee</text>
 
-  <text x="800" y="510" class="body">Missing-hive conditions:</text>
-  <text x="820" y="542" class="body">• Bee less than 4u from its known-hive position.</text>
-  <text x="820" y="572" class="body">• Bee less than 8u away with a clear probe line.</text>
-  <text x="820" y="602" class="body">• Keep both conditions false.</text>
+  <text x="800" y="510" class="body">Known-hive distance:</text>
+  <text x="820" y="542" class="body">• Less than 4 units: do not hold the hive.</text>
+  <text x="820" y="572" class="body">• 4 to less than 8: cover the probe.</text>
+  <text x="820" y="602" class="body">• 8 or more: no held-hive probe.</text>
 
   <text x="1270" y="510" class="label">Ranges</text>
   <path d="M 1270 535 H 1310" fill="none" stroke="#268CFF" stroke-width="4"/>
