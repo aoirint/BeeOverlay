@@ -12,6 +12,11 @@ internal sealed class WorldGuideSelection
 {
     private int? selectedBeeIdentity;
 
+    public void Reset()
+    {
+        selectedBeeIdentity = null;
+    }
+
     public WorldGuideSelectionResult Update(OverlayFrame frame, bool cycleTriggered)
     {
         var selectedIndex = FindSelectedIndex(frame);
