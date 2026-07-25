@@ -4,8 +4,10 @@
 
 ### Added
 
-- Added controls for enabling BeeOverlay, allowing guest use, and independently
-  choosing its HUD and world-guide elements.
+- Added `General.Enabled` as BeeOverlay's global enable switch.
+- Added `General.GuestEnabled` to let lobby hosts allow or disallow guest use.
+- Added `Overlay.Enabled` and controls for independently choosing BeeOverlay's
+  HUD and world-guide elements.
 
 ### Changed
 
