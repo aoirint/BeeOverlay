@@ -27,8 +27,7 @@
   <circle cx="375" cy="385" r="115" fill="none" stroke="#FFD91A" stroke-width="4" stroke-dasharray="12 10"/>
   <circle cx="455" cy="385" r="78" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="12 10"/>
 
-  <path d="M 397 385 H 463" fill="none" stroke="#2E2E2E" stroke-width="5" stroke-dasharray="14 10" marker-end="url(#arrow)"/>
-  <rect x="420" y="356" width="30" height="58" rx="5" fill="#2E2E2E"/>
+  <path d="M 405 365 L 430 385 L 405 405 z" fill="#2E2E2E"/>
 
   <circle cx="375" cy="385" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
   <text x="375" y="385" class="marker">B</text>
