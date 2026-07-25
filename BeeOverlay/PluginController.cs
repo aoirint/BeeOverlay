@@ -60,9 +60,9 @@ internal sealed class PluginController
         hostModPresenceGate.BeginHostPresenceCheck(bridge);
     }
 
-    public void RequestHostModPresence()
+    public HostPresenceRequestResult TryRequestHostModPresence()
     {
-        hostModPresenceGate.RequestHostPresence();
+        return hostModPresenceGate.TryRequestHostPresence();
     }
 
     public void ResetHostModPresence()

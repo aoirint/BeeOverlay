@@ -14,6 +14,9 @@ namespace BeeOverlay.Interop.Game;
 /// </summary>
 internal sealed class HostModPresenceBehaviour : NetworkBehaviour
 {
+    private const int MaximumRequestAttempts = 3;
+    private const float RequestRetryIntervalSeconds = 5f;
+
     private Coroutine? scheduledRequest;
 
     public override void OnNetworkSpawn()
@@ -69,8 +72,26 @@ internal sealed class HostModPresenceBehaviour : NetworkBehaviour
 
     private IEnumerator RequestHostPresenceAfterDelay(float delaySeconds)
     {
-        yield return new WaitForSecondsRealtime(delaySeconds);
+        var waitSeconds = delaySeconds;
+        var requestAttempts = 0;
+        while (requestAttempts < MaximumRequestAttempts)
+        {
+            yield return new WaitForSecondsRealtime(waitSeconds);
+            waitSeconds = RequestRetryIntervalSeconds;
+
+            switch (Plugin.Controller.TryRequestHostModPresence())
+            {
+                case HostPresenceRequestResult.Stop:
+                    scheduledRequest = null;
+                    yield break;
+                case HostPresenceRequestResult.Sent:
+                    requestAttempts++;
+                    break;
+                case HostPresenceRequestResult.Deferred:
+                    break;
+            }
+        }
+
         scheduledRequest = null;
-        Plugin.Controller.RequestHostModPresence();
     }
 }

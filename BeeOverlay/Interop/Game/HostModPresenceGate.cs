@@ -6,8 +6,15 @@ using LethalCompany::Unity.Netcode;
 
 namespace BeeOverlay.Interop.Game;
 
+internal enum HostPresenceRequestResult
+{
+    Stop,
+    Deferred,
+    Sent,
+}
+
 /// <summary>
-/// Tracks the one-time, delayed host-presence request for a lobby connection.
+/// Tracks delayed, bounded host-presence requests for a lobby connection.
 /// </summary>
 internal sealed class HostModPresenceGate
 {
@@ -44,13 +51,32 @@ internal sealed class HostModPresenceGate
         bridge.ScheduleHostPresenceRequest(RequestDelaySeconds);
     }
 
-    public void RequestHostPresence()
+    public HostPresenceRequestResult TryRequestHostPresence()
     {
-        NetworkManager? network = NetworkManager.Singleton;
-        if (network is not null && network.IsClient && !network.IsHost)
+        if (IsOverlayAllowed)
         {
-            behaviour?.RequestHostPresenceServerRpc();
+            return HostPresenceRequestResult.Stop;
         }
+
+        NetworkManager? network = NetworkManager.Singleton;
+        if (network is null || !network.IsClient || network.IsHost)
+        {
+            return HostPresenceRequestResult.Stop;
+        }
+
+        StartOfRound? startOfRound = StartOfRound.Instance;
+        if (startOfRound is null || startOfRound.inShipPhase)
+        {
+            return HostPresenceRequestResult.Deferred;
+        }
+
+        if (behaviour is null)
+        {
+            return HostPresenceRequestResult.Stop;
+        }
+
+        behaviour.RequestHostPresenceServerRpc();
+        return HostPresenceRequestResult.Sent;
     }
 
     public void ConfirmHostPresence()
