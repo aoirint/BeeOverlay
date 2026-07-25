@@ -1,7 +1,7 @@
 # BeeOverlay
 
 BeeOverlay visualizes RedLocustBees spatial checks.
-It is intended for Bee AI Break practice and research.
+It is intended for practicing and researching the Bee AI Break glitch.
 
 ## Compatibility
 
