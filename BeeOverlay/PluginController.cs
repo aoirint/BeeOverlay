@@ -76,6 +76,7 @@ internal sealed class PluginController
     public void ResetHostModPresence()
     {
         hostModPresenceGate.Reset();
+        frameHandler.ResetLobbySession();
     }
 
     public void HandleFrame()

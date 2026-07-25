@@ -81,4 +81,10 @@ internal sealed class FrameHandler
 
         presenter.Present(frame, options, selection.SelectedBeeIdentity);
     }
+
+    public void ResetLobbySession()
+    {
+        worldGuideSelection.Reset();
+        presenter.HideAll();
+    }
 }
