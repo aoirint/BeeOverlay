@@ -52,6 +52,8 @@
   <text x="650" y="165" class="subheading">2. Missing hive</text>
   <text x="650" y="195" class="body">Keep the known-hive probe from reaching its position.</text>
 
+  <text x="760" y="245" class="label">8-unit known-hive probe range</text>
+  <text x="780" y="300" class="label">4-unit known-hive near range</text>
   <circle cx="880" cy="390" r="62" fill="none" stroke="#268CFF" stroke-width="4"/>
   <circle cx="880" cy="390" r="125" fill="none" stroke="#4099FF" stroke-width="4" stroke-dasharray="12 10"/>
   <circle cx="880" cy="390" r="22" fill="#0D52FF" stroke="#07399A" stroke-width="4"/>
