@@ -67,6 +67,8 @@ BeeOverlay shows the relevant ranges, marker, and probe line without changing
 game behavior. See [Bee AI Break](docs/domain/bee-ai-break.md) for technical
 details.
 
+![Diagram of the hive-defense and missing-hive conditions for Bee AI Break](docs/diagrams/bee-ai-break-conditions.svg)
+
 ## Installation
 
 1. Install [BepInExPack][bepinexpack-package] for Lethal Company.
