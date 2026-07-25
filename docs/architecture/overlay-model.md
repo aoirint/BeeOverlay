@@ -32,10 +32,11 @@ Add Core state only when a future feature has an explicit cross-frame rule.
 
 ## Enablement
 
-`General.Enabled` defaults to `true` and is the global switch.
+`General.Enabled` defaults to `true` and controls global overlay operation; it
+does not unload the plugin.
 `General.GuestEnabled` defaults to `true`; when the local player hosts, it
 authorizes non-host players to use BeeOverlay. `Overlay.Enabled` controls local
-presentation independently from the global switch. `Overlay.HudEnabled` selects
+presentation independently from `General.Enabled`. `Overlay.HudEnabled` selects
 HUD text. The remaining `Overlay.*` world-guide settings independently select every marker,
 Sight line, and Sphere: bee, hive, remembered-hive, and player markers;
 bee-to-player, bee-to-remembered-hive, and bee-to-hive pickup-proxy lines; and

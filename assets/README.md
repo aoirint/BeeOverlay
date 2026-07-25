@@ -36,9 +36,9 @@ launch.
 
 | Setting | Default | Behavior |
 | --- | --- | --- |
-| `General.Enabled` | `true` | Global switch for all BeeOverlay functionality. |
+| `General.Enabled` | `true` | Turns off overlay output without unloading BeeOverlay. |
 | `General.GuestEnabled` | `true` | When hosting, allows non-host players to use BeeOverlay. |
-| `Overlay.Enabled` | `true` | Shows BeeOverlay elements when the global switch is enabled. |
+| `Overlay.Enabled` | `true` | Shows BeeOverlay elements when `General.Enabled` is `true`. |
 | `Overlay.HudEnabled` | `true` | Shows the HUD status text. |
 | `Overlay.BeeMarkerEnabled` | `true` | Shows bee markers. |
 | `Overlay.HiveMarkerEnabled` | `true` | Shows hive markers. |
