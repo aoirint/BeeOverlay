@@ -52,7 +52,7 @@
   <text x="510" y="335" class="marker">H</text>
   <circle cx="580" cy="335" r="22" fill="#FF261A" stroke="#9F1A12" stroke-width="4"/>
   <text x="580" y="335" class="marker">P</text>
-  <text x="520" y="290" class="small">≤16u from B: block sight</text>
+  <text x="540" y="290" class="small">≤16u from B: block sight</text>
 
   <text x="270" y="455" class="label">B: Circuit Bee</text>
   <text x="485" y="455" class="label">H: hive; P: player</text>
