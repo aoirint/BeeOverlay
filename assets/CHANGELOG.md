@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.3.0 - 2026-07-25 UTC
+
+### Added
+
+- Added bee selection for the overlay.
+    - Press **Select Next Bee** (`B` by default) to select a bee and cycle
+      through the available bees.
+    - The HUD and world guides show the selected bee only.
+
+### Notes
+
+- Requires LethalCompany InputUtils v0.7.13.
+- Compatibility: Lethal Company v81 (2026-04-17 UTC, Manifest ID:
+  `6423525044216269478`).
+
 ## v0.2.0 - 2026-07-25 UTC
 
 ### Added
