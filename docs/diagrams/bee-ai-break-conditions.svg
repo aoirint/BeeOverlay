@@ -25,54 +25,58 @@
   <text x="85" y="195" class="body">Keep the bee from defending the live hive.</text>
 
   <circle cx="295" cy="385" r="115" fill="none" stroke="#FFD91A" stroke-width="4" stroke-dasharray="12 10"/>
-  <text x="180" y="277" class="label">16-unit bee sight range</text>
   <circle cx="295" cy="385" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
   <text x="295" y="385" class="marker">B</text>
-  <text x="245" y="455" class="label">Circuit Bee</text>
 
   <circle cx="375" cy="385" r="78" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="12 10"/>
-  <text x="310" y="292" class="label">10-unit hive defense range</text>
   <circle cx="375" cy="385" r="22" fill="#40FF59" stroke="#168A2A" stroke-width="4"/>
   <text x="375" y="385" class="marker">H</text>
   <circle cx="405" cy="385" r="22" fill="#FF261A" stroke="#9F1A12" stroke-width="4"/>
   <text x="405" y="385" class="marker">P</text>
-  <text x="340" y="484" class="label">Held hive + player</text>
-  <text x="357" y="507" class="small">green hive, red player</text>
 
   <path d="M 317 385 H 383" fill="none" stroke="#2E2E2E" stroke-width="5" stroke-dasharray="14 10" marker-end="url(#arrow)"/>
   <rect x="340" y="356" width="30" height="58" rx="5" fill="#2E2E2E"/>
-  <text x="325" y="438" class="small">block sight line</text>
+
+  <text x="160" y="475" class="label">B: Circuit Bee</text>
+  <text x="340" y="475" class="label">H: hive; P: player</text>
 
   <text x="85" y="510" class="body">Hive defense needs both:</text>
-  <text x="105" y="542" class="body">• The bee sees the player within 16 units.</text>
-  <text x="105" y="572" class="body">• The player is within 10 units of the live hive.</text>
-  <text x="85" y="605" class="small">Keep either predicate false.</text>
+  <text x="105" y="542" class="body">• Player seen within 16 units.</text>
+  <text x="105" y="572" class="body">• Player within 10 units of the live hive.</text>
+  <text x="105" y="602" class="body">• Keep either predicate false.</text>
+
+  <text x="430" y="510" class="label">Ranges</text>
+  <path d="M 430 535 H 470" fill="none" stroke="#FFD91A" stroke-width="4" stroke-dasharray="8 6"/>
+  <text x="480" y="541" class="small">16u sight</text>
+  <path d="M 430 570 H 470" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="8 6"/>
+  <text x="480" y="576" class="small">10u defense</text>
 
   <rect x="620" y="125" width="525" height="500" rx="20" fill="#fff7ed" stroke="#fdba74" stroke-width="3"/>
   <text x="650" y="165" class="subheading">2. Missing hive</text>
   <text x="650" y="195" class="body">Keep the known-hive probe from reaching its position.</text>
 
-  <text x="760" y="245" class="label">8-unit known-hive probe range</text>
-  <text x="780" y="300" class="label">4-unit known-hive near range</text>
-  <circle cx="880" cy="390" r="62" fill="none" stroke="#268CFF" stroke-width="4"/>
-  <circle cx="880" cy="390" r="125" fill="none" stroke="#4099FF" stroke-width="4" stroke-dasharray="12 10"/>
-  <circle cx="880" cy="390" r="22" fill="#0D52FF" stroke="#07399A" stroke-width="4"/>
-  <text x="880" y="390" class="marker-light">K</text>
-  <text x="800" y="425" class="label">Known-hive position</text>
-  <text x="812" y="451" class="small">where the hive was</text>
+  <circle cx="780" cy="350" r="55" fill="none" stroke="#268CFF" stroke-width="4"/>
+  <circle cx="780" cy="350" r="100" fill="none" stroke="#4099FF" stroke-width="4" stroke-dasharray="12 10"/>
+  <circle cx="780" cy="350" r="22" fill="#0D52FF" stroke="#07399A" stroke-width="4"/>
+  <text x="780" y="350" class="marker-light">K</text>
+  <text x="680" y="475" class="label">K: known-hive position</text>
 
-  <circle cx="1000" cy="390" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
-  <text x="1000" y="390" class="marker">B</text>
-  <text x="950" y="465" class="label">Circuit Bee</text>
-  <path d="M 978 390 H 935" fill="none" stroke="#2E2E2E" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#arrow)"/>
-  <rect x="910" y="361" width="28" height="58" rx="5" fill="#2E2E2E"/>
-  <text x="917" y="345" class="small">solid cover</text>
-  <text x="950" y="370" class="small">blocked probe</text>
+  <circle cx="870" cy="350" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
+  <text x="870" y="350" class="marker">B</text>
+  <text x="885" y="475" class="label">B: Circuit Bee</text>
+  <path d="M 848 350 H 838" fill="none" stroke="#2E2E2E" stroke-width="4" stroke-dasharray="8 6" marker-end="url(#arrow)"/>
+  <rect x="810" y="321" width="28" height="58" rx="5" fill="#2E2E2E"/>
 
   <text x="650" y="510" class="body">Known-hive distance:</text>
   <text x="670" y="542" class="body">• Less than 4 units: do not hold the hive.</text>
-  <text x="670" y="572" class="body">• 4 to less than 8: block the probe with solid cover.</text>
-  <text x="670" y="602" class="body">• 8 or more: the held hive is not noticed as missing.</text>
+  <text x="670" y="572" class="body">• 4 to less than 8: cover the probe.</text>
+  <text x="670" y="602" class="body">• 8 or more: no held-hive probe.</text>
+
+  <text x="985" y="510" class="label">Ranges</text>
+  <path d="M 985 535 H 1025" fill="none" stroke="#268CFF" stroke-width="4"/>
+  <text x="1035" y="541" class="small">4u near</text>
+  <path d="M 985 570 H 1025" fill="none" stroke="#4099FF" stroke-width="4" stroke-dasharray="8 6"/>
+  <text x="1035" y="576" class="small">8u probe</text>
 
   <text x="60" y="666" class="small">BeeOverlay visualizes the relevant ranges, known-hive marker, and sight or probe lines; it does not change game behavior.</text>
 </svg>
