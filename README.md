@@ -93,10 +93,10 @@ also installed BeeOverlay.
 
 ## Controls
 
-BeeOverlay starts with no world-guide target selected. The HUD summary remains
-visible, but it shows diagnostic details only for the selected bee. Press
-**Select Next Bee** (`B` by default) to select `bee:1`, then `bee:2`, and so
-on. Pressing it after the last bee returns to no selection.
+BeeOverlay starts with no world-guide target selected and keeps its HUD hidden.
+Press **Select Next Bee** (`B` by default) to select `bee:1`, then `bee:2`,
+and so on. Pressing it after the last bee returns to no selection and hides the
+HUD again.
 
 If no bees are available when the action is pressed, BeeOverlay displays a HUD
 tip and keeps no selection. If the selected bee is removed, BeeOverlay clears

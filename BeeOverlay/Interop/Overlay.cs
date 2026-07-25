@@ -89,7 +89,8 @@ internal sealed partial class Overlay : IOverlayPresenter
     {
         var seen = new HashSet<int>();
         var statusBuilder = new StringBuilder();
-        if (options.HudEnabled)
+        var showHud = options.HudEnabled && selectedBeeIdentity.HasValue;
+        if (showHud)
         {
             statusBuilder.Append($"Bee Overlay | bees={frame.Bees.Count}");
         }
@@ -102,7 +103,7 @@ internal sealed partial class Overlay : IOverlayPresenter
                 DrawBee(bee, seen, options);
             }
 
-            if (options.HudEnabled && isSelected)
+            if (showHud && isSelected)
             {
                 statusBuilder.AppendLine();
                 // HUD numbers are compact per-frame ordinals after sorting, while the view dictionary
@@ -127,11 +128,15 @@ internal sealed partial class Overlay : IOverlayPresenter
             HideWorldGuides();
         }
 
-        if (options.HudEnabled)
+        if (showHud)
         {
             // The status text is rebuilt from the current frame instead of cached so stale bee rows
             // disappear immediately when a bee despawns or no longer has readable navigation data.
             SetStatus(statusBuilder.ToString());
+        }
+        else
+        {
+            HideHud();
         }
     }
 
