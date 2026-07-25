@@ -2,7 +2,7 @@
 
 This guide covers the editable package-icon source and its generated asset.
 
-`docs/diagrams/icon.svg` is the editable source for the package icon.
+`docs/release/icon.svg` is the editable source for the package icon.
 `assets/icon.png` is the 256×256 Thunderstore asset generated from that SVG.
 Do not edit the PNG by hand.
 
@@ -84,7 +84,7 @@ The following PowerShell script uses Microsoft Edge and `System.Drawing`:
 
 ```powershell
 $edge = "${env:ProgramFiles(x86)}\Microsoft\Edge\Application\msedge.exe"
-$svg = (Resolve-Path "docs/diagrams/icon.svg").Path -replace '\\', '/'
+$svg = (Resolve-Path "docs/release/icon.svg").Path -replace '\\', '/'
 $png = Join-Path (Get-Location) "assets/icon.png"
 $highResolutionPng = Join-Path $env:TEMP "package-icon-4x.png"
 $profile = Join-Path $env:TEMP "package-icon-render-profile"

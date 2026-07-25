@@ -15,14 +15,14 @@ RedLocustBees spatial checks for practicing the Bee AI Break glitch.
 <details>
 <summary>Overview: Bee, hive, player, and known-hive spatial checks</summary>
 
-![BeeOverlay visualizing bee, hive, player, and known-hive spatial checks](docs/screenshots/beeoverlay_usage_001.webp)
+![BeeOverlay visualizing bee, hive, player, and known-hive spatial checks](docs/release/screenshots/beeoverlay_usage_001.webp)
 
 </details>
 
 <details>
 <summary>Use case: Blocked bee-to-hive and bee-to-known-hive Sight checks</summary>
 
-![BeeOverlay showing blocked bee-to-hive and bee-to-known-hive Sight checks](docs/screenshots/beeoverlay_usage_002.webp)
+![BeeOverlay showing blocked bee-to-hive and bee-to-known-hive Sight checks](docs/release/screenshots/beeoverlay_usage_002.webp)
 
 </details>
 
@@ -67,7 +67,7 @@ BeeOverlay shows the relevant ranges, marker, and probe line without changing
 game behavior. See [Bee AI Break](docs/domain/bee-ai-break.md) for technical
 details.
 
-![Diagram of the hive-defense and missing-hive conditions for Bee AI Break](docs/diagrams/bee-ai-break-diagram.svg)
+![Diagram of the hive-defense and missing-hive conditions for Bee AI Break](docs/release/bee-ai-break-diagram.svg)
 
 ## Installation
 

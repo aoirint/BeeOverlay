@@ -86,13 +86,13 @@ require a meaning-preserving manual edit.
       knowledge without BeeOverlay-specific product decisions.
     - `architecture/` contains BeeOverlay models, workflows, responsibilities,
       and design decisions; it links to the domain knowledge it uses.
-    - `diagrams/` contains maintained diagram and icon sources with their
+    - `release/` contains maintained diagram and icon sources with their
       authoring procedures.
 
 ## Icon Assets
 
-When changing `docs/diagrams/icon.svg` or regenerating `assets/icon.png`,
-follow `docs/diagrams/icon-authoring.md`.
+When changing `docs/release/icon.svg` or regenerating `assets/icon.png`,
+follow `docs/release/icon-authoring.md`.
 
 ## Local Prerelease Builds
 
