@@ -12,8 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Added `General.Enabled` to control global overlay operation without unloading
-  BeeOverlay.
+- Added `General.Enabled` to disable all BeeOverlay functionality.
 - Added `General.AllowGuestEnabled`, which lets a host explicitly allow non-host
   players to use BeeOverlay. It defaults to `true`.
 - Added `Overlay.Enabled` as the local presentation switch, plus
