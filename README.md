@@ -1,8 +1,8 @@
 # BeeOverlay
 
 A [Lethal Company][lethal-company-steam] diagnostic overlay mod that visualizes
-RedLocustBees spatial checks.
-It is intended for practicing and researching the Bee AI Break glitch.
+RedLocustBees spatial checks for practicing and researching the Bee AI Break
+glitch.
 
 ## Compatibility
 
