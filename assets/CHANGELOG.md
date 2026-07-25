@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.2.0 - 2026-07-25 UTC
 
 ### Added
 
@@ -11,6 +11,7 @@
 
 ### Changed
 
+- Updated Lethal Company compatibility from v73 to v81.
 - Lobby hosts must install BeeOverlay before non-host players can use its
   diagnostic overlay. This keeps diagnostic features from being used in a lobby
   without the host's knowledge.
