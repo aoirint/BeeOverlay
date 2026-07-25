@@ -1,4 +1,4 @@
-# Host-presence Netcode bridge
+# Host authorization
 
 ## Scope
 
@@ -24,16 +24,32 @@ identify its installed mod.
 `IsHost` identifies the listen-server host. `NetworkBehaviour.OnNetworkDespawn`
 is the lifecycle boundary at which a bridge can clear connection-scoped state.
 
-## Host-consent signal
+## Host-consent need
 
-When a client-side capability could be used without the host's knowledge, a
-presence response should carry an explicit host authorization value rather than
-only proving that the host loaded compatible RPC code. The client must treat an
-absent response or a negative authorization value as permission denied.
+Client-side diagnostic capabilities can be used without changing game state.
+When a host must be able to prevent their use in a lobby, an integration needs a
+verifiable host authorization path. An absent authorization or a negative
+authorization value must leave the client-side capability unavailable.
 
-This makes the host's installation and configuration an observable consent
-signal, which prevents a guest from self-authorizing the capability. It is not
-a general authentication, anti-cheat, version-negotiation, or mod-list protocol.
+This requirement prevents a guest from self-authorizing a capability the host
+has not allowed. It does not require a general authentication, anti-cheat,
+version-negotiation, or mod-list protocol.
+
+## Technical options
+
+An integration can provide host authorization in several ways:
+
+- A targeted custom RPC can carry one authorization value from the host to the
+  requesting client. It requires compatible `NetworkBehaviour` code on both
+  peers, but adds no general discovery protocol.
+- A shared mod-list or version-negotiation protocol can establish installed
+  packages and compatibility more broadly. The v81 GameLibs reference does not
+  expose such a general protocol, so an integration would need to supply it.
+- A client-only setting needs no network integration, but cannot establish or
+  enforce host authorization.
+
+These options describe available integration techniques. The product decision
+about which one to use belongs to the architecture documentation.
 
 ## Evidence and limits
 

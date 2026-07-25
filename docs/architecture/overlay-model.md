@@ -73,9 +73,17 @@ The bridge clears the confirmation when its network object despawns. Core
 receives only the resulting enablement Boolean and continues to have no Unity
 or Netcode dependency.
 
+BeeOverlay chooses the targeted custom-RPC option from
+[the host authorization domain knowledge](../domain/host-authorization.md).
+It gives the host an explicit `General.GuestEnabled` decision without a general
+mod-list protocol, which the v81 GameLibs reference does not provide. A
+client-only setting is rejected because it would let a guest enable diagnostic
+features without host authorization. This decision treats the host's installed
+configuration as the consent signal that prevents that abuse.
+
 This is a presence check, not an exact-version negotiation. Its external
 Netcode assumptions and evidence are documented in
-[../domain/host-presence-netcode.md](../domain/host-presence-netcode.md).
+[../domain/host-authorization.md](../domain/host-authorization.md).
 
 The game meanings of bee state, sight, and hive tests are defined in
 [../domain/red-locust-bees.md](../domain/red-locust-bees.md). The HUD update
