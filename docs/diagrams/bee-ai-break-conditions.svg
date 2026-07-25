@@ -33,21 +33,28 @@
   <text x="85" y="165" class="subheading">1. Hive defense</text>
   <text x="85" y="195" class="body">Keep the bee from defending the hive.</text>
 
-  <rect x="180" y="250" width="370" height="170" rx="85" fill="none" stroke="#FFD91A" stroke-width="4" stroke-dasharray="12 10"/>
-  <circle cx="430" cy="335" r="70" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="12 10"/>
-  <path d="M 282 335 H 360" fill="none" stroke="#FF261A" stroke-width="4" stroke-dasharray="10 7" marker-end="url(#sight-arrow)"/>
-  <rect x="370" y="306" width="30" height="58" rx="5" fill="#2E2E2E"/>
-  <text x="350" y="290" class="small">solid cover</text>
+  <text x="75" y="290" class="small">&gt;16u: no sight needed</text>
+  <circle cx="115" cy="335" r="55" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="12 10"/>
+  <circle cx="115" cy="335" r="22" fill="#40FF59" stroke="#168A2A" stroke-width="4"/>
+  <text x="115" y="335" class="marker">H</text>
+  <circle cx="165" cy="335" r="22" fill="#FF261A" stroke="#9F1A12" stroke-width="4"/>
+  <text x="165" y="335" class="marker">P</text>
+  <rect x="260" y="250" width="370" height="170" rx="85" fill="none" stroke="#FFD91A" stroke-width="4" stroke-dasharray="12 10"/>
+  <circle cx="510" cy="335" r="70" fill="none" stroke="#40FF59" stroke-width="4" stroke-dasharray="12 10"/>
+  <path d="M 318 335 H 187" fill="none" stroke="#2E2E2E" stroke-opacity="0.58" stroke-width="4" stroke-dasharray="10 7" marker-end="url(#inactive-arrow)"/>
+  <path d="M 362 335 H 440" fill="none" stroke="#FF261A" stroke-width="4" stroke-dasharray="10 7" marker-end="url(#sight-arrow)"/>
+  <rect x="450" y="306" width="30" height="58" rx="5" fill="#2E2E2E"/>
+  <text x="430" y="290" class="small">solid cover</text>
 
-  <circle cx="260" cy="335" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
-  <text x="260" y="335" class="marker">B</text>
-  <circle cx="430" cy="335" r="22" fill="#40FF59" stroke="#168A2A" stroke-width="4"/>
-  <text x="430" y="335" class="marker">H</text>
-  <circle cx="500" cy="335" r="22" fill="#FF261A" stroke="#9F1A12" stroke-width="4"/>
-  <text x="500" y="335" class="marker">P</text>
+  <circle cx="340" cy="335" r="22" fill="#FFD91A" stroke="#9A7410" stroke-width="4"/>
+  <text x="340" y="335" class="marker">B</text>
+  <circle cx="510" cy="335" r="22" fill="#40FF59" stroke="#168A2A" stroke-width="4"/>
+  <text x="510" y="335" class="marker">H</text>
+  <circle cx="580" cy="335" r="22" fill="#FF261A" stroke="#9F1A12" stroke-width="4"/>
+  <text x="580" y="335" class="marker">P</text>
 
-  <text x="190" y="455" class="label">B: Circuit Bee</text>
-  <text x="405" y="455" class="label">H: hive; P: player</text>
+  <text x="270" y="455" class="label">B: Circuit Bee</text>
+  <text x="485" y="455" class="label">H: hive; P: player</text>
 
   <text x="85" y="510" class="body">Player position:</text>
   <text x="105" y="542" class="body">• Within 10u of hive and 16u of bee: block sight.</text>
