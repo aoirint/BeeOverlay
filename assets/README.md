@@ -15,8 +15,6 @@ Break glitch.
 ## Screenshots
 
 These screenshots were captured with a development build of v0.2.0.
-Current target-selection builds show the same one-bee HUD and guide layout
-after selecting `bee:1`.
 
 <details>
 <summary>Overview: Bee, hive, player, and known-hive spatial checks</summary>

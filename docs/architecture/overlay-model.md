@@ -114,11 +114,9 @@ shown beside other practice tools.
 
 Selection starts empty. The InputUtils **Select Next Bee** action, bound to `B`
 by default, advances through the current sorted frame and then returns to no
-selection, hiding the HUD when no target remains. The selected status line has
-the same format as the v0.2.0 development-build screenshots.
-`WorldGuideSelection` retains the stable
-`thisEnemyIndex` rather than the display ordinal, so inserting another bee does
-not silently retarget existing guides.
+selection, hiding the HUD when no target remains. `WorldGuideSelection` retains
+the stable `thisEnemyIndex` rather than the display ordinal, so inserting
+another bee does not silently retarget existing guides.
 
 When the action is pressed while the frame has no bees, Core keeps selection
 empty and emits a `No bee found to select.` HUD Tip. If the retained identity
