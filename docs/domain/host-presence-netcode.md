@@ -24,6 +24,17 @@ identify its installed mod.
 `IsHost` identifies the listen-server host. `NetworkBehaviour.OnNetworkDespawn`
 is the lifecycle boundary at which a bridge can clear connection-scoped state.
 
+## Host-consent signal
+
+When a client-side capability could be used without the host's knowledge, a
+presence response should carry an explicit host authorization value rather than
+only proving that the host loaded compatible RPC code. The client must treat an
+absent response or a negative authorization value as permission denied.
+
+This makes the host's installation and configuration an observable consent
+signal, which prevents a guest from self-authorizing the capability. It is not
+a general authentication, anti-cheat, version-negotiation, or mod-list protocol.
+
 ## Evidence and limits
 
 The members above are verified by the v81.0.5 compile-time GameLibs reference.
