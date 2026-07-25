@@ -24,7 +24,6 @@
 
   <rect width="1500" height="700" fill="#f8fafc"/>
   <text x="60" y="58" class="heading">Bee AI Break: keep both conditions false while carrying the hive away</text>
-  <text x="60" y="88" class="body">The diagram is schematic; the labeled ranges are the game checks.</text>
 
   <rect x="55" y="125" width="675" height="500" rx="20" fill="#eff6ff" stroke="#93c5fd" stroke-width="3"/>
   <text x="85" y="165" class="subheading">1. Hive defense</text>
