@@ -5,12 +5,13 @@ RedLocustBees spatial checks.
 
 ## Compatibility
 
-- Target game: Lethal Company v81 (2026-04-17 UTC, Manifest ID:
-  `6423525044216269478`).
-- Required package: [BepInExPack][bepinexpack-package] v5.4.2305
-  (2026-03-17 UTC).
-- Validation scope: managed-code and asset exports were inspected. In-game HUD
-  validation in a clean v81 profile remains pending.
+- Lethal Company v81 (2026-04-17 UTC, Manifest ID:
+  `6423525044216269478`)
+    - Test environment
+        - [BepInExPack][bepinexpack-package] v5.4.2305 (2026-03-17 UTC)
+
+The target is supported by managed-code and asset inspection. In-game HUD
+validation in a clean v81 profile remains pending.
 
 ## Installation
 

@@ -25,7 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
-- Clarified the documented compatibility target, required package, and current
+- Clarified the documented compatibility target, test environment, and current
   validation scope for the upcoming release.
 
 ## v0.2.0-alpha.1 - 2026-07-20 UTC
