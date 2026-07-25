@@ -9,8 +9,8 @@ namespace BeeOverlay.Interop;
 internal sealed class BeeOverlayConfiguration
 {
     private readonly ConfigEntry<bool> enabled;
-    private readonly ConfigEntry<bool> overlayEnabled;
     private readonly ConfigEntry<bool> guestEnabled;
+    private readonly ConfigEntry<bool> overlayEnabled;
     private readonly ConfigEntry<bool> hudEnabled;
     private readonly ConfigEntry<bool> beeMarkerEnabled;
     private readonly ConfigEntry<bool> hiveMarkerEnabled;
@@ -26,8 +26,8 @@ internal sealed class BeeOverlayConfiguration
 
     private BeeOverlayConfiguration(
         ConfigEntry<bool> enabled,
-        ConfigEntry<bool> overlayEnabled,
         ConfigEntry<bool> guestEnabled,
+        ConfigEntry<bool> overlayEnabled,
         ConfigEntry<bool> hudEnabled,
         ConfigEntry<bool> beeMarkerEnabled,
         ConfigEntry<bool> hiveMarkerEnabled,
@@ -42,8 +42,8 @@ internal sealed class BeeOverlayConfiguration
         ConfigEntry<bool> hivePickupSightLineEnabled)
     {
         this.enabled = enabled;
-        this.overlayEnabled = overlayEnabled;
         this.guestEnabled = guestEnabled;
+        this.overlayEnabled = overlayEnabled;
         this.hudEnabled = hudEnabled;
         this.beeMarkerEnabled = beeMarkerEnabled;
         this.hiveMarkerEnabled = hiveMarkerEnabled;
@@ -60,9 +60,9 @@ internal sealed class BeeOverlayConfiguration
 
     public bool Enabled => enabled.Value;
 
-    public bool OverlayEnabled => overlayEnabled.Value;
-
     public bool GuestEnabled => guestEnabled.Value;
+
+    public bool OverlayEnabled => overlayEnabled.Value;
 
     public OverlayPresentationOptions PresentationOptions => new(
         hudEnabled.Value,
@@ -98,8 +98,8 @@ internal sealed class BeeOverlayConfiguration
 
         return new BeeOverlayConfiguration(
             enabled,
-            overlayEnabled,
             guestEnabled,
+            overlayEnabled,
             hudEnabled,
             beeMarkerEnabled,
             hiveMarkerEnabled,
