@@ -1,5 +1,6 @@
 using BeeOverlay.Core.Models;
 using BeeOverlay.Core.Ports;
+using BeeOverlay.Core.Presentation;
 using BeeOverlay.Core.State;
 using BeeOverlay.Core.UseCases;
 
@@ -31,13 +32,30 @@ internal sealed class FrameHandler
         this.worldGuideSelection = worldGuideSelection;
     }
 
-    public void HandleFrame(bool enabled, OverlayPresentationOptions options)
+    public void HandleFrame(
+        bool enabled,
+        bool targetSelectionAllowed,
+        OverlayPresentationOptions options
+    )
     {
         if (!enabled || !options.HasVisibleElement)
         {
             // Hiding the complete owned presentation makes disabling immediate even when the HUD
             // survives a scene transition. No game state is sampled while the diagnostic is off.
             presenter.HideAll();
+            return;
+        }
+
+        if (!targetSelectionAllowed)
+        {
+            // Report the rejected input without observing bees, so a denied client cannot infer
+            // whether a selectable target exists.
+            presenter.HideAll();
+            if (overlayInput.CycleWorldGuideTargetTriggered)
+            {
+                presenter.DisplayTip(HudTipMessage.TargetSelectionNotPermitted);
+            }
+
             return;
         }
 

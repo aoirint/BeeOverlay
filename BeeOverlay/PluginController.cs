@@ -81,8 +81,7 @@ internal sealed class PluginController
     public void HandleFrame()
     {
         frameHandler.HandleFrame(
-            configuration.Enabled &&
-            configuration.OverlayEnabled &&
+            configuration.Enabled && configuration.OverlayEnabled,
             hostModPresenceGate.IsOverlayAllowed,
             configuration.PresentationOptions
         );

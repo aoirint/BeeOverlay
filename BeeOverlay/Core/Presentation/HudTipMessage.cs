@@ -21,6 +21,12 @@ internal sealed class HudTipMessage
         "Selected bee was removed."
     );
 
+    public static readonly HudTipMessage TargetSelectionNotPermitted = new(
+        "target_selection_not_permitted",
+        DefaultHeaderText,
+        "BeeOverlay is not permitted by the host."
+    );
+
     private HudTipMessage(string token, string headerText, string bodyText)
     {
         Token = token;
