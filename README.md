@@ -54,9 +54,11 @@ To do that while moving the hive:
 
 - Keep the player carrying the hive outside the bee's 16-unit sight range or
   block the bee-to-player sight line.
-- Keep the bee at least 4 units from its known-hive position.
-- When the bee is less than 8 units from that position, block the probe line
-  with solid cover.
+- Do not hold the hive while the bee is less than 4 units from its known-hive
+  position.
+- When the bee is 4 to less than 8 units from that position, block the probe
+  line with solid cover.
+- At 8 units or more, the hive can be carried without triggering this probe.
 
 BeeOverlay shows the relevant ranges, marker, and probe line without changing
 game behavior. See [Bee AI Break](docs/domain/bee-ai-break.md) for technical

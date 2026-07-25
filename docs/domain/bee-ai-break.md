@@ -90,9 +90,11 @@ false:
   the hive-defense-radius check. When a player carries the hive, this normally
   means keeping that player outside the bee's sight range or blocking the
   bee-to-player sight line.
-- **Missing hive:** the bee-to-known-hive probe must not pass. Keep the bee at
-  least 4 units from the known-hive position; when it is less than 8 units
-  away, the linecast to that position must be blocked.
+- **Missing hive:** the bee-to-known-hive probe must not pass while the hive
+  is held. Do not hold the hive when the bee is less than 4 units from the
+  known-hive position. When the bee is 4 to less than 8 units away, block the
+  linecast to that position. At 8 units or more, the predicate does not probe
+  the hive.
 
 The two conditions are evaluated independently. Preventing the missing-hive
 probe alone does not prevent defensive state 1.
