@@ -40,12 +40,12 @@ hive's defense radius.
 While a Circuit Bee is near its hive, it leaves its calm behavior when either
 condition is met:
 
+- **It defends the hive.** The bee must see a player within 16 units, and that
+  player's body must be inside the hive's defense radius.
 - **It notices the hive is missing.** Its bee-to-known-hive probe must reach
   the known-hive position: the bee is less than 4 units away, or less than 8
   units away with a clear probe line. A held hive is recognized as missing once
   the probe reaches it.
-- **It defends the hive.** The bee must see a player within 16 units, and that
-  player's body must be inside the hive's defense radius.
 
 Bee AI Break prevents the missing-hive condition while the hive is moved away.
 
