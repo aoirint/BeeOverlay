@@ -26,6 +26,48 @@ researching the Bee AI Break glitch.
 
 </details>
 
+## Bee AI Break glitch
+
+Bee AI Break is the community name for a glitch in which players move a hive
+away from Circuit Bees without the bees recognizing that it is missing, which
+can make hive collection safer.
+
+When the glitch is active, the bees stay calm. They do not become defensive
+merely because a player is nearby; they must also see that player inside the
+hive's defense radius.
+
+While a Circuit Bee is near its hive, it leaves its calm behavior when either
+condition is met:
+
+- **Hive defense.**
+    - The bee sees a player within 16 units.
+    - The player is within 10 units of the hive.
+- **Missing hive.**
+    - The bee-to-known-hive probe reaches the known-hive position:
+        - The bee is less than 4 units away.
+        - The bee is less than 8 units away with a clear probe line.
+
+For Bee AI Break to work, both conditions must remain false while the hive is
+carried away. NavMesh boundaries or terrain features can sometimes make these
+conditions possible.
+
+While carrying the hive away:
+
+- Keep the player carrying the hive outside the bee's 16-unit sight range or
+  block the bee-to-player sight line.
+- Do not hold the hive while the bee is less than 4 units from its known-hive
+  position.
+- When the bee is 4 to less than 8 units from its known-hive position, block
+  the probe line with solid cover.
+- When the bee is 8 units or more from its known-hive position, it does not
+  notice that a held hive is missing, but the 16-unit sight condition must
+  still remain false.
+
+BeeOverlay shows the relevant ranges, marker, and probe line without changing
+game behavior. See the
+[Bee AI Break documentation](https://github.com/aoirint/BeeOverlay/blob/main/docs/domain/bee-ai-break.md)
+for technical details.
+
 ## What it does
 
 - Displays a HUD summary for each `RedLocustBees` instance.
@@ -68,11 +110,6 @@ launch.
 
 Changes made through a BepInEx configuration UI apply on the next HUD update.
 BeeOverlay does not watch direct edits to the generated configuration file.
-
-## Documentation
-
-For implementation details, see the
-[repository documentation](https://github.com/aoirint/BeeOverlay/tree/main/docs).
 
 ## AI Disclosure
 
