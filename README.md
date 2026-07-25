@@ -51,6 +51,9 @@ condition is met:
 For Bee AI Break to work, both conditions must remain false while the hive is
 carried away.
 
+NavMesh boundaries, together with terrain that blocks sight lines, can
+sometimes create these conditions.
+
 While carrying the hive away:
 
 - Keep the player carrying the hive outside the bee's 16-unit sight range or
