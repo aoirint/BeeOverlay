@@ -15,14 +15,14 @@ Break glitch.
 <details>
 <summary>Overview: Bee, hive, player, and known-hive spatial checks</summary>
 
-![BeeOverlay visualizing bee, hive, player, and known-hive spatial checks](https://raw.githubusercontent.com/aoirint/BeeOverlay/main/docs/screenshots/beeoverlay_usage_001.webp)
+![BeeOverlay visualizing bee, hive, player, and known-hive spatial checks](https://raw.githubusercontent.com/aoirint/BeeOverlay/main/docs/release/screenshots/beeoverlay_usage_001.webp)
 
 </details>
 
 <details>
 <summary>Use case: Blocked bee-to-hive and bee-to-known-hive Sight checks</summary>
 
-![BeeOverlay showing blocked bee-to-hive and bee-to-known-hive Sight checks](https://raw.githubusercontent.com/aoirint/BeeOverlay/main/docs/screenshots/beeoverlay_usage_002.webp)
+![BeeOverlay showing blocked bee-to-hive and bee-to-known-hive Sight checks](https://raw.githubusercontent.com/aoirint/BeeOverlay/main/docs/release/screenshots/beeoverlay_usage_002.webp)
 
 </details>
 
@@ -68,7 +68,7 @@ game behavior. See the
 [Bee AI Break documentation](https://github.com/aoirint/BeeOverlay/blob/main/docs/domain/bee-ai-break.md)
 for technical details.
 
-![Diagram of the hive-defense and missing-hive conditions for Bee AI Break](https://raw.githubusercontent.com/aoirint/BeeOverlay/main/docs/diagrams/bee-ai-break-diagram.webp)
+![Diagram of the hive-defense and missing-hive conditions for Bee AI Break](https://raw.githubusercontent.com/aoirint/BeeOverlay/main/docs/release/bee-ai-break-diagram.webp)
 
 ## What it does
 

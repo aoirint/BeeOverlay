@@ -72,7 +72,7 @@ derivative, and only when the timing rule above is met.
 1. Read [Bee AI Break](../domain/bee-ai-break.md) and inspect the current
    overlay colors and line behavior before changing a mechanic, color, or
    label.
-2. Edit `docs/diagrams/bee-ai-break-diagram.svg` directly. Keep marker,
+2. Edit `docs/release/bee-ai-break-diagram.svg` directly. Keep marker,
    range, arrow, cover, and label changes together when one case moves.
 3. Preserve the two README embeds unless the asset path changes:
    - `README.md` uses the repository-relative SVG.
@@ -80,7 +80,7 @@ derivative, and only when the timing rule above is met.
 4. Parse the SVG and check whitespace before committing:
 
    ```powershell
-   [xml](Get-Content docs/diagrams/bee-ai-break-diagram.svg -Raw) | Out-Null
+   [xml](Get-Content docs/release/bee-ai-break-diagram.svg -Raw) | Out-Null
    git diff --check
    ```
 
