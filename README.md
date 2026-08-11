@@ -16,19 +16,13 @@ RedLocustBees spatial checks for practicing the Bee AI Break glitch.
 
 These screenshots were captured with a development build of v0.2.0.
 
-<details>
-<summary>Overview: Bee, hive, player, and known-hive spatial checks</summary>
+### Overview: Bee, hive, player, and known-hive spatial checks
 
 ![BeeOverlay visualizing bee, hive, player, and known-hive spatial checks](docs/release/screenshots/beeoverlay_usage_001.webp)
 
-</details>
-
-<details>
-<summary>Use case: Blocked bee-to-hive and bee-to-known-hive Sight checks</summary>
+### Use case: Blocked bee-to-hive and bee-to-known-hive Sight checks
 
 ![BeeOverlay showing blocked bee-to-hive and bee-to-known-hive Sight checks](docs/release/screenshots/beeoverlay_usage_002.webp)
-
-</details>
 
 ## Bee AI Break glitch
 
