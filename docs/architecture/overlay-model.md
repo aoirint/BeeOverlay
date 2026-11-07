@@ -38,11 +38,15 @@ does not unload the plugin.
 `General.AllowGuestEnabled` defaults to `true`; when the local player hosts, it
 authorizes non-host players to use BeeOverlay. `Overlay.Enabled` controls local
 presentation independently from `General.Enabled`. `Overlay.HudEnabled` selects
-HUD text. The remaining `Overlay.*` world-guide settings independently select every marker,
-Sight line, and Sphere: bee, hive, known-hive, and player markers;
-bee-to-player, bee-to-known-hive, and bee-to-hive pickup-proxy lines; and the
-bee sight-range, hive defense-range, known-hive near, and known-hive
-line-of-sight spheres. Every setting defaults to `true`.
+HUD text. The remaining `Overlay.*` settings independently select these world guides:
+
+- Markers: bee, hive, known hive, and player.
+- Sight lines: bee-to-player, bee-to-known-hive, and bee-to-hive pickup proxy.
+- Spheres: bee sight range, hive defense range, known-hive near range, and
+  known-hive line-of-sight range.
+
+Every setting defaults to `true`.
+
 `PluginController` reads the live BepInEx values for every HUD callback and
 passes plain values into Core. When the global or overlay switch is `false`, or
 all selected presentation elements are `false`, the frame handler hides all mod-owned
@@ -139,10 +143,9 @@ difference between an unreadable private sync field and a game value of
 `false`.
 
 `OverlayFrame` combines each observation with values derived by Core. Both the
-HUD and world-guide presenter receive the same derived object. This deliberately
-changes the old implementation, which called sight and physics queries once
-for HUD text and again for world guides; a changing game state can no longer
-make those two presentations disagree within one update.
+HUD and world-guide presenter receive the same derived object. Sampling sight
+and physics queries once per update keeps the two presentations consistent
+even when game state changes between rendering calls.
 
 ## Diagnostic model
 
