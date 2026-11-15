@@ -21,8 +21,8 @@
     <PackageReference Include="Rune580.Mods.LethalCompany.InputUtils" Version="[0.7.13]" IncludeAssets="compile">
       <Aliases>LethalCompanyInputUtils</Aliases>
     </PackageReference>
-    <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
-    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.Analyzers" Version="[1.0.8]" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="[2.1.0]" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>

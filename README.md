@@ -120,7 +120,7 @@ BeeOverlay does not watch direct edits to the generated configuration file.
 
 ## Development
 
-Install [.NET SDK 10.0][dotnet-sdk-download] or later.
+Install [.NET SDK 11.0][dotnet-sdk-download] or later.
 
 Install [PowerShell 7][powershell-install].
 
@@ -252,6 +252,27 @@ To update the lock file after modifying package references, run:
 dotnet restore --use-lock-file
 ```
 
+### NuGet minimum publish age
+
+Use .NET SDK 11.0.100 or a later stable SDK selected by `global.json`.
+The configured NuGet sources use `minPublishAgeHours="168"` to delay
+automatic version selection by `dotnet package add` and
+`dotnet package update` for seven days. This NuGet 8 feature is the reason
+for adopting the .NET 11 STS SDK; it does not change the mod's runtime target.
+
+Explicit version requests bypass this filter. Ordinary restore, including
+transitive dependencies and locked restore, does not validate package age.
+Floating references with an applicable cooldown fail with NU1020; keep the
+existing non-floating package versions and review lockfile changes.
+Both nuget.org and the BepInEx feed expose registration `published` metadata.
+If an evaluated version lacks its publish date, automatic selection fails
+rather than assuming it is old enough. Source mappings and exceptions retain
+their existing scope. Cooldown expiry does not establish package trust;
+continue reviewing provenance, identity, hashes, and vulnerability signals.
+
+See [NuGet minimum package publish age][nuget-minimum-publish-age] for the
+supported operations and restore limitations.
+
 ### .NET and C# tooling updates
 
 This project separates the SDK used to build and format the mod from the target
@@ -363,7 +384,7 @@ policies.
 [bepinexpack-package]: https://thunderstore.io/c/lethal-company/p/BepInEx/BepInExPack/
 [input-utils-package]: https://thunderstore.io/c/lethal-company/p/Rune580/LethalCompany_InputUtils/
 [docker-install]: https://docs.docker.com/get-started/get-docker/
-[dotnet-sdk-download]: https://dotnet.microsoft.com/en-us/download/dotnet/10.0
+[dotnet-sdk-download]: https://dotnet.microsoft.com/en-us/download/dotnet/11.0
 [github-actions-docs]: https://docs.github.com/en/actions
 [lethal-company-steam]: https://store.steampowered.com/app/1966720/Lethal_Company/
 [markdownlint-cli2-repo]: https://github.com/DavidAnson/markdownlint-cli2
@@ -371,3 +392,5 @@ policies.
 [powershell-install]: https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell-on-windows
 [shellcheck-repo]: https://www.shellcheck.net/
 [visual-studio-download]: https://visualstudio.microsoft.com/en-us/vs/
+
+[nuget-minimum-publish-age]: https://learn.microsoft.com/en-us/nuget/consume-packages/minimum-package-publish-age
