@@ -1,8 +1,8 @@
 # Domain Knowledge
 
 This directory contains implementation knowledge about Lethal Company and
-reusable diagnostic rendering. It does not define BeeOverlay's product model or
-design decisions.
+reusable knowledge about diagnostic rendering and dependencies. It does not
+define BeeOverlay's product model or design decisions.
 
 - [RedLocustBees implementation analysis](red-locust-bees.md) records the
   base-game members, behaviour, and implementation choices relevant to bee
@@ -16,3 +16,5 @@ design decisions.
   registration contract used for rebindable BeeOverlay input.
 - [Host authorization](host-authorization.md) records the host-consent need,
   technical options, and Netcode constraints for an authorization path.
+- [Dependency baseline](dependencies.md) explains NuGet minimum publish age,
+  including automatic version selection, publication metadata, and restore limits.
